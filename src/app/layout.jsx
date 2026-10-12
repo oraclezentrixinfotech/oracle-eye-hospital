@@ -5,7 +5,6 @@ import FloatingWidgets from "@/components/FloatingWidgets";
 import AosAnimationProvider from "@/components/AosAnimationProvider";
 import SiteChrome from "@/components/SiteChrome";
 import { getSettings } from "@/lib/settings";
-
 export const metadata = {
   metadataBase: new URL("https://oracleeyehospital.com"),
   title: "Oracle Eye Hospital - Best Eye Hospital in Moradabad | Cataract, LASIK & Retina Care",
