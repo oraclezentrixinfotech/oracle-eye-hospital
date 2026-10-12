@@ -21,6 +21,7 @@ pnpm-debug.log*
 coverage/
 .turbo/
 .vercel/
+scripts/cdp_temp_*/
 
 # Prisma local database files
 prisma/*.db
