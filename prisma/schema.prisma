@@ -1,0 +1,87 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum AppointmentStatus {
+  PENDING
+  CONFIRMED
+  COMPLETED
+  CANCELLED
+}
+
+enum PostType {
+  BLOG
+  NEWS
+}
+
+// Patient appointment requests from the website form
+model Appointment {
+  id            String            @id @default(cuid())
+  name          String
+  phone         String
+  email         String?
+  doctor        String?
+  service       String?
+  preferredDate DateTime?
+  message       String?
+  status        AppointmentStatus @default(PENDING)
+  createdAt     DateTime          @default(now())
+
+  @@index([status, createdAt])
+}
+
+// Contact page messages
+model Enquiry {
+  id        String   @id @default(cuid())
+  name      String
+  phone     String?
+  email     String?
+  subject   String?
+  message   String
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+}
+
+// Blogs and News & Events share one table (type decides where it shows)
+model Post {
+  id        String   @id @default(cuid())
+  type      PostType @default(BLOG)
+  slug      String   @unique
+  title     String
+  excerpt   String
+  body      String
+  image     String?
+  published Boolean  @default(true)
+  createdAt DateTime @default(now())
+
+  @@index([type, published, createdAt])
+}
+
+model Video {
+  id        String   @id @default(cuid())
+  title     String
+  url       String
+  active    Boolean  @default(true)
+  sortOrder Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+model Photo {
+  id        Int      @id @default(autoincrement())
+  title     String
+  image     String
+  status    Boolean  @default(true)
+  sortOrder Int      @default(0)
+  createdAt DateTime @default(now())
+}
+
+model Setting {
+  id    Int    @id @default(autoincrement())
+  key   String @unique
+  value String @db.Text
+}

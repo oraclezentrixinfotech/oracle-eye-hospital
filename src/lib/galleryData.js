@@ -1,0 +1,317 @@
+// Static gallery data for Oracle Eye Hospital and Hospital Interior
+export const GALLERY_COLLECTIONS = {
+  "oracle-eye-hospital": {
+    "slug": "oracle-eye-hospital",
+    "title": "Oracle Eye Hospital",
+    "bannerTitle": "Oracle Eye Hospital",
+    "heading": "Oracle Eye Hospital",
+    "coverImage": "/uploads/photogallery/16567d17-c657-460d-9dae-98d91660fb1a.jpg",
+    "items": [
+      {
+        "src": "/uploads/photogallery/16567d17-c657-460d-9dae-98d91660fb1a.jpg",
+        "alt": "Oracle Eye Hospital",
+        "caption": "Oracle Eye Hospital",
+        "width": 1200,
+        "height": 1800,
+        "aspectRatio": 0.667
+      },
+      {
+        "src": "/uploads/photogallery/6af6a1d9-299e-42db-a62f-07b087fcaf95.jpg",
+        "alt": "Oracle Eye Hospital",
+        "caption": "Oracle Eye Hospital",
+        "width": 1200,
+        "height": 800,
+        "aspectRatio": 1.5
+      },
+      {
+        "src": "/uploads/photogallery/72962093-fd19-48de-81c4-46b40cc10465.jpg",
+        "alt": "Oracle Eye Hospital",
+        "caption": "Oracle Eye Hospital",
+        "width": 1200,
+        "height": 675,
+        "aspectRatio": 1.778
+      },
+      {
+        "src": "/uploads/photogallery/9447c227-2ed2-4aaf-965b-f429d9b3bff3.jpg",
+        "alt": "Oracle Eye Hospital",
+        "caption": "Oracle Eye Hospital",
+        "width": 1200,
+        "height": 675,
+        "aspectRatio": 1.778
+      },
+      {
+        "src": "/uploads/photogallery/8cf74d59-9437-4cb4-8518-10fe14e60eca.jpg",
+        "alt": "Oracle Eye Hospital",
+        "caption": "Oracle Eye Hospital",
+        "width": 1200,
+        "height": 675,
+        "aspectRatio": 1.778
+      },
+      {
+        "src": "/uploads/photogallery/0c2933c5-f72d-4518-9bfe-329a2ff70bf0.jpg",
+        "alt": "Oracle Eye Hospital",
+        "caption": "Oracle Eye Hospital",
+        "width": 1200,
+        "height": 675,
+        "aspectRatio": 1.778
+      }
+    ]
+  },
+  "hospital-interior": {
+    "slug": "hospital-interior",
+    "title": "Hospital Interior",
+    "bannerTitle": "Hospital Interior",
+    "heading": "Hospital Interior In Oracle Eye Hospital",
+    "coverImage": "/uploads/photogallery/543ba95a-8e05-4a52-85bb-18a72382f33d.jpg",
+    "items": [
+      {
+        "src": "/uploads/photogallery/543ba95a-8e05-4a52-85bb-18a72382f33d.jpg",
+        "alt": "Hospital Interior",
+        "caption": "Hospital Interior",
+        "width": 1200,
+        "height": 800,
+        "aspectRatio": 1.5
+      },
+      {
+        "src": "/uploads/photogallery/78aec65b-6d74-427f-a518-d4c52a8778c8.jpg",
+        "alt": "Hospital Interior",
+        "caption": "Hospital Interior",
+        "width": 1200,
+        "height": 800,
+        "aspectRatio": 1.5
+      },
+      {
+        "src": "/uploads/photogallery/f9487258-d4bb-485d-b58d-b2ad9be126f4.jpg",
+        "alt": "Hospital Interior",
+        "caption": "Hospital Interior",
+        "width": 1200,
+        "height": 800,
+        "aspectRatio": 1.5
+      },
+      {
+        "src": "/uploads/photogallery/20181a57-7327-40fb-a08a-397595b7ef55.jpg",
+        "alt": "Hospital Interior",
+        "caption": "Hospital Interior",
+        "width": 1200,
+        "height": 798,
+        "aspectRatio": 1.504
+      },
+      {
+        "src": "/uploads/photogallery/39b3f5e8-2f8b-4525-9bc9-5c7f492915d0.jpg",
+        "alt": "Hospital Interior",
+        "caption": "Hospital Interior",
+        "width": 1200,
+        "height": 798,
+        "aspectRatio": 1.504
+      },
+      {
+        "src": "/uploads/photogallery/8597d4b9-e9d7-4748-baf5-34d631d23cf0.jpg",
+        "alt": "Hospital Interior",
+        "caption": "Hospital Interior",
+        "width": 1200,
+        "height": 800,
+        "aspectRatio": 1.5
+      },
+      {
+        "src": "/uploads/photogallery/2e7f4270-e8ff-4a1b-9322-915f7e53b731.jpg",
+        "alt": "Hospital Interior",
+        "caption": "Hospital Interior",
+        "width": 1200,
+        "height": 800,
+        "aspectRatio": 1.5
+      },
+      {
+        "src": "/uploads/photogallery/a8e57699-e68f-4772-8e0a-ea0bcb324213.jpg",
+        "alt": "Hospital Interior",
+        "caption": "Hospital Interior",
+        "width": 1200,
+        "height": 798,
+        "aspectRatio": 1.504
+      },
+      {
+        "src": "/uploads/photogallery/61fbb5d6-6cc5-4a4c-ab5c-ce82cefd6693.jpg",
+        "alt": "Hospital Interior",
+        "caption": "Hospital Interior",
+        "width": 1064,
+        "height": 1600,
+        "aspectRatio": 0.665
+      },
+      {
+        "src": "/uploads/photogallery/fa9ac784-2118-4995-927e-42624b60755f.jpg",
+        "alt": "Hospital Interior",
+        "caption": "Hospital Interior",
+        "width": 1200,
+        "height": 798,
+        "aspectRatio": 1.504
+      },
+      {
+        "src": "/uploads/photogallery/ed879997-ef85-4ab0-8af8-dd086e6d3be4.jpg",
+        "alt": "Hospital Interior",
+        "caption": "Hospital Interior",
+        "width": 1200,
+        "height": 798,
+        "aspectRatio": 1.504
+      },
+      {
+        "src": "/uploads/photogallery/79b3a059-3fc4-40ca-8943-e27877b49ae1.jpg",
+        "alt": "Hospital Interior",
+        "caption": "Hospital Interior",
+        "width": 1200,
+        "height": 798,
+        "aspectRatio": 1.504
+      },
+      {
+        "src": "/uploads/photogallery/bca46f55-0084-4c6d-a9f0-fa2063ecbf8f.jpg",
+        "alt": "Hospital Interior",
+        "caption": "Hospital Interior",
+        "width": 1200,
+        "height": 798,
+        "aspectRatio": 1.504
+      },
+      {
+        "src": "/uploads/photogallery/bb119f6b-389a-4826-b717-8ce6e2529fa6.jpg",
+        "alt": "Hospital Interior",
+        "caption": "Hospital Interior",
+        "width": 1200,
+        "height": 798,
+        "aspectRatio": 1.504
+      },
+      {
+        "src": "/uploads/photogallery/c523115e-2821-4d27-b9ca-5ea3bc8cbe00.jpg",
+        "alt": "Hospital Interior",
+        "caption": "Hospital Interior",
+        "width": 1064,
+        "height": 1600,
+        "aspectRatio": 0.665
+      },
+      {
+        "src": "/uploads/photogallery/d8e1e0ae-6cbd-4fec-b563-47a0fb822b17.jpg",
+        "alt": "Hospital Interior",
+        "caption": "Hospital Interior",
+        "width": 1200,
+        "height": 798,
+        "aspectRatio": 1.504
+      },
+      {
+        "src": "/uploads/photogallery/9a8a5b5e-d044-4448-9d39-22e7713c8b1d.jpg",
+        "alt": "Hospital Interior",
+        "caption": "Hospital Interior",
+        "width": 900,
+        "height": 1600,
+        "aspectRatio": 0.563
+      },
+      {
+        "src": "/uploads/photogallery/0a605f09-697b-4ac3-b499-defd91ad18c9.jpg",
+        "alt": "Hospital Interior",
+        "caption": "Hospital Interior",
+        "width": 1200,
+        "height": 675,
+        "aspectRatio": 1.778
+      },
+      {
+        "src": "/uploads/photogallery/2eed840a-e452-44dd-9097-9f8fc247b482.jpg",
+        "alt": "Hospital Interior",
+        "caption": "Hospital Interior",
+        "width": 1200,
+        "height": 675,
+        "aspectRatio": 1.778
+      },
+      {
+        "src": "/uploads/photogallery/d9d2fbcb-4966-4a60-97c3-5fde6bd58d11.jpg",
+        "alt": "Hospital Interior",
+        "caption": "Hospital Interior",
+        "width": 1200,
+        "height": 675,
+        "aspectRatio": 1.778
+      },
+      {
+        "src": "/uploads/photogallery/f5601430-fcf1-4d2f-b164-c3bc01ac3baa.jpg",
+        "alt": "Hospital Interior",
+        "caption": "Hospital Interior",
+        "width": 1200,
+        "height": 675,
+        "aspectRatio": 1.778
+      },
+      {
+        "src": "/uploads/photogallery/72fd1340-5742-455d-a976-4055eb1b8c79.jpg",
+        "alt": "Hospital Interior",
+        "caption": "Hospital Interior",
+        "width": 1200,
+        "height": 675,
+        "aspectRatio": 1.778
+      },
+      {
+        "src": "/uploads/photogallery/7f79301d-5a32-4784-9862-ebe89ccc3132.jpg",
+        "alt": "Hospital Interior",
+        "caption": "Hospital Interior",
+        "width": 1200,
+        "height": 900,
+        "aspectRatio": 1.333
+      },
+      {
+        "src": "/uploads/photogallery/eb39db22-ed97-4399-b4d3-c37f3d6bb561.jpg",
+        "alt": "Hospital Interior",
+        "caption": "Hospital Interior",
+        "width": 1200,
+        "height": 675,
+        "aspectRatio": 1.778
+      },
+      {
+        "src": "/uploads/photogallery/51629f48-2055-4c24-938e-90e3fc0b7a5b.jpg",
+        "alt": "Hospital Interior",
+        "caption": "Hospital Interior",
+        "width": 1200,
+        "height": 900,
+        "aspectRatio": 1.333
+      },
+      {
+        "src": "/uploads/photogallery/deae2c42-5cc8-442a-9a6c-4e18739348aa.jpg",
+        "alt": "Hospital Interior",
+        "caption": "Hospital Interior",
+        "width": 1200,
+        "height": 900,
+        "aspectRatio": 1.333
+      },
+      {
+        "src": "/uploads/photogallery/eb0d2965-1326-4778-9bd4-1ee1c1d40564.jpg",
+        "alt": "Hospital Interior",
+        "caption": "Hospital Interior",
+        "width": 960,
+        "height": 1280,
+        "aspectRatio": 0.75
+      },
+      {
+        "src": "/uploads/photogallery/bcd6b461-2ca5-4e7d-81ac-1b6b16510e4e.jpg",
+        "alt": "Hospital Interior",
+        "caption": "Hospital Interior",
+        "width": 1200,
+        "height": 800,
+        "aspectRatio": 1.5
+      },
+      {
+        "src": "/uploads/photogallery/7b7f49da-ec71-4f5f-a4c2-43dd1620d6a2.jpg",
+        "alt": "Hospital Interior",
+        "caption": "Hospital Interior",
+        "width": 1200,
+        "height": 800,
+        "aspectRatio": 1.5
+      },
+      {
+        "src": "/uploads/photogallery/b8bc82b4-83f6-4182-b19f-3e2f7e8d47b0.jpg",
+        "alt": "Hospital Interior",
+        "caption": "Hospital Interior",
+        "width": 1200,
+        "height": 800,
+        "aspectRatio": 1.5
+      }
+    ]
+  }
+};
+
+export function getGalleryBySlug(slug) {
+  return GALLERY_COLLECTIONS[slug] || null;
+}
+
+export function getAllGallerySlugs() {
+  return Object.keys(GALLERY_COLLECTIONS);
+}
