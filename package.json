@@ -8,7 +8,10 @@
     "start": "next start",
     "postinstall": "prisma generate",
     "db:push": "prisma db push",
+    "db:migrate": "prisma migrate deploy",
     "db:seed": "node prisma/seed.js",
+    "db:setup": "prisma migrate deploy && node prisma/seed.js",
+    "db:baseline": "node scripts/baseline-existing-database-migrations.js",
     "db:studio": "prisma studio"
   },
   "dependencies": {
@@ -16,6 +19,7 @@
     "@fontsource-variable/plus-jakarta-sans": "^5.1.0",
     "@prisma/client": "5.22.0",
     "aos": "^2.3.4",
+    "bcrypt": "^5.1.1",
     "cloudinary": "^2.11.0",
     "framer-motion": "^11.11.0",
     "lucide-react": "^1.52.0",
