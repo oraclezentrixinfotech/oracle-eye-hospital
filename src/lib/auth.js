@@ -1,6 +1,8 @@
+import bcrypt from "bcrypt";
 import crypto from "crypto";
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
+import { prisma } from "@/lib/prisma";
 
 export const COOKIE_NAME = "oeh_admin";
 
@@ -27,17 +29,16 @@ export function verifyToken(token) {
   return Number(exp) > Date.now();
 }
 
-export function checkCredentials(email, password) {
-  const realEmail = process.env.ADMIN_EMAIL || "";
-  const realPassword = process.env.ADMIN_PASSWORD || "";
-  if (!realEmail || !realPassword || !email || !password) return false;
-  
-  // Timing safe comparison for both email and password
-  const h = (s) => crypto.createHash("sha256").update(String(s)).digest();
-  const emailMatch = crypto.timingSafeEqual(h(email.toLowerCase().trim()), h(realEmail.toLowerCase().trim()));
-  const passMatch = crypto.timingSafeEqual(h(password), h(realPassword));
-  
-  return emailMatch && passMatch;
+export async function checkCredentials(email, password) {
+  if (!email || !password) return false;
+  const normalizedEmail = String(email).toLowerCase().trim();
+  try {
+    const user = await prisma.user.findUnique({ where: { email: normalizedEmail } });
+    if (!user || !user.active || user.role !== "ADMIN") return false;
+    return bcrypt.compare(String(password), user.passwordHash);
+  } catch {
+    return false;
+  }
 }
 
 export function isAdmin() {

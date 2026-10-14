@@ -1,5 +1,6 @@
 // prisma/seed.js
 const { PrismaClient } = require("@prisma/client");
+const { seedAdminFromEnv } = require("./adminUser");
 const prisma = new PrismaClient();
 
 const settingsData = [
@@ -287,6 +288,10 @@ const blogPostsData = [
 
 async function main() {
   console.log("Starting database seeding...");
+
+  // 0. Admin user (requires ADMIN_EMAIL and ADMIN_PASSWORD in env)
+  const adminResult = await seedAdminFromEnv(prisma);
+  console.log(`✓ Admin account ${adminResult.action} (id: ${adminResult.id}, email: ${adminResult.email})`);
 
   // 1. Settings
   for (const s of settingsData) {
