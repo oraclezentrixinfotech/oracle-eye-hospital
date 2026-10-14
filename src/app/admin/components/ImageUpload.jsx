@@ -4,12 +4,13 @@ import { Upload, X, CheckCircle } from "lucide-react";
 import "./datatable.css";
 
 // onUpload(url) called after successful Cloudinary upload
-export default function ImageUpload({ currentUrl, onUpload, label = "Image" }) {
+export default function ImageUpload({ currentUrl, onUpload, label = "Image", mediaType = "image" }) {
   const [preview, setPreview] = useState(currentUrl || "");
   const [progress, setProgress] = useState(0); // 0-100
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState("");
   const inputRef = useRef(null);
+  const isVideo = mediaType === "video";
 
   async function handleFile(e) {
     const file = e.target.files?.[0];
@@ -76,7 +77,11 @@ export default function ImageUpload({ currentUrl, onUpload, label = "Image" }) {
       {/* Preview */}
       {preview ? (
         <div className="iup-preview-wrap">
-          <img src={preview} alt="Preview" className="iup-preview-img" />
+          {isVideo ? (
+            <video src={preview} className="iup-preview-img" controls />
+          ) : (
+            <img src={preview} alt="Preview" className="iup-preview-img" />
+          )}
           {progress === 100 && !uploading && (
             <span className="iup-done"><CheckCircle size={14} /> Uploaded</span>
           )}
@@ -89,8 +94,10 @@ export default function ImageUpload({ currentUrl, onUpload, label = "Image" }) {
       ) : (
         <div className="iup-dropzone" onClick={() => inputRef.current?.click()}>
           <Upload size={22} color="#9ca3af" />
-          <span>Click to choose image</span>
-          <span className="iup-hint">JPG, PNG, WebP · max 5 MB</span>
+          <span>Click to choose {isVideo ? "video" : "image"}</span>
+          <span className="iup-hint">
+            {isVideo ? "MP4, WebM, MOV · max 100 MB" : "JPG, PNG, WebP · max 5 MB"}
+          </span>
         </div>
       )}
 
@@ -108,14 +115,14 @@ export default function ImageUpload({ currentUrl, onUpload, label = "Image" }) {
       {/* Change button when preview exists */}
       {preview && !uploading && (
         <button type="button" className="iup-change-btn" onClick={() => inputRef.current?.click()}>
-          Change image
+          Change {isVideo ? "video" : "image"}
         </button>
       )}
 
       <input
         ref={inputRef}
         type="file"
-        accept="image/jpeg,image/png,image/webp"
+        accept={isVideo ? "video/mp4,video/webm,video/quicktime" : "image/jpeg,image/png,image/webp"}
         style={{ display: "none" }}
         onChange={handleFile}
       />

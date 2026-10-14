@@ -16,6 +16,10 @@ function getEmbedUrl(url) {
   return url;
 }
 
+function isCloudinaryVideo(url) {
+  return url.includes("res.cloudinary.com/") && url.includes("/video/upload/");
+}
+
 export default async function VideoGalleryPage() {
   let videos = [];
   try {
@@ -50,13 +54,23 @@ export default async function VideoGalleryPage() {
               {videos.map((vid) => (
                 <div key={vid.id} className="col-xxl-4 col-lg-4 m-b30">
                   <div className="dz-card style-3">
-                    <iframe
-                      src={getEmbedUrl(vid.url)}
-                      className="video_frame"
-                      style={{ border: 0 }}
-                      allowFullScreen
-                      title={vid.title}
-                    ></iframe>
+                    {isCloudinaryVideo(vid.url) ? (
+                      <video
+                        src={vid.url}
+                        className="video_frame"
+                        controls
+                        preload="metadata"
+                        aria-label={vid.title}
+                      />
+                    ) : (
+                      <iframe
+                        src={getEmbedUrl(vid.url)}
+                        className="video_frame"
+                        style={{ border: 0 }}
+                        allowFullScreen
+                        title={vid.title}
+                      ></iframe>
+                    )}
                     <div className="dz-info">
                       <h3 className="dz-title text-center" data-aos="fade-up">
                         {vid.title}

@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { Plus, X, Loader2 } from "lucide-react";
 import DataTable from "../components/DataTable";
 import ConfirmModal from "../components/ConfirmModal";
+import ImageUpload from "../components/ImageUpload";
 import { toast } from "../components/Toast";
 import "../admin.css";
 import "../components/datatable.css";
@@ -158,8 +159,17 @@ export default function VideoClient({ rows }) {
               </div>
 
               <div className="adt-field" style={{ marginBottom: 16 }}>
-                <label>YouTube URL *</label>
+                <label>YouTube URL or Cloudinary video URL *</label>
                 <input type="url" required placeholder="https://www.youtube.com/watch?v=..." {...field("url")} />
+              </div>
+
+              <div style={{ marginBottom: 16 }}>
+                <ImageUpload
+                  label="Upload video to Cloudinary"
+                  currentUrl={form.url.includes("res.cloudinary.com/") && form.url.includes("/video/upload/") ? form.url : ""}
+                  mediaType="video"
+                  onUpload={(url) => setForm((current) => ({ ...current, url }))}
+                />
               </div>
 
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginBottom: 16 }}>
