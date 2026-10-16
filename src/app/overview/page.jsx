@@ -32,48 +32,52 @@ export default function Page() {
 
 
 						<div
-                             className="item1"
-                             data-bottom-top="transform: translateY(-30px)"
-                             data-top-bottom="transform: translateY(30px)"
-                        >
-                            <div className="svg-rotate-wrapper">
-                                <svg
-                                    className="rotating-text-svg"
-                                    viewBox="0 0 100 100"
-                                    preserveAspectRatio="xMidYMid meet"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    role="img"
-                                    aria-label="Oracle Eye Hospital"
-                                >
-                                    <defs>
-                                        <path
-                                            id="oracleCirclePath"
-                                            d="M 50,50 m -35,0 a 35,35 0 1,1 70,0 a 35,35 0 1,1 -70,0"
-                                        />
-                                    </defs>
-
-                                        <text
-                                            fill="#ffffff"
-                                            fontSize="13"
-                                            letterSpacing="1.5"
-                                            textAnchor="middle"
-                                        >
-                                            <textPath
-                                                href="#oracleCirclePath"
-                                                xlinkHref="#oracleCirclePath"
-                                                startOffset="25%"
-                                            >
-                                                ORACLE   EYE   HOSPITAL
-                                            </textPath>
-                                        </text>
-                                </svg>
-
-                                <i
-                                    className="icon feather icon-arrow-up-right center-arrow-icon"
-                                    aria-hidden="true"
-                                />
-                            </div>
-                        </div>
+							className="item1"
+							data-bottom-top="transform: translateY(-30px)"
+							data-top-bottom="transform: translateY(30px)"
+						>
+							<div className="svg-rotate-wrapper" role="img" aria-label="Oracle Eye Hospital">
+								<div className="rotating-svg-track">
+									<svg
+										viewBox="0 0 100 100"
+										className="rotating-text-svg"
+										preserveAspectRatio="xMidYMid meet"
+										xmlns="http://www.w3.org/2000/svg"
+										aria-hidden="true"
+									>
+										<defs>
+											<path
+												id="oracleCirclePathOverview"
+												d="M 50, 50 m -35.5, 0 a 35.5,35.5 0 1,1 71,0 a 35.5,35.5 0 1,1 -71,0"
+											/>
+										</defs>
+										<text
+											fill="#ffffff"
+											fontSize="9.2"
+											fontWeight="700"
+											dominantBaseline="central"
+											style={{
+												fontFamily: "'Plus Jakarta Sans', system-ui, -apple-system, sans-serif",
+												textTransform: "uppercase",
+											}}
+										>
+											<textPath
+												href="#oracleCirclePathOverview"
+												xlinkHref="#oracleCirclePathOverview"
+												textLength="216"
+												lengthAdjust="spacing"
+											>
+												ORACLE • EYE • HOSPITAL •&#160;
+											</textPath>
+										</text>
+									</svg>
+								</div>
+								<i
+									className="icon feather icon-arrow-up-right center-arrow-icon"
+									aria-hidden="true"
+								/>
+							</div>
+						</div>
 					</div>
 				</div>
 				<div className="col-xxl-6 col-xl-6 col-lg-6">

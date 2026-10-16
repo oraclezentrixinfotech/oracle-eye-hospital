@@ -1,72 +1,107 @@
-/* Oracle Eye Hospital circular logo - Safari compatibility */
+/* ========================================================
+   ORACLE EYE HOSPITAL CIRCULAR ROTATING LOGO
+   Safari (iPadOS / iOS / macOS) & Cross-Browser Unified Fix
+   ======================================================== */
 
-.svg-rotate-wrapper {
-    position: relative;
-    width: clamp(90px, 25vw, 130px);
-    aspect-ratio: 1 / 1;
-    border-radius: 50%;
-    box-sizing: border-box;
-}
-
-.svg-rotate-wrapper .rotating-text-svg {
-    position: absolute;
-    inset: 0;
-    display: block;
-    width: 100%;
-    height: 100%;
-    max-width: none;
-    max-height: none;
-    overflow: visible;
-    -webkit-transform-origin: 50% 50%;
-    transform-origin: 50% 50%;
-    animation: rotateCircleText 12s linear infinite;
-}
-
-.svg-rotate-wrapper .center-arrow-icon {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    animation: none;
-}
-/* Smooth scrolling */
-
-html {
-    scroll-behavior: smooth;
-}
-
-
-/* Custom Animation Keyframes */
-
-@keyframes rotateCircleText {
-    from {
+@-webkit-keyframes rotateCircleText {
+    0% {
+        -webkit-transform: rotate(0deg);
         transform: rotate(0deg);
     }
-    to {
+    100% {
+        -webkit-transform: rotate(360deg);
         transform: rotate(360deg);
     }
 }
 
-.rotating-text-svg {
-    width: 68%;
-    height: 68%;
-    animation: rotateCircleText 12s linear infinite;
-    transform-origin: center center;
+@keyframes rotateCircleText {
+    0% {
+        -webkit-transform: rotate(0deg);
+        transform: rotate(0deg);
+    }
+    100% {
+        -webkit-transform: rotate(360deg);
+        transform: rotate(360deg);
+    }
 }
 
-.center-arrow-icon {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 1em;
-    height: 1em;
-    color: #fff !important;
-    font-size: clamp(16px, 5vw, 24px);
-    z-index: 2;
+.svg-rotate-wrapper {
+    position: relative !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 135px !important;
+    height: 135px !important;
+    min-width: 135px !important;
+    min-height: 135px !important;
+    max-width: 135px !important;
+    max-height: 135px !important;
+    aspect-ratio: 1 / 1;
+    background-color: #79174A !important;
+    border-radius: 50% !important;
+    box-sizing: border-box !important;
+    overflow: visible !important;
+    box-shadow: 0 8px 26px rgba(121, 23, 74, 0.35) !important;
+    z-index: 10 !important;
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
+}
+
+/* Dedicated rotating track for the SVG so rotation never conflicts with center arrow */
+.svg-rotate-wrapper .rotating-svg-track {
+    position: absolute !important;
+    inset: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    display: block !important;
+    border-radius: 50% !important;
+    -webkit-transform-origin: 50% 50% !important;
+    transform-origin: 50% 50% !important;
+    -webkit-animation: rotateCircleText 14s linear infinite !important;
+    animation: rotateCircleText 14s linear infinite !important;
+    pointer-events: none !important;
+    overflow: visible !important;
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+}
+
+.svg-rotate-wrapper .rotating-text-svg {
+    position: absolute !important;
+    inset: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    display: block !important;
+    overflow: visible !important;
+    pointer-events: none !important;
+}
+
+/* Stationary center arrow icon */
+.svg-rotate-wrapper .center-arrow-icon {
+    position: absolute !important;
+    top: 50% !important;
+    left: 50% !important;
+    -webkit-transform: translate(-50%, -50%) !important;
+    transform: translate(-50%, -50%) !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 32px !important;
+    height: 32px !important;
+    color: #ffffff !important;
+    font-size: 24px !important;
+    line-height: 1 !important;
+    z-index: 5 !important;
+    animation: none !important;
+    -webkit-animation: none !important;
+    pointer-events: none !important;
+}
+
+/* Smooth scrolling */
+
+html {
+    scroll-behavior: smooth;
 }
 
 
@@ -349,19 +384,6 @@ html {
 }
 
 
-/* Rotating SVG button wrapper */
-
-.svg-rotate-wrapper {
-    position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: clamp(90px, 25vw, 130px);
-    aspect-ratio: 1/1;
-    border-radius: 50%;
-    background-color: #00a297;
-    box-shadow: 0 10px 25px rgba(0, 162, 151, 0.4);
-}
 
 
 /* Appointment underline inputs - Left-aligned text right next to icons */
@@ -1186,50 +1208,61 @@ iframe.video_frame {
         animation-duration: 0.65s !important;
         /* Slightly faster feel on mobile touch */
     }
-    /* Fix the rotating circle (item1) overlapping and overflowing on mobile */
-    .content-wrapper.style-1 .item1 {
-        right: -10px !important;
-        top: 40px !important;
-        bottom: auto !important;
-        transform: scale(0.75) !important;
-        transform-origin: center right !important;
-        left: auto !important;
+    /* Fix the rotating circle (item1) positioning on mobile */
+    .content-wrapper.style-1 .content-media .item1 {
         position: absolute !important;
-        z-index: 5 !important;
+        top: -10px !important;
+        right: 15px !important;
+        left: auto !important;
+        bottom: auto !important;
+        z-index: 10 !important;
+    }
+    .content-wrapper.style-1 .item1 {
+        right: 15px !important;
+        top: -10px !important;
+    }
+    .svg-rotate-wrapper {
+        width: 105px !important;
+        height: 105px !important;
+        min-width: 105px !important;
+        min-height: 105px !important;
+    }
+    .svg-rotate-wrapper .center-arrow-icon {
+        font-size: 18px !important;
     }
 }
 
-
-/* ========================================================
-   ROTATING BADGE — FINAL CENTERING FIX (override all prev)
-   ======================================================== */
-
-.svg-rotate-wrapper {
-    position: relative !important;
-    display: block !important;
-    aspect-ratio: 1 / 1;
-    border-radius: 50%;
+/* Tablet & iPad (768px - 991.98px) positioning & sizing */
+@media (min-width: 768px) and (max-width: 991.98px) {
+    .content-wrapper.style-1 .content-media .item1,
+    .content-wrapper.style-1 .item1 {
+        position: absolute !important;
+        top: -15px !important;
+        right: 30px !important;
+        left: auto !important;
+        bottom: auto !important;
+        z-index: 10 !important;
+    }
+    .svg-rotate-wrapper {
+        width: 120px !important;
+        height: 120px !important;
+        min-width: 120px !important;
+        min-height: 120px !important;
+    }
+    .svg-rotate-wrapper .center-arrow-icon {
+        font-size: 20px !important;
+    }
 }
 
-.svg-rotate-wrapper .rotating-text-svg {
+/* Desktop default positioning for about section rotating badge */
+.content-wrapper.style-1 .content-media .item1,
+.content-wrapper.style-1 .item1 {
     position: absolute !important;
-    inset: 0 !important;
-    margin: auto !important;
-    width: 68% !important;
-    height: 68% !important;
-    max-width: none !important;
-    max-height: none !important;
-    overflow: visible;
-    transform-origin: 50% 50% !important;
-    animation: rotateCircleText 12s linear infinite !important;
-}
-
-.svg-rotate-wrapper .center-arrow-icon {
-    position: absolute !important;
-    top: 50% !important;
-    left: 50% !important;
-    transform: translate(-50%, -50%) !important;
-    animation: none !important;
+    top: -25px !important;
+    right: 45px !important;
+    left: auto !important;
+    bottom: auto !important;
+    z-index: 10 !important;
 }
 
 
