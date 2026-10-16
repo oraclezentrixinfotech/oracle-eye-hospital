@@ -298,7 +298,7 @@ export default function Page() {
 									<tr>
 										
 										<td>Corneal Transplant Surgery</td>
-										<td>₹25,000</td>
+										<td>₹24,000</td>
 									</tr>
 									<tr>
 										<td>Glaucoma Surgery</td>

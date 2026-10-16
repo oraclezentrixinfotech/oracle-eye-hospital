@@ -54,7 +54,7 @@ export default function StatsCounters() {
                 requestAnimationFrame(animate);
               } else {
                 // Ensure exact final numbers
-                if (surgeriesRef.current) surgeriesRef.current.innerText = "25,000";
+                if (surgeriesRef.current) surgeriesRef.current.innerText = "24,000";
                 if (patientsRef.current) patientsRef.current.innerText = "50,000";
                 if (yearsRef.current) yearsRef.current.innerText = "15";
               }
