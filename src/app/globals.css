@@ -123,7 +123,7 @@ html {
         transform: translateY(0px) rotate(0deg);
     }
     50% {
-        transform: translateY(18px) rotate(4deg);
+        transform: translateY(16px) rotate(4deg);
     }
 }
 
@@ -905,16 +905,16 @@ img {
 
 @media (min-width: 992px) {
     .site-header.style-3 .header-nav .nav.navbar-nav > li > a {
-        font-family: 'Poppins', sans-serif !important;
+        font-family:  'Libre', Baskerville !important;
         font-weight: 500 !important;
         letter-spacing: 0.2px;
     }
     .site-header.style-3 .header-nav .nav.navbar-nav > li > a span {
-        font-family: 'Poppins', sans-serif !important;
+        font-family: 'Libre', Baskerville !important;
     }
     .site-header.style-3 .header-nav .sub-menu li a,
     .site-header.style-3 .header-nav .sub-menu li a span {
-        font-family: 'Poppins', sans-serif !important;
+        font-family: 'Libre', Baskerville !important;
         font-weight: 400 !important;
     }
 }
@@ -1018,7 +1018,7 @@ img {
     }
     /* rotating-text-svg max-width removed — centering handled by inset:0 + margin:auto */
     .center-arrow-icon {
-        font-size: 18px !important;
+        font-size: 16px !important;
     }
 }
 
@@ -1074,7 +1074,7 @@ img {
 
 @media (max-width: 575.98px) {
     .content-bx.style-1 {
-        margin-bottom: 18px !important;
+        margin-bottom: 16px !important;
         text-align: center;
     }
     .content-bx.style-1 .content-text {
@@ -1106,7 +1106,7 @@ img {
 
 @media (max-width: 767.98px) {
     .form-wrapper.style-1 {
-        padding: 24px 18px !important;
+        padding: 24px 16px !important;
         border-radius: 14px !important;
     }
     .form-wrapper.style-1 .form-title {
@@ -1188,7 +1188,7 @@ iframe.video_frame {
     }
     .booking-popup-box {
         width: 92% !important;
-        padding: 24px 18px !important;
+        padding: 24px 16px !important;
     }
 }
 
@@ -1228,7 +1228,7 @@ iframe.video_frame {
         min-height: 105px !important;
     }
     .svg-rotate-wrapper .center-arrow-icon {
-        font-size: 18px !important;
+        font-size: 16px !important;
     }
 }
 
@@ -2130,7 +2130,7 @@ iframe.video_frame {
 .appointment-request-card {
     overflow: hidden;
     background: #ffffff;
-    border-radius: 18px;
+    border-radius: 16px;
     box-shadow: 0 14px 44px rgba(57, 21, 42, 0.12);
 }
 
@@ -2206,7 +2206,7 @@ iframe.video_frame {
 }
 
 .appointment-form-error {
-    margin: 18px 0 0;
+    margin: 16px 0 0;
     color: #b42318;
     font-size: 14px;
 }
@@ -2244,3 +2244,1679 @@ iframe.video_frame {
         font-size: 26px;
     }
 }
+
+/* ==========================================================================
+   Navbar Menu & Button Typography: Georgia / Serif, Bold, 22px
+   - Applied to all top-level navbar items & navbar appointment button
+   - Vertically centered dropdown arrows (:after)
+   - Responsive single-row layout across desktop/laptop without breaking
+   - Clean dark styling in mobile drawer
+   ========================================================================== */
+
+/* Main navbar container */
+.site-header.style-3 .main-bar .container-fluid {
+    --spacing: 0px !important;
+    padding-left: 8px !important;
+    padding-right: 8px !important;
+    max-width: 100% !important;
+}
+
+@media only screen and (min-width: 992px) {
+    .site-header.style-3 .main-bar .inner-bar {
+        display: flex !important;
+        justify-content: center !important;
+        align-items: center !important;
+        width: 100% !important;
+        padding: 0 4px !important;
+    }
+
+    .site-header.style-3 .main-bar .extra-nav {
+        display: none !important;
+    }
+
+    .site-header.style-3 .header-nav.w3menu {
+        display: flex !important;
+        justify-content: center !important;
+        align-items: center !important;
+        width: 100% !important;
+        margin: 0 auto !important;
+    }
+
+    .site-header.style-3 .header-nav.w3menu .nav,
+    .site-header.style-3 .header-nav .navbar-nav {
+        display: flex !important;
+        flex-direction: row !important;
+        flex-wrap: nowrap !important;
+        justify-content: center !important;
+        align-items: center !important;
+        margin: 0 auto !important;
+        padding: 0 !important;
+        width: auto !important;
+    }
+
+    .site-header.style-3 .header-nav.w3menu .nav > li,
+    .site-header.style-3 .header-nav .navbar-nav > li {
+        display: inline-block !important;
+        flex-shrink: 0 !important;
+    }
+
+    /* All navbar items: Georgia, bold, 22px */
+    .site-header.style-3 .header-nav.w3menu .nav > li > a,
+    .site-header.style-3 .header-nav .navbar-nav > li > a {
+        font-family: Georgia, 'Times New Roman', serif !important;
+        font-size: 16px !important;
+        font-weight: bold !important;
+        line-height: 26px !important;
+        padding: 11px 6px !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        color: #ffffff !important;
+        white-space: nowrap !important;
+        cursor: pointer !important;
+        letter-spacing: -0.2px !important;
+    }
+
+    /* Dropdown arrow alignment */
+    .site-header.style-3 .header-nav.w3menu .nav > li.sub-menu-down > a:after,
+    .site-header.style-3 .header-nav.w3menu .nav > li.menu-item-has-children > a:after,
+    .site-header.style-3 .header-nav .navbar-nav > li.sub-menu-down > a:after,
+    .site-header.style-3 .header-nav .navbar-nav > li.menu-item-has-children > a:after {
+        margin-left: 6px !important;
+        margin-top: 0 !important;
+        vertical-align: middle !important;
+        display: inline-block !important;
+        flex-shrink: 0 !important;
+    }
+}
+
+/* Intermediate screens (1200px - 1440.98px): preserve single row without clipping */
+@media only screen and (min-width: 1200px) and (max-width: 1440.98px) {
+    .site-header.style-3 .header-nav.w3menu .nav > li > a,
+    .site-header.style-3 .header-nav .navbar-nav > li > a {
+        font-size: 19.5px !important;
+        padding: 11px 4.5px !important;
+    }
+}
+
+/* Compact desktop screens (992px - 1199.98px) */
+@media only screen and (min-width: 992px) and (max-width: 1199.98px) {
+    .site-header.style-3 .header-nav.w3menu .nav > li > a,
+    .site-header.style-3 .header-nav .navbar-nav > li > a {
+        font-size: 15.5px !important;
+        padding: 11px 3px !important;
+    }
+}
+
+/* Tablet & Mobile header bar (< 992px) */
+@media only screen and (max-width: 991.98px) {
+    .site-header.style-3 .main-bar {
+        height: 56px !important;
+        min-height: 56px !important;
+        max-height: 56px !important;
+        background-color: #610B38 !important;
+        padding: 0 16px !important;
+        margin: 0 !important;
+        display: block !important;
+    }
+
+    .site-header.style-3 .main-bar .inner-bar {
+        width: 100% !important;
+        height: 56px !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: space-between !important;
+        padding: 0 16px !important;
+    }
+
+    .menu-close:not(.show) {
+        display: none !important;
+    }
+
+    .site-header .extra-nav,
+    .site-header.style-3 .extra-nav {
+        position: static !important;
+        order: 1 !important;
+        display: flex !important;
+        align-items: center !important;
+        background: transparent !important;
+        box-shadow: none !important;
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+
+    .site-header .extra-nav .header-right .nav-item.item-call,
+    .site-header .extra-nav .header-right .nav-item.header-tagline,
+    .site-header .extra-nav .header-right .nav-item:not(.item-btn) {
+        display: none !important;
+    }
+
+    .site-header .extra-nav .btn,
+    .site-header.style-3 .extra-nav .btn {
+        font-family: Georgia, 'Times New Roman', serif !important;
+        font-size: 15px !important;
+        font-weight: bold !important;
+        padding: 7px 16px !important;
+        border-radius: 6px !important;
+        color: #ffffff !important;
+        background-color: #7b114a !important;
+        border: 1px solid rgba(255, 255, 255, 0.3) !important;
+    }
+
+    .site-header .w3menu-toggler.navicon {
+        order: 2 !important;
+        width: 44px !important;
+        height: 40px !important;
+        background: #ffffff !important;
+        border-radius: 6px !important;
+        display: flex !important;
+        flex-direction: column !important;
+        justify-content: center !important;
+        align-items: center !important;
+        border: 1px solid #d5d5d5 !important;
+    }
+
+    /* Drawer items: Georgia, bold, 22px with clear dark text */
+    .site-header.style-3 .header-nav.w3menu .nav > li > a,
+    .site-header.style-3 .header-nav .navbar-nav > li > a {
+        font-family: Georgia, 'Times New Roman', serif !important;
+        font-size: 22px !important;
+        font-weight: bold !important;
+        color: #1a1a1a !important;
+        line-height: 32px !important;
+        padding: 12px 0 !important;
+        display: flex !important;
+        justify-content: space-between !important;
+        align-items: center !important;
+    }
+
+    .site-header.style-3 .header-nav.w3menu .nav > li > a:hover {
+        color: #580a31 !important;
+    }
+}
+
+/* Sub-menu (dropdown) items stay compact and legible */
+.site-header.style-3 .header-nav.w3menu .nav > li .sub-menu li a {
+    font-size: 15px !important;
+    font-family: var(--bs-body-font-family);
+    font-weight: normal !important;
+    line-height: 22px !important;
+    padding: 8px 20px !important;
+    color: #333333 !important;
+}
+
+/* ==========================================================================
+   ORACLE EYE HOSPITAL — PREMIUM HEALTHCARE CHATBOT WIDGET
+   Design System:
+   - Primary burgundy: #790D49 / #57072F
+   - Background: #F8F7F9
+   - Border: #E8E2E8
+   - Text: #25212A / #6F6872
+   - Online Status: #20B96B
+   ========================================================================== */
+
+/* 1. FLOATING LAUNCHER WRAPPER */
+.oeh-launcher-wrapper {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 10px;
+    pointer-events: auto;
+}
+
+/* Launcher Tooltip Preview */
+.oeh-launcher-tooltip {
+    background: #ffffff;
+    color: #25212a;
+    border: 1px solid #e8e2e8;
+    border-radius: 14px;
+    padding: 10px 14px;
+    box-shadow: 0 10px 30px rgba(87, 7, 47, 0.12), 0 2px 8px rgba(0, 0, 0, 0.04);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    max-width: 290px;
+    cursor: pointer;
+    transform-origin: bottom right;
+    animation: oehTooltipIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.oeh-launcher-tooltip:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 14px 34px rgba(87, 7, 47, 0.16);
+}
+
+.oeh-tooltip-inner {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.oeh-tooltip-wave {
+    font-size: 20px;
+    line-height: 1;
+}
+
+.oeh-tooltip-inner strong {
+    display: block;
+    font-size: 13px;
+    font-weight: 700;
+    color: #790d49;
+    line-height: 1.25;
+}
+
+.oeh-tooltip-inner p {
+    font-size: 11.5px;
+    color: #6f6872;
+    margin: 2px 0 0 0;
+    line-height: 1.3;
+}
+
+.oeh-tooltip-close {
+    background: transparent;
+    border: none;
+    color: #a39ca7;
+    font-size: 18px;
+    cursor: pointer;
+    padding: 0 2px;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.15s ease;
+}
+
+.oeh-tooltip-close:hover {
+    color: #25212a;
+}
+
+/* Circular Burgundy Launcher Button */
+.oeh-chatbot-launcher {
+    position: relative;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #790d49 0%, #57072f 100%);
+    border: 2px solid #ffffff;
+    color: #ffffff;
+    box-shadow: 0 8px 24px rgba(121, 13, 73, 0.38), 0 2px 6px rgba(0, 0, 0, 0.08);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.22s ease, background 0.2s ease;
+    outline: none;
+    padding: 0;
+}
+
+.oeh-chatbot-launcher:hover {
+    transform: translateY(-3px) scale(1.03);
+    box-shadow: 0 12px 30px rgba(121, 13, 73, 0.48), 0 4px 10px rgba(0, 0, 0, 0.12);
+}
+
+.oeh-chatbot-launcher:focus-visible {
+    box-shadow: 0 0 0 3px rgba(121, 13, 73, 0.35), 0 12px 30px rgba(121, 13, 73, 0.45);
+}
+
+.oeh-launcher-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+}
+
+.oeh-icon-chat {
+    width: 28px;
+    height: 28px;
+    stroke-width: 2.2;
+    color: #ffffff;
+}
+
+/* Pulsing Online Indicator */
+.oeh-online-indicator {
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    width: 15px;
+    height: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+}
+
+.oeh-dot {
+    width: 11px;
+    height: 11px;
+    background-color: #20b96b;
+    border: 2px solid #ffffff;
+    border-radius: 50%;
+    position: relative;
+    z-index: 2;
+}
+
+.oeh-ping-ring {
+    position: absolute;
+    inset: -2px;
+    border-radius: 50%;
+    background-color: rgba(32, 185, 107, 0.45);
+    animation: oehPing 2s cubic-bezier(0, 0, 0.2, 1) infinite;
+    z-index: 1;
+}
+
+/* Unread Notification Badge */
+.oeh-badge {
+    position: absolute;
+    top: -3px;
+    left: -3px;
+    background-color: #ffffff;
+    color: #790d49;
+    font-size: 11px;
+    font-weight: 800;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid #790d49;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+/* 2. CHAT WINDOW PANEL */
+.oeh-chat-window {
+    position: fixed;
+    bottom: 0 !important;
+    right: 0 !important;
+    width: 340px !important;
+    height: 490px !important;
+    max-height: calc(100vh - 20px) !important;
+    background-color: #ffffff;
+    border: 1px solid #e8e2e8;
+    border-right: none !important;
+    border-bottom: none !important;
+    border-top-left-radius: 18px !important;
+    border-top-right-radius: 0 !important;
+    border-bottom-left-radius: 0 !important;
+    border-bottom-right-radius: 0 !important;
+    box-shadow: -4px 10px 30px rgba(87, 7, 47, 0.18), 0 0 1px rgba(0, 0, 0, 0.08);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    z-index: 10000;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(24px) scale(0.96);
+    transition: opacity 0.28s cubic-bezier(0.16, 1, 0.3, 1), transform 0.28s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.28s;
+    font-family: inherit;
+}
+
+.oeh-chat-window.oeh-open {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0) scale(1);
+}
+
+.oeh-chat-window.oeh-minimized {
+    height: 58px !important;
+    min-height: 58px !important;
+    overflow: hidden;
+    box-shadow: -2px 6px 20px rgba(87, 7, 47, 0.2);
+}
+
+/* 3. CHAT HEADER */
+.oeh-chat-header {
+    background: linear-gradient(135deg, #790d49 0%, #57072f 100%);
+    color: #ffffff;
+    padding: 10px 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 58px;
+    box-sizing: border-box;
+    position: relative;
+    user-select: none;
+    -webkit-user-select: none;
+    flex-shrink: 0;
+}
+
+.oeh-header-branding {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex: 1;
+    min-width: 0;
+}
+
+.oeh-avatar-box {
+    position: relative;
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: #ffffff;
+    padding: 2.5px;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.oeh-avatar-box img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    border-radius: 50%;
+}
+
+.oeh-avatar-fallback {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background-color: #790d49;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.oeh-header-online-dot {
+    position: absolute;
+    bottom: -1px;
+    right: -1px;
+    width: 11px;
+    height: 11px;
+    background-color: #20b96b;
+    border: 2px solid #57072f;
+    border-radius: 50%;
+}
+
+.oeh-header-text {
+    flex: 1;
+    min-width: 0;
+}
+
+.oeh-header-title-row {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.oeh-header-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: #ffffff;
+    margin: 0;
+    line-height: 1.2;
+    letter-spacing: -0.2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.oeh-verified-badge {
+    color: #facc15;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.oeh-header-subtitle {
+    font-size: 11.5px;
+    color: rgba(255, 255, 255, 0.88);
+    margin: 2px 0 0 0;
+    line-height: 1.2;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.oeh-header-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 10.5px;
+    color: #a7f3d0;
+    margin-top: 3px;
+    font-weight: 500;
+}
+
+.oeh-status-pulse {
+    width: 6px;
+    height: 6px;
+    background-color: #20b96b;
+    border-radius: 50%;
+    display: inline-block;
+    box-shadow: 0 0 6px #20b96b;
+}
+
+.oeh-header-controls {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    flex-shrink: 0;
+}
+
+.oeh-btn-icon {
+    width: 28px;
+    height: 28px;
+    border-radius: 7px;
+    background: rgba(255, 255, 255, 0.12);
+    border: none;
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.15s ease, transform 0.1s ease;
+    padding: 0;
+}
+
+.oeh-btn-icon:hover {
+    background: rgba(255, 255, 255, 0.22);
+}
+
+.oeh-btn-icon:active {
+    transform: scale(0.95);
+}
+
+.oeh-btn-close:hover {
+    background: rgba(239, 68, 68, 0.85);
+}
+
+/* 4. CHAT BODY */
+.oeh-chat-body {
+    flex: 1;
+    background-color: #f8f7f9;
+    padding: 12px 10px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+}
+
+.oeh-date-stamp {
+    text-align: center;
+    margin: 1px 0 4px 0;
+}
+
+.oeh-date-stamp span {
+    font-size: 10px;
+    font-weight: 600;
+    color: #8c8590;
+    background-color: rgba(0, 0, 0, 0.04);
+    padding: 2px 8px;
+    border-radius: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+
+/* Messages */
+.oeh-message-row {
+    display: flex;
+    align-items: flex-end;
+    gap: 7px;
+    width: 100%;
+}
+
+.oeh-user-row {
+    justify-content: flex-end;
+}
+
+.oeh-bot-row {
+    justify-content: flex-start;
+}
+
+.oeh-bot-avatar {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background-color: #790d49;
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-bottom: 14px;
+    box-shadow: 0 2px 5px rgba(121, 13, 73, 0.2);
+}
+
+.oeh-message-bubble-wrapper {
+    display: flex;
+    flex-direction: column;
+    max-width: 88%;
+}
+
+.oeh-user-row .oeh-message-bubble-wrapper {
+    align-items: flex-end;
+}
+
+.oeh-bot-row .oeh-message-bubble-wrapper {
+    align-items: flex-start;
+}
+
+.oeh-message-bubble {
+    padding: 8px 11px;
+    border-radius: 14px;
+    font-size: 12.5px;
+    line-height: 1.44;
+    position: relative;
+    word-break: break-word;
+}
+
+/* Bot Bubble */
+.oeh-bubble-bot {
+    background-color: #ffffff;
+    color: #25212a;
+    border: 1px solid #ede8ee;
+    border-bottom-left-radius: 4px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
+}
+
+/* User Bubble */
+.oeh-bubble-user {
+    background: linear-gradient(135deg, #790d49 0%, #680b3e 100%);
+    color: #ffffff;
+    border-bottom-right-radius: 4px;
+    box-shadow: 0 3px 10px rgba(121, 13, 73, 0.22);
+}
+
+.oeh-message-text p {
+    margin: 0;
+    font-size: 12.5px;
+    line-height: 1.42;
+}
+
+.oeh-message-text p + p {
+    margin-top: 6px;
+}
+
+.oeh-message-text strong {
+    font-weight: 700;
+}
+
+.oeh-bubble-user .oeh-message-text strong {
+    color: #ffffff;
+}
+
+.oeh-bubble-bot .oeh-message-text strong {
+    color: #57072f;
+}
+
+.oeh-message-timestamp {
+    font-size: 9.5px;
+    color: #9d96a1;
+    margin-top: 2px;
+    padding: 0 4px;
+}
+
+/* Typing Indicator */
+.oeh-typing-bubble {
+    padding: 8px 12px;
+    display: inline-flex;
+    align-items: center;
+}
+
+.oeh-typing-dots {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.oeh-typing-dots span {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background-color: #790d49;
+    opacity: 0.4;
+    animation: oehDotBounce 1.3s infinite ease-in-out;
+}
+
+.oeh-typing-dots span:nth-child(1) { animation-delay: 0s; }
+.oeh-typing-dots span:nth-child(2) { animation-delay: 0.2s; }
+.oeh-typing-dots span:nth-child(3) { animation-delay: 0.4s; }
+
+/* 5. QUICK ACTIONS GRID */
+.oeh-quick-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 5px;
+    margin-top: 8px;
+    width: 100%;
+}
+
+.oeh-quick-btn {
+    background: #ffffff;
+    border: 1px solid #e5dfe7;
+    border-radius: 8px;
+    padding: 6px 8px;
+    font-size: 11px;
+    font-weight: 600;
+    color: #25212a;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    text-align: left;
+    transition: all 0.16s ease;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+}
+
+.oeh-quick-btn:hover {
+    background: #fbf4f8;
+    border-color: #790d49;
+    color: #790d49;
+    transform: translateY(-1px);
+    box-shadow: 0 3px 8px rgba(121, 13, 73, 0.1);
+}
+
+.oeh-quick-btn:active {
+    transform: scale(0.98);
+}
+
+.oeh-quick-highlight {
+    background: #fdf2f7;
+    border-color: rgba(121, 13, 73, 0.35);
+    color: #790d49;
+    grid-column: span 2;
+    justify-content: center;
+    font-weight: 700;
+}
+
+.oeh-quick-highlight:hover {
+    background: #790d49;
+    color: #ffffff;
+}
+
+.oeh-quick-highlight:hover svg {
+    color: #ffffff !important;
+}
+
+/* 6. CARDS & EMBEDDED CONTENT */
+.oeh-card-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 10px;
+    width: 100%;
+}
+
+.oeh-service-item {
+    background: #fcfbfe;
+    border: 1px solid #ece7ee;
+    border-radius: 10px;
+    padding: 9px 11px;
+}
+
+.oeh-service-item strong {
+    font-size: 12.5px;
+    color: #57072f;
+    display: block;
+    margin-bottom: 2px;
+}
+
+.oeh-service-item p {
+    font-size: 11.5px;
+    color: #6f6872;
+    margin: 0;
+    line-height: 1.35;
+}
+
+.oeh-service-actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 6px;
+    padding-top: 6px;
+    border-top: 1px dashed #eee8f0;
+}
+
+.oeh-link-chip {
+    font-size: 11px;
+    font-weight: 600;
+    color: #790d49;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+}
+
+.oeh-link-chip:hover {
+    text-decoration: underline;
+}
+
+.oeh-book-chip {
+    background: #790d49;
+    color: #ffffff;
+    border: none;
+    border-radius: 6px;
+    padding: 3px 10px;
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s ease;
+}
+
+.oeh-book-chip:hover {
+    background: #57072f;
+}
+
+/* Doctors Card */
+.oeh-doctor-item {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    background: #fcfbfe;
+    border: 1px solid #ece7ee;
+    border-radius: 10px;
+    padding: 9px 11px;
+}
+
+.oeh-doctor-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: #fdf2f7;
+    border: 1px solid rgba(121, 13, 73, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.oeh-doctor-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.oeh-doctor-info strong {
+    font-size: 12.5px;
+    color: #25212a;
+    display: block;
+    line-height: 1.25;
+}
+
+.oeh-doc-title {
+    font-size: 11px;
+    color: #790d49;
+    display: block;
+    font-weight: 600;
+}
+
+.oeh-doc-quals {
+    font-size: 10.5px;
+    color: #8c8590;
+    display: block;
+}
+
+/* Embedded Info Cards */
+.oeh-embedded-card {
+    background: #fcfbfe;
+    border: 1px solid #ece7ee;
+    border-radius: 12px;
+    padding: 10px 12px;
+    margin-top: 8px;
+    width: 100%;
+}
+
+.oeh-embed-row {
+    display: flex;
+    gap: 9px;
+    align-items: flex-start;
+}
+
+.oeh-embed-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 10px;
+    padding-top: 8px;
+    border-top: 1px dashed #ece7ee;
+}
+
+.oeh-action-btn {
+    flex: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    padding: 7px 10px;
+    border-radius: 8px;
+    font-size: 11.5px;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+    border: 1px solid transparent;
+    transition: all 0.15s ease;
+}
+
+.oeh-action-primary {
+    background-color: #790d49;
+    color: #ffffff !important;
+}
+
+.oeh-action-primary:hover {
+    background-color: #57072f;
+}
+
+.oeh-action-secondary {
+    background-color: #ffffff;
+    border-color: #ded7e1;
+    color: #25212a;
+}
+
+.oeh-action-secondary:hover {
+    background-color: #f8f6f9;
+    border-color: #790d49;
+    color: #790d49;
+}
+
+/* Contact Tiles */
+.oeh-contact-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.oeh-contact-tile {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: #ffffff;
+    border: 1px solid #e5dfe7;
+    border-radius: 10px;
+    padding: 8px 12px;
+    text-decoration: none;
+    color: #25212a;
+    transition: all 0.15s ease;
+    cursor: pointer;
+}
+
+.oeh-contact-tile:hover {
+    border-color: #790d49;
+    transform: translateY(-1px);
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.05);
+}
+
+.oeh-contact-tile span {
+    font-size: 10.5px;
+    color: #7e7682;
+    display: block;
+    line-height: 1.2;
+}
+
+.oeh-contact-tile strong {
+    font-size: 13px;
+    color: #25212a;
+    display: block;
+    font-weight: 700;
+}
+
+.oeh-whatsapp-tile:hover {
+    border-color: #20b96b;
+}
+
+.oeh-whatsapp-tile strong {
+    color: #15803d;
+}
+
+/* Emergency Notice Banner */
+.oeh-emergency-banner {
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    border-radius: 12px;
+    padding: 11px 13px;
+    margin-top: 9px;
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+}
+
+.oeh-emergency-banner strong {
+    font-size: 12.5px;
+    color: #b91c1c;
+    display: block;
+}
+
+.oeh-emergency-banner p {
+    font-size: 11.5px;
+    color: #7f1d1d;
+    margin: 3px 0 8px 0;
+    line-height: 1.35;
+}
+
+.oeh-emergency-call-btn {
+    display: inline-flex;
+    align-items: center;
+    background: #dc2626;
+    color: #ffffff !important;
+    font-size: 11.5px;
+    font-weight: 700;
+    padding: 6px 12px;
+    border-radius: 8px;
+    text-decoration: none;
+    transition: background 0.15s ease;
+}
+
+.oeh-emergency-call-btn:hover {
+    background: #b91c1c;
+}
+
+/* Attached Quick Buttons */
+.oeh-attached-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 10px;
+}
+
+.oeh-attached-btn {
+    background: #fdf2f7;
+    border: 1px solid rgba(121, 13, 73, 0.25);
+    color: #790d49;
+    border-radius: 20px;
+    padding: 4px 11px;
+    font-size: 11.5px;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    transition: all 0.15s ease;
+}
+
+.oeh-attached-btn:hover {
+    background: #790d49;
+    color: #ffffff;
+    border-color: #790d49;
+}
+
+/* 7. GUIDED APPOINTMENT FLOW */
+.oeh-step-container {
+    margin-top: 10px;
+    width: 100%;
+}
+
+.oeh-step-label {
+    font-size: 11.5px;
+    font-weight: 700;
+    color: #57072f;
+    margin: 0 0 6px 0;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+
+.oeh-pill-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.oeh-pill-btn {
+    background: #ffffff;
+    border: 1px solid #ded7e1;
+    border-radius: 10px;
+    padding: 8px 12px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #25212a;
+    text-align: left;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.oeh-pill-btn:hover {
+    background: #fbf4f8;
+    border-color: #790d49;
+    color: #790d49;
+    transform: translateX(2px);
+}
+
+.oeh-date-input {
+    width: 100%;
+    padding: 7px 10px;
+    border: 1px solid #ded7e1;
+    border-radius: 8px;
+    font-size: 12px;
+    color: #25212a;
+    outline: none;
+    background: #ffffff;
+}
+
+.oeh-date-input:focus {
+    border-color: #790d49;
+    box-shadow: 0 0 0 2px rgba(121, 13, 73, 0.15);
+}
+
+/* Inline Contact Form */
+.oeh-inline-form {
+    background: #fcfbfe;
+    border: 1px solid #ede8ee;
+    border-radius: 12px;
+    padding: 12px;
+    margin-top: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+    width: 100%;
+}
+
+.oeh-form-group label {
+    display: block;
+    font-size: 11px;
+    font-weight: 600;
+    color: #57072f;
+    margin-bottom: 3px;
+}
+
+.oeh-form-input {
+    width: 100%;
+    padding: 8px 10px;
+    border: 1px solid #dcd5de;
+    border-radius: 8px;
+    font-size: 12.5px;
+    color: #25212a;
+    outline: none;
+    box-sizing: border-box;
+    background: #ffffff;
+}
+
+.oeh-form-input:focus {
+    border-color: #790d49;
+    box-shadow: 0 0 0 2px rgba(121, 13, 73, 0.15);
+}
+
+.oeh-form-error {
+    font-size: 11px;
+    color: #dc2626;
+    background: #fef2f2;
+    padding: 5px 8px;
+    border-radius: 6px;
+    border: 1px solid #fecaca;
+}
+
+.oeh-submit-btn {
+    width: 100%;
+    background: linear-gradient(135deg, #790d49 0%, #57072f 100%);
+    color: #ffffff;
+    border: none;
+    border-radius: 9px;
+    padding: 9px 12px;
+    font-size: 12.5px;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 0.15s ease, transform 0.1s ease;
+    box-shadow: 0 3px 10px rgba(121, 13, 73, 0.25);
+}
+
+.oeh-submit-btn:hover:not(:disabled) {
+    opacity: 0.94;
+    transform: translateY(-1px);
+}
+
+.oeh-submit-btn:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+/* Success Card */
+.oeh-success-card {
+    background: #f0fdf4;
+    border: 1px solid #bbf7d0;
+    border-radius: 12px;
+    padding: 12px;
+    margin-top: 8px;
+    width: 100%;
+}
+
+.oeh-success-header {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    color: #15803d;
+    font-size: 13px;
+}
+
+.oeh-success-buttons {
+    display: flex;
+    gap: 7px;
+}
+
+/* 8. CHAT FOOTER & INPUT COMPOSER */
+.oeh-chat-footer {
+    background-color: #ffffff;
+    border-top: 1px solid #ede8ee;
+    padding: 7px 10px 9px 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    flex-shrink: 0;
+}
+
+/* WhatsApp Secondary Pill Bar */
+.oeh-secondary-whatsapp-bar {
+    display: flex;
+    justify-content: center;
+}
+
+.oeh-whatsapp-pill {
+    background-color: #f0fdf4;
+    border: 1px solid #86efac;
+    color: #15803d;
+    border-radius: 20px;
+    padding: 3px 10px;
+    font-size: 10.5px;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    box-shadow: 0 1px 3px rgba(32, 185, 107, 0.08);
+}
+
+.oeh-whatsapp-pill:hover {
+    background-color: #dcfce7;
+    border-color: #22c55e;
+    transform: translateY(-1px);
+}
+
+.oeh-whatsapp-icon-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background-color: #20b96b;
+    display: inline-block;
+}
+
+/* Composer Bar */
+.oeh-chat-composer {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background-color: #f8f7f9;
+    border: 1px solid #ded7e1;
+    border-radius: 24px;
+    padding: 3px 3px 3px 12px;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+
+.oeh-chat-composer:focus-within {
+    background-color: #ffffff;
+    border-color: #790d49;
+    box-shadow: 0 0 0 3px rgba(121, 13, 73, 0.12);
+}
+
+.oeh-composer-input {
+    flex: 1;
+    border: none;
+    background: transparent;
+    font-size: 12px;
+    color: #25212a;
+    outline: none;
+    padding: 4px 0;
+}
+
+.oeh-composer-input::placeholder {
+    color: #8f8793;
+    font-size: 11.5px;
+}
+
+.oeh-composer-send {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: #790d49;
+    color: #ffffff;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.15s ease, transform 0.1s ease, opacity 0.15s ease;
+    padding: 0;
+    flex-shrink: 0;
+}
+
+.oeh-composer-send:hover:not(:disabled) {
+    background: #57072f;
+    transform: scale(1.05);
+}
+
+.oeh-composer-send:disabled {
+    background: #d6d0d8;
+    color: #8c8590;
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+/* Footer Disclaimer */
+.oeh-footer-disclaimer {
+    text-align: center;
+}
+
+.oeh-footer-disclaimer span {
+    font-size: 9.5px;
+    color: #9d96a1;
+    line-height: 1.2;
+    display: block;
+}
+
+/* 9. KEYFRAME ANIMATIONS */
+@keyframes oehPing {
+    75%, 100% {
+        transform: scale(1.8);
+        opacity: 0;
+    }
+}
+
+@keyframes oehTooltipIn {
+    0% {
+        opacity: 0;
+        transform: translateY(8px) scale(0.95);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+@keyframes oehDotBounce {
+    0%, 80%, 100% {
+        transform: translateY(0);
+        opacity: 0.4;
+    }
+    40% {
+        transform: translateY(-5px);
+        opacity: 1;
+    }
+}
+
+/* 10. RESPONSIVE MEDIA QUERIES (Desktop, Tablet/iPad, Mobile) */
+
+/* Tablet & iPad (768px – 991.98px) */
+@media (min-width: 768px) and (max-width: 991.98px) {
+    .oeh-chat-window {
+        width: 320px !important;
+        max-width: 100vw !important;
+        height: 460px !important;
+        max-height: 75vh !important;
+        bottom: 0 !important;
+        right: 0 !important;
+        border-radius: 16px 0 0 0 !important;
+    }
+    .oeh-launcher-wrapper {
+        bottom: 16px;
+        right: 16px;
+    }
+}
+
+/* Mobile Screens (<= 767.98px) - Compact size so it does not cover the screen */
+@media (max-width: 767.98px) {
+    .oeh-launcher-wrapper {
+        bottom: 12px;
+        right: 12px;
+    }
+
+    .oeh-chatbot-launcher {
+        width: 44px;
+        height: 44px;
+    }
+
+    .oeh-icon-chat {
+        width: 18px;
+        height: 18px;
+    }
+
+    .oeh-chat-window {
+        bottom: 0 !important;
+        right: 0 !important;
+        left: auto !important;
+        width: 260px !important;
+        max-width: calc(100vw - 16px) !important;
+        height: 315px !important;
+        max-height: 48vh !important;
+        border-radius: 14px 0 0 0 !important;
+        box-shadow: -2px 6px 20px rgba(87, 7, 47, 0.22) !important;
+    }
+
+    .oeh-chat-window.oeh-minimized {
+        height: 42px !important;
+        min-height: 42px !important;
+    }
+
+    .oeh-chat-header {
+        min-height: 42px !important;
+        height: auto !important;
+        padding: 5px 8px !important;
+    }
+
+    .oeh-avatar-box {
+        width: 26px !important;
+        height: 26px !important;
+        padding: 1px !important;
+    }
+
+    .oeh-header-title {
+        font-size: 11.5px !important;
+        max-width: 115px !important;
+        line-height: 1.2 !important;
+        white-space: nowrap !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+    }
+
+    .oeh-header-subtitle {
+        display: none !important;
+    }
+
+    .oeh-header-status {
+        font-size: 8px !important;
+        margin-top: 1px !important;
+    }
+
+    .oeh-status-pulse {
+        width: 4.5px !important;
+        height: 4.5px !important;
+    }
+
+    .oeh-btn-icon {
+        width: 22px !important;
+        height: 22px !important;
+        border-radius: 4px !important;
+    }
+
+    .oeh-btn-icon svg {
+        width: 11px !important;
+        height: 11px !important;
+    }
+
+    .oeh-chat-body {
+        padding: 5px !important;
+        gap: 4px !important;
+    }
+
+    .oeh-date-stamp {
+        margin: 2px 0 4px 0 !important;
+    }
+
+    .oeh-date-stamp span {
+        font-size: 7.5px !important;
+        padding: 1.5px 6px !important;
+    }
+
+    .oeh-bot-avatar {
+        width: 15px !important;
+        height: 15px !important;
+        margin-bottom: 4px !important;
+    }
+
+    .oeh-bot-avatar svg {
+        width: 9px !important;
+        height: 9px !important;
+    }
+
+    .oeh-message-bubble-wrapper {
+        max-width: 90% !important;
+    }
+
+    .oeh-message-bubble {
+        font-size: 9.5px !important;
+        padding: 4px 6px !important;
+        border-radius: 8px !important;
+    }
+
+    .oeh-message-text p {
+        font-size: 9.5px !important;
+        line-height: 1.28 !important;
+    }
+
+    .oeh-message-timestamp {
+        font-size: 7.5px !important;
+    }
+
+    .oeh-quick-grid {
+        grid-template-columns: 1fr !important;
+        gap: 2.5px !important;
+        margin-top: 4px !important;
+    }
+
+    .oeh-quick-btn {
+        padding: 3px 5px !important;
+        font-size: 8.5px !important;
+        border-radius: 5px !important;
+        gap: 3px !important;
+        min-height: 20px !important;
+    }
+
+    .oeh-quick-btn svg {
+        width: 9px !important;
+        height: 9px !important;
+    }
+
+    .oeh-quick-highlight {
+        grid-column: span 1 !important;
+    }
+
+    .oeh-service-item {
+        padding: 4px 6px !important;
+        font-size: 9px !important;
+        gap: 2px !important;
+    }
+
+    .oeh-service-actions {
+        gap: 3px !important;
+    }
+
+    .oeh-link-chip,
+    .oeh-book-chip {
+        padding: 2px 5px !important;
+        font-size: 8px !important;
+    }
+
+    .oeh-appointment-card {
+        padding: 6px !important;
+        gap: 5px !important;
+        border-radius: 6px !important;
+    }
+
+    .oeh-form-group label {
+        font-size: 8px !important;
+    }
+
+    .oeh-form-input,
+    .oeh-form-select {
+        font-size: 9px !important;
+        padding: 2px 4px !important;
+        height: 22px !important;
+    }
+
+    .oeh-form-submit {
+        font-size: 9px !important;
+        padding: 4px !important;
+    }
+
+    .oeh-chat-footer {
+        padding: 3px 5px 4px 5px !important;
+        gap: 2px !important;
+    }
+
+    .oeh-whatsapp-pill {
+        padding: 2px 6px !important;
+        font-size: 8px !important;
+        gap: 3px !important;
+    }
+
+    .oeh-whatsapp-pill svg {
+        width: 8px !important;
+        height: 8px !important;
+    }
+
+    .oeh-chat-composer {
+        padding: 1px 1px 1px 6px !important;
+        border-radius: 14px !important;
+        min-height: 24px !important;
+    }
+
+    .oeh-composer-input {
+        font-size: 9.5px !important;
+        padding: 2px 0 !important;
+    }
+
+    .oeh-composer-input::placeholder {
+        font-size: 8.5px !important;
+    }
+
+    .oeh-composer-send {
+        width: 20px !important;
+        height: 20px !important;
+    }
+
+    .oeh-composer-send svg {
+        width: 9px !important;
+        height: 9px !important;
+    }
+
+    .oeh-footer-disclaimer span {
+        font-size: 7px !important;
+        line-height: 1 !important;
+    }
+
+    .oeh-launcher-tooltip {
+        display: none !important;
+    }
+}
+
+/* Extra Small Mobile (< 360px) */
+@media (max-width: 360px) {
+    .oeh-chat-window {
+        width: 230px !important;
+        height: 290px !important;
+        max-height: 48vh !important;
+    }
+}
+
+/* Reduced Motion Preference */
+@media (prefers-reduced-motion: reduce) {
+    .oeh-chatbot-launcher,
+    .oeh-chat-window,
+    .oeh-launcher-tooltip,
+    .oeh-ping-ring,
+    .oeh-typing-dots span {
+        animation: none !important;
+        transition: none !important;
+    }
+}
+
+

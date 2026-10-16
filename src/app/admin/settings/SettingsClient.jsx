@@ -93,7 +93,7 @@ export default function SettingsClient({ initialSettings }) {
               color: "#b91c1c",
               borderRadius: "4px",
               fontSize: "13px",
-              marginBottom: "18px",
+              marginBottom: "16px",
             }}
           >
             {error}

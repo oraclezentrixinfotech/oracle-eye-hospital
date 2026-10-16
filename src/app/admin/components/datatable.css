@@ -219,7 +219,7 @@
 
 .adt-modal-title {
   margin: 0 0 8px;
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 700;
   color: #111827;
 }
@@ -268,7 +268,7 @@
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  padding: 12px 18px;
+  padding: 12px 16px;
   border-radius: 8px;
   min-width: 260px;
   max-width: 380px;
@@ -286,7 +286,7 @@
   background: none;
   border: none;
   color: inherit;
-  font-size: 18px;
+  font-size: 16px;
   cursor: pointer;
   opacity: 0.75;
   line-height: 1;
@@ -329,14 +329,14 @@
   color: #111827;
   border-bottom: 1px solid #e5e7eb;
   padding-bottom: 10px;
-  margin: 0 0 18px;
+  margin: 0 0 16px;
 }
 
 /* ── Form fields ── */
 .adt-form-row {
   display: grid;
-  gap: 18px;
-  margin-bottom: 18px;
+  gap: 16px;
+  margin-bottom: 16px;
 }
 .adt-form-row-2 { grid-template-columns: 1fr 1fr; }
 .adt-form-row-3 { grid-template-columns: 1fr 1fr 1fr; }
@@ -755,7 +755,7 @@
 /* Appointment table: keep each field readable instead of compressing columns together. */
 .ad-root .adt-appointments-header {
   gap: 16px;
-  padding: 18px 24px;
+  padding: 16px 24px;
 }
 
 .ad-root .adt-appointments-header-actions {
@@ -961,7 +961,7 @@
 /* Contact Messages (Enquiries) table — consistent with Appointments and other admin tables */
 .ad-root .adt-enquiries-header {
   gap: 16px;
-  padding: 18px 24px;
+  padding: 16px 24px;
 }
 
 .ad-root .adt-enquiries-header-left {
@@ -1215,7 +1215,7 @@
   align-items: center;
   justify-content: space-between;
   gap: 16px;
-  margin-bottom: 18px;
+  margin-bottom: 16px;
 }
 
 .ad-root .adt-root .adt-entries label,

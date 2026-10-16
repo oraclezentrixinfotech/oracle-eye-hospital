@@ -307,7 +307,7 @@ export default function Header({ settings = {} }) {
             <div className="extra-nav active">
               <div className="extra-cell">
                 <ul className="header-right">
-                  <li className="nav-item item-call">
+                  <li className="nav-item item-call d-none d-xxl-block">
                     <div className="info-widget style-3">
                       <div className="widget-media">
                         <i className="feather icon-phone-call dz-ring-effect text-primary"></i>
@@ -318,15 +318,15 @@ export default function Header({ settings = {} }) {
                       </div>
                     </div>
                   </li>
-                  <li className="nav-item">
+                  <li className="nav-item header-tagline d-none d-xxl-block">
                     Don't Hesitate To Contact Us Any Time
                   </li>
-                  <li className="nav-item item-btn">
+                  {/* <li className="nav-item item-btn">
                     <Link className="btn btn-primary btn-hover2" href="/appointment">
                       Appointment
                       <i className="feather icon-arrow-right"></i>
                     </Link>
-                  </li>
+                  </li> */}
                 </ul>
               </div>
             </div>

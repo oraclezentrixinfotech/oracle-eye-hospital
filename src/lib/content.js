@@ -18,7 +18,7 @@ export const SITE = {
 };
 
 export const STATS = [
-  { value: "24,000+", label: "Surgeries done" },
+  { value: "25,000+", label: "Surgeries done" },
   { value: "50,000+", label: "Patients treated" },
   { value: "15+", label: "Years of eye care" },
 ];

@@ -63,7 +63,7 @@ export default async function GalleryDetailPage({ params }) {
               className="btn btn-outline-primary btn-sm d-inline-flex align-items-center gap-2"
               style={{
                 borderRadius: "30px",
-                padding: "8px 18px",
+                padding: "8px 16px",
                 fontWeight: "500",
                 fontSize: "0.9rem",
               }}

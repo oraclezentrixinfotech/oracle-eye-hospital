@@ -3988,7 +3988,7 @@ textarea.form-control-lg {
     }
 
 .btn-lg, .btn-group-lg > .btn {
-    --bs-btn-padding-y: 18px;
+    --bs-btn-padding-y: 16px;
     --bs-btn-padding-x: 25px;
     --bs-btn-font-size: 1.125rem;
     --bs-btn-border-radius: 15px;
@@ -5368,7 +5368,7 @@ textarea.form-control-lg {
     --bs-accordion-border-radius: var(--bs-border-radius);
     --bs-accordion-inner-border-radius: calc(var(--bs-border-radius) - (var(--bs-border-width)));
     --bs-accordion-btn-padding-x: 25px;
-    --bs-accordion-btn-padding-y: 18px;
+    --bs-accordion-btn-padding-y: 16px;
     --bs-accordion-btn-color: #11516A;
     --bs-accordion-btn-bg: #fff;
     --bs-accordion-btn-icon: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='%23566593' stroke-linecap='round' stroke-linejoin='round'%3e%3cpath d='m2 5 6 6 6-6'/%3e%3c/svg%3e");
@@ -14125,7 +14125,7 @@ strong,
 
 .content-body {
     margin-left: 65px;
-    margin-top: 18px;
+    margin-top: 16px;
     margin-right: 6px;
     margin-bottom: 45px;
 }
@@ -15234,7 +15234,7 @@ img::selection {
 
 @media only screen and (max-width: 575px) {
     .dz-loader .dz-loader-info .load-text {
-        font-size: 18px;
+        font-size: 16px;
     }
 }
 
@@ -15319,7 +15319,7 @@ img::selection {
 }
 
 .font-18 {
-    font-size: 18px;
+    font-size: 16px;
 }
 
 .font-20 {
@@ -17836,7 +17836,7 @@ section {
 
 .hero-banner.style-1 p {
     margin-bottom: 50px;
-    font-size: 18px;
+    font-size: 16px;
 }
 
 .hero-banner.style-1 .hero-content {
@@ -18256,7 +18256,7 @@ section {
         }
 
         .word-rotate-box i {
-            font-size: 18px;
+            font-size: 16px;
         }
 }
 
@@ -18389,7 +18389,7 @@ section {
         }
 
         .word-rotate-box2 i {
-            font-size: 18px;
+            font-size: 16px;
         }
 }
 
@@ -18536,7 +18536,7 @@ section {
         }
 
     .info-widget.style-1 ul li {
-        font-size: 18px;
+        font-size: 16px;
         display: flex;
         justify-content: space-between;
         padding: 10px 0;
@@ -18552,7 +18552,7 @@ section {
     }
 
         .info-widget.style-1.widget-sm .title {
-            font-size: 18px;
+            font-size: 16px;
             margin: 0;
             font-weight: 700;
         }
@@ -18597,7 +18597,7 @@ section {
     }
 
         .info-widget.style-1 .title {
-            font-size: 18px;
+            font-size: 16px;
             margin-bottom: 10px;
         }
 
@@ -18670,7 +18670,7 @@ section {
     }
 
     .info-widget.style-3 .widget-content a {
-        font-size: 18px;
+        font-size: 16px;
         font-weight: 600;
         color: #7b114a;
         font-family: var(--font-family-title);
@@ -18698,7 +18698,7 @@ section {
     }
 
     .info-widget.style-4 .widget-content a {
-        font-size: 18px;
+        font-size: 16px;
         font-weight: 600;
         color: #7b114a;
     }
@@ -18721,7 +18721,7 @@ section {
     }
 
     .info-widget.style-5 .title {
-        font-size: 18px;
+        font-size: 16px;
         text-align: justify;
     }
 
@@ -18781,7 +18781,7 @@ section {
 }
 
     .widget-rating1 img {
-        width: 18px;
+        width: 16px;
     }
 
     .widget-rating1 .star-list {
@@ -18864,7 +18864,7 @@ section {
 }
 
     .widget-rating3.large {
-        font-size: 18px;
+        font-size: 16px;
     }
 
         .widget-rating3.large .text {
@@ -18872,7 +18872,7 @@ section {
         }
 
         .widget-rating3.large .star-list li {
-            font-size: 18px;
+            font-size: 16px;
         }
 
 @media only screen and (max-width: 767px) {
@@ -19058,7 +19058,7 @@ section {
 
 @media only screen and (max-width: 1199px) {
     .section-head .font-20 {
-        font-size: 18px;
+        font-size: 16px;
     }
 }
 
@@ -19075,7 +19075,7 @@ section {
 
 @media only screen and (max-width: 767px) {
     .section-head .font-24 {
-        font-size: 18px;
+        font-size: 16px;
     }
 }
 
@@ -19119,7 +19119,7 @@ section {
 }
 
 .section-head.style-1 p {
-    font-size: 18px;
+    font-size: 16px;
     font-weight: 300;
 }
 
@@ -19135,7 +19135,7 @@ section {
 
 @media only screen and (max-width: 1199px) {
     .section-head.style-1 .font-20 {
-        font-size: 18px;
+        font-size: 16px;
     }
 }
 
@@ -19184,7 +19184,7 @@ section {
 }
 
 .section-head.style-2 p {
-    font-size: 18px;
+    font-size: 16px;
     font-weight: 300;
 }
 
@@ -19235,7 +19235,7 @@ section {
 }
 
 .section-head.style-3 p {
-    font-size: 18px;
+    font-size: 16px;
     font-weight: 300;
 }
 
@@ -19302,7 +19302,7 @@ section {
 }
 
 .section-head.style-4 p {
-    font-size: 18px;
+    font-size: 16px;
     font-weight: 300;
 }
 
@@ -19375,7 +19375,7 @@ section {
 .section-head.style-5 .sub-title {
     color: #7b114a;
     font-weight: 600;
-    font-size: 18px;
+    font-size: 16px;
     line-height: 20px;
     margin-bottom: 0;
     text-transform: uppercase;
@@ -19417,7 +19417,7 @@ section {
 .section-head.style-6 .sub-title {
     color: #7b114a;
     font-weight: 600;
-    font-size: 18px;
+    font-size: 16px;
     line-height: 20px;
     margin-bottom: 0;
     font-family: var(--font-family-base);
@@ -19452,7 +19452,7 @@ section {
 .section-head.style-7 .sub-title {
     color: #7b114a;
     font-weight: 600;
-    font-size: 18px;
+    font-size: 16px;
     line-height: 20px;
     margin-bottom: 0;
     text-transform: uppercase;
@@ -19471,7 +19471,7 @@ section {
 .section-head.style-8 .sub-title {
     color: #7b114a;
     font-weight: 600;
-    font-size: 18px;
+    font-size: 16px;
     line-height: 20px !important;
     margin-bottom: 0;
     text-transform: uppercase;
@@ -19480,7 +19480,7 @@ section {
     background-image: none !important;
     padding: 0 !important;
     border-radius: 0 !important;
-    font-size: 18px !important;
+    font-size: 16px !important;
     margin-bottom: 0 !important;
     display: inline-flex !important;
     gap: 5px;
@@ -19499,8 +19499,8 @@ section {
     }
 
         .section-head.style-8 .sub-title svg {
-            width: 18px;
-            height: 18px;
+            width: 16px;
+            height: 16px;
         }
 }
 
@@ -19534,7 +19534,7 @@ section {
 }
 
 .section-head.style-8 p {
-    font-size: 18px;
+    font-size: 16px;
     font-weight: 400;
     font-family: var(--font-family-base);
 }
@@ -19546,7 +19546,7 @@ section {
 .section-head.style-9 .sub-title {
     color: #7b114a;
     font-weight: 600;
-    font-size: 18px;
+    font-size: 16px;
     line-height: 20px !important;
     margin-bottom: 0;
     text-transform: uppercase;
@@ -19555,7 +19555,7 @@ section {
     background-image: none !important;
     padding: 0 !important;
     border-radius: 0 !important;
-    font-size: 18px !important;
+    font-size: 16px !important;
     margin-bottom: 0 !important;
     display: inline-flex !important;
     gap: 5px;
@@ -19574,8 +19574,8 @@ section {
     }
 
         .section-head.style-9 .sub-title svg {
-            width: 18px;
-            height: 18px;
+            width: 16px;
+            height: 16px;
         }
 }
 
@@ -19603,7 +19603,7 @@ section {
 }
 
 .section-head.style-9 p {
-    font-size: 18px;
+    font-size: 16px;
     font-weight: 400;
     font-family: var(--font-family-base);
 }
@@ -19615,7 +19615,7 @@ section {
 .section-head.style-10 .sub-title {
     color: #7b114a;
     font-weight: 600;
-    font-size: 18px;
+    font-size: 16px;
     line-height: 20px !important;
     margin-bottom: 0;
     text-transform: uppercase;
@@ -19624,7 +19624,7 @@ section {
     background-image: none !important;
     padding: 0 !important;
     border-radius: 0 !important;
-    font-size: 18px !important;
+    font-size: 16px !important;
     margin-bottom: 0 !important;
     display: inline-flex !important;
     gap: 5px;
@@ -19643,8 +19643,8 @@ section {
     }
 
         .section-head.style-10 .sub-title svg {
-            width: 18px;
-            height: 18px;
+            width: 16px;
+            height: 16px;
         }
 }
 
@@ -19672,7 +19672,7 @@ section {
 }
 
 .section-head.style-10 p {
-    font-size: 18px;
+    font-size: 16px;
     font-weight: 400;
     font-family: var(--font-family-base);
 }
@@ -19709,8 +19709,8 @@ section {
     }
 
         .section-head.style-11 .sub-title svg {
-            width: 18px;
-            height: 18px;
+            width: 16px;
+            height: 16px;
         }
 }
 
@@ -19744,7 +19744,7 @@ section {
 }
 
 .section-head.style-11 p {
-    font-size: 18px;
+    font-size: 16px;
     font-weight: 400;
     font-family: var(--font-family-base);
 }
@@ -19781,8 +19781,8 @@ section {
     }
 
         .section-head.style-12 .sub-title svg {
-            width: 18px;
-            height: 18px;
+            width: 16px;
+            height: 16px;
         }
 }
 
@@ -19810,7 +19810,7 @@ section {
 }
 
 .section-head.style-12 p {
-    font-size: 18px;
+    font-size: 16px;
     font-weight: 400;
     font-family: var(--font-family-base);
 }
@@ -19848,8 +19848,8 @@ section {
     }
 
         .section-head.style-13 .sub-title svg {
-            width: 18px;
-            height: 18px;
+            width: 16px;
+            height: 16px;
         }
 }
 
@@ -19877,7 +19877,7 @@ section {
 }
 
 .section-head.style-13 p {
-    font-size: 18px;
+    font-size: 16px;
     font-weight: 400;
     font-family: var(--font-family-base);
 }
@@ -19929,7 +19929,7 @@ section {
 }
 
 .section-head.style-14 p {
-    font-size: 18px;
+    font-size: 16px;
     font-weight: 400;
     font-family: var(--bs-body-font-family);
     color: #000;
@@ -19991,7 +19991,7 @@ section {
 
 @media only screen and (max-width: 1480px) {
     .section-head.style-15 p {
-        font-size: 18px;
+        font-size: 16px;
     }
 }
 
@@ -20057,7 +20057,7 @@ section {
 
 @media only screen and (max-width: 1480px) {
     .section-head.style-16 p {
-        font-size: 18px;
+        font-size: 16px;
     }
 }
 
@@ -20268,7 +20268,7 @@ section {
 
 .dzSubscribe.style-1 .input-group .form-control {
     height: 60px;
-    border-radius: 18px !important;
+    border-radius: 16px !important;
     background: #fff;
     border: 1px solid #DAE2F2;
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.05);
@@ -20303,7 +20303,7 @@ section {
         width: 48px;
         min-width: 48px;
         padding: 0;
-        font-size: 18px;
+        font-size: 16px;
     }
 
     .dzSubscribe.style-1 .input-group .input-group-addon i {
@@ -20335,7 +20335,7 @@ section {
 }
 
 .dz-accordion .accordion-button {
-    font-size: 18px;
+    font-size: 16px;
     font-weight: 500;
     line-height: 1.35;
     padding-right: calc(var(--bs-accordion-btn-padding-x) - 5px);
@@ -20381,7 +20381,7 @@ section {
 
 @media only screen and (max-width: 767px) {
     .dz-accordion.style-1 .accordion-item .accordion-button {
-        font-size: 18px;
+        font-size: 16px;
     }
 }
 
@@ -20413,7 +20413,7 @@ section {
 
     .dz-accordion.style-1 .accordion-item .accordion-body p:last-child {
         margin-bottom: 0;
-        font-size: 18px;
+        font-size: 16px;
         color: #496A77;
     }
 
@@ -20441,7 +20441,7 @@ section {
 
 @media only screen and (max-width: 575px) {
     .dz-accordion.style-1 .accordion-item .accordion-button {
-        padding: 18px 0px 18px 0px;
+        padding: 16px 0px 16px 0px;
         font-size: 16px;
     }
 }
@@ -20509,7 +20509,7 @@ section {
 
 .dz-accordion.style-2 .accordion-item .accordion-body p:last-child {
     margin-bottom: 0;
-    font-size: 18px;
+    font-size: 16px;
     color: #496A77;
 }
 
@@ -20765,7 +20765,7 @@ section {
                 width: 230px;
                 background-color: #fff;
                 border-radius: 15px;
-                padding: 18px 25px;
+                padding: 16px 25px;
                 box-shadow: 0 20px 50px rgba(var(--bs-secondary-rgb), 0.1);
             }
 
@@ -20780,7 +20780,7 @@ section {
                     }
 
                 .testimonial-1 .testimonial-media .item1 .info-widget .title {
-                    font-size: 18px;
+                    font-size: 16px;
                 }
 
     .testimonial-1 .testimonial-detail {
@@ -20802,7 +20802,7 @@ section {
         }
 
         .testimonial-1 .testimonial-detail .title {
-            font-size: 18px;
+            font-size: 16px;
             margin-bottom: 0;
         }
 
@@ -20842,7 +20842,7 @@ section {
             }
 
             .testimonial-1 .testimonial-info .clearfix .testimonial-position {
-                font-size: 18px;
+                font-size: 16px;
             }
 
 @media only screen and (max-width: 575px) {
@@ -20853,11 +20853,11 @@ section {
 
 @media only screen and (max-width: 1199px) {
     .testimonial-1 .testimonial-detail p {
-        font-size: 18px;
+        font-size: 16px;
     }
 
     .testimonial-1 .testimonial-info .testimonial-name {
-        font-size: 18px;
+        font-size: 16px;
     }
 
     .testimonial-1 .testimonial-info .testimonial-position {
@@ -21098,7 +21098,7 @@ section {
 
 @media only screen and (max-width: 767px) {
     .twentytwenty-wrapper .twentytwenty-container::before, .twentytwenty-wrapper .twentytwenty-container::after {
-        font-size: 18px;
+        font-size: 16px;
         height: 95px;
         width: 40px;
     }
@@ -21222,7 +21222,7 @@ section {
 }
 
     .twentytwenty-sm .twentytwenty-wrapper .twentytwenty-container::before, .twentytwenty-sm .twentytwenty-wrapper .twentytwenty-container::after {
-        font-size: 18px;
+        font-size: 16px;
         height: 105px;
         width: 45px;
     }
@@ -21335,8 +21335,8 @@ section {
     }
 
         .dz-marquee.style-1 .marquee-list .item:after {
-            height: 18px;
-            width: 18px;
+            height: 16px;
+            width: 16px;
             margin: 0 20px;
         }
 }
@@ -21434,8 +21434,8 @@ section {
     }
 
         .dz-marquee.style-2 .marquee-list .item:after {
-            height: 18px;
-            width: 18px;
+            height: 16px;
+            width: 16px;
             margin: 0 15px;
         }
 
@@ -21639,7 +21639,7 @@ section {
 }
 
     .pricingtable-wrapper.style-1 .pricingtable-list .list-title {
-        font-size: 18px;
+        font-size: 16px;
         font-weight: 700;
         margin: 0;
         color: #000;
@@ -21652,7 +21652,7 @@ section {
 
     .pricingtable-wrapper.style-1 .pricingtable-features li {
         padding: 7px 0 7px 30px;
-        font-size: 18px;
+        font-size: 16px;
         font-weight: 500;
         position: relative;
         color: #000;
@@ -22701,7 +22701,7 @@ select, button {
         }
 
         .icon-bx-wraper.style-2 .dz-title {
-            font-size: 18px;
+            font-size: 16px;
         }
 
         .icon-bx-wraper.style-2 .icon-bx {
@@ -22753,7 +22753,7 @@ select, button {
     }
 
     .icon-bx-wraper.style-3 .dz-title {
-        font-size: 18px;
+        font-size: 16px;
         font-weight: 500;
         margin-bottom: 5px;
     }
@@ -22807,7 +22807,7 @@ select, button {
         width: 50px;
         min-width: 50px;
         height: 50px;
-        font-size: 18px;
+        font-size: 16px;
     }
 }
 
@@ -22849,7 +22849,7 @@ select, button {
         }
 
     .icon-bx-wraper.style-4 .dz-title {
-        font-size: 18px;
+        font-size: 16px;
         font-weight: 500;
        /* margin-bottom: 5px;*/
     }
@@ -22903,7 +22903,7 @@ select, button {
         width: 50px;
         min-width: 50px;
         height: 50px;
-        font-size: 18px;
+        font-size: 16px;
     }
 }
 
@@ -23082,7 +23082,7 @@ select, button {
                 border-radius: 0;
                 background: #7b114a;
                 color: #fff;
-                font-size: 18px;
+                font-size: 16px;
             }
 
                 .dz-team.style-1 .team-social a.plus-btn {
@@ -23668,7 +23668,7 @@ select, button {
 
 @media only screen and (max-width: 575px) {
     .dz-card.style-2.blog-half .dz-title {
-        font-size: 18px;
+        font-size: 16px;
     }
 }
 
@@ -23735,7 +23735,7 @@ select, button {
 }
 
 .dz-card.style-3 p {
-    font-size: 18px;
+    font-size: 16px;
     color: #496A77;
 }
 
@@ -23829,7 +23829,7 @@ select, button {
 }
 
 .dz-card.style-4 p {
-    font-size: 18px;
+    font-size: 16px;
     color: #496A77;
 }
 
@@ -24137,7 +24137,7 @@ select, button {
         font-size: 12px;
         min-width: 22px;
         min-height: 22px;
-        line-height: 18px;
+        line-height: 16px;
         text-transform: uppercase;
         text-align: center;
         font-weight: 600;
@@ -24166,7 +24166,7 @@ select, button {
 @media only screen and (max-width: 1380px) {
     .shop-card .dz-content {
         gap: 10px;
-        padding: 18px 20px;
+        padding: 16px 20px;
     }
 }
 
@@ -24177,7 +24177,7 @@ select, button {
 
 @media only screen and (max-width: 767px) {
     .shop-card .dz-content .title {
-        font-size: 18px;
+        font-size: 16px;
         margin-bottom: 3px;
     }
 }
@@ -24246,7 +24246,7 @@ select, button {
 
     .alert.alert-xl {
         padding: 35px 15px;
-        font-size: 18px;
+        font-size: 16px;
     }
 
     .alert[class*=alert-] i {
@@ -24800,8 +24800,8 @@ label.error {
         }
 
 .form-check2 .form-check-input {
-    height: 18px;
-    width: 18px;
+    height: 16px;
+    width: 16px;
     background-color: transparent;
     border: 1px solid var(--bs-body-color);
     border-radius: 2px !important;
@@ -24843,7 +24843,7 @@ label.error {
         background-image: url('data:image/svg+xml,<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="24px" height="30px" viewBox="0 0 24 30" style="enable-background:new 0 0 50 50;" xml:space="preserve"> <rect x="0" y="13" width="4" height="5" fill="%23fff"> <animate attributeName="height" attributeType="XML" values="5;21;5" begin="0s" dur="0.6s" repeatCount="indefinite"></animate> <animate attributeName="y" attributeType="XML" values="13; 5; 13" begin="0s" dur="0.6s" repeatCount="indefinite"></animate> </rect> <rect x="10" y="13" width="4" height="5" fill="%23fff"> <animate attributeName="height" attributeType="XML" values="5;21;5" begin="0.15s" dur="0.6s" repeatCount="indefinite"></animate> <animate attributeName="y" attributeType="XML" values="13; 5; 13" begin="0.15s" dur="0.6s" repeatCount="indefinite"></animate> </rect> <rect x="20" y="13" width="4" height="5" fill="%23fff"> <animate attributeName="height" attributeType="XML" values="5;21;5" begin="0.3s" dur="0.6s" repeatCount="indefinite"></animate> <animate attributeName="y" attributeType="XML" values="13; 5; 13" begin="0.3s" dur="0.6s" repeatCount="indefinite"></animate> </rect> </svg>');
         background-repeat: no-repeat;
         background-position: center;
-        background-size: 18px;
+        background-size: 16px;
     }
 
 @media only screen and (max-width: 575px) {
@@ -24886,7 +24886,7 @@ label.error {
     border: 0;
     font-size: 15px;
     color: var(--bs-body-color);
-    top: 18px;
+    top: 16px;
     left: 20px;
 }
 
@@ -25111,7 +25111,7 @@ label.error {
     font-size: 16px;
     font-weight: 500;
     color: rgba(var(--bs-secondary-rgb), 0.6);
-    top: 18px;
+    top: 16px;
     left: 25px;
 }
 
@@ -25746,7 +25746,7 @@ input[type=number] {
 
 @media only screen and (max-width: 767px) {
     .btn-icon.btn-xl {
-        font-size: 18px;
+        font-size: 16px;
     }
 
         .btn-icon.btn-xl .right-icon,
@@ -25775,11 +25775,11 @@ input[type=number] {
 }
 
 .btn-icon.btn-lg .right-icon, .btn-group-lg > .btn-icon.btn .right-icon {
-    margin: -11px -18px -11px 12px;
+    margin: -11px -16px -11px 12px;
 }
 
 .btn-icon.btn-lg .left-icon, .btn-group-lg > .btn-icon.btn .left-icon {
-    margin: -11px 12px -11px -18px;
+    margin: -11px 12px -11px -16px;
 }
 
 @media only screen and (max-width: 767px) {
@@ -26308,7 +26308,7 @@ input[type=number] {
     .badge.badge-sm {
         padding: 4px 5px;
         font-size: 10px;
-        min-width: 18px;
+        min-width: 16px;
         min-height: 16px;
     }
 
@@ -26447,7 +26447,7 @@ table {
     }
 
         .check-tbl.style-1 tbody tr td {
-            padding: 30px 18px;
+            padding: 30px 16px;
         }
 
             .check-tbl.style-1 tbody tr td img {
@@ -26467,7 +26467,7 @@ table {
 
 @media only screen and (max-width: 1199px) {
     .check-tbl.style-1 tbody tr td {
-        padding: 20px 18px;
+        padding: 20px 16px;
     }
 
         .check-tbl.style-1 tbody tr td img {
@@ -26565,7 +26565,7 @@ table {
         }
 
         .check-tbl tbody tr td.product-item-name {
-            font-size: 18px;
+            font-size: 16px;
             font-family: var(--font-family-title);
             padding-left: 15px;
         }
@@ -28038,7 +28038,7 @@ table {
         height: 40px;
         line-height: 40px;
         width: 40px;
-        font-size: 18px !important;
+        font-size: 16px !important;
     }
 }
 
@@ -28143,7 +28143,7 @@ table {
     .owl-num-count .owl-dots .owl-dot {
         padding: 5px 2px !important;
         cursor: pointer;
-        font-size: 18px;
+        font-size: 16px;
         position: relative;
     }
 
@@ -28160,7 +28160,7 @@ table {
             counter-increment: li;
             font-weight: 600;
             color: #777777;
-            font-size: 18px;
+            font-size: 16px;
         }
 
         .owl-num-count .owl-dots .owl-dot.active:before {
@@ -28723,7 +28723,7 @@ table {
 .content-wrapper.style-4 p {
     font-family: var(--bs-body-font-family);
     font-weight: 300;
-    font-size: 18px;
+    font-size: 16px;
     color: rgba(255, 255, 255, 0.8) !important;
     width: 90%;
     line-height: 1.2;
@@ -29008,7 +29008,7 @@ table {
     flex: 0 0 120px;
     transition: all 0.5s;
     background-position: center;
-    margin: 0px 18px 0px 0px;
+    margin: 0px 16px 0px 0px;
     overflow: hidden;
     width: 120px;
     gap: 0;
@@ -29212,13 +29212,13 @@ table {
 
 @media only screen and (max-width: 767px) {
     .dz-flex-wrapper .dz-flex-info .dz-title {
-        font-size: 18px;
+        font-size: 16px;
     }
 }
 
 .dz-flex-wrapper .dz-flex-info .text {
     margin-bottom: 30px;
-    font-size: 18px;
+    font-size: 16px;
 }
 
 @media only screen and (max-width: 991px) {
@@ -29241,7 +29241,7 @@ table {
 }
 
 .dz-flex-wrapper .dz-info ul.list-check-try li {
-    font-size: 18px;
+    font-size: 16px;
     padding: 4px 0px 4px 30px;
 }
 
@@ -29495,14 +29495,14 @@ table {
     display: flex;
     background-color: #fff;
     border-radius: 15px;
-    padding: 18px 15px;
+    padding: 16px 15px;
     gap: 12px;
     align-items: center;
     box-shadow: 0 0 35px rgba(var(--bs-secondary-rgb), 0.05);
 }
 
     .dz-img-box.style-1 .title {
-        font-size: 18px;
+        font-size: 16px;
         margin-bottom: 3px;
     }
 
@@ -29610,7 +29610,7 @@ table {
     }
 
     .dz-img-box.style-2 .dz-footer {
-        padding: 18px 30px;
+        padding: 16px 30px;
         border-top: 1px solid rgba(0, 0, 0, 0.1);
         margin: auto -10px -10px;
     }
@@ -29864,9 +29864,9 @@ ul.list-check-circle-small li {
         font-family: "Font Awesome 6 Free";
         font-weight: 700;
         color: #fff;
-        width: 18px;
-        height: 18px;
-        line-height: 18px;
+        width: 16px;
+        height: 16px;
+        line-height: 16px;
         text-align: center;
         background-color: #7b114a;
         border-radius: 50%;
@@ -29886,9 +29886,9 @@ ul.list-check-try li {
         font-family: "feather";
         position: absolute;
         color: #fff;
-        width: 18px;
-        height: 18px;
-        line-height: 18px;
+        width: 16px;
+        height: 16px;
+        line-height: 16px;
         text-align: center;
         background-color: #7b114a;
         border-radius: 50% 50% 0% 50%;
@@ -29907,9 +29907,9 @@ ul.list-check-try li {
         font-family: "feather";
         position: absolute;
         color: #fff;
-        width: 18px;
-        height: 18px;
-        line-height: 18px;
+        width: 16px;
+        height: 16px;
+        line-height: 16px;
         text-align: center;
         background-color: #7b114a;
         border-radius: 50% 50% 0% 50%;
@@ -29976,7 +29976,7 @@ ul.grid-2 {
     }
 
     .list-style-1 li .title {
-        font-size: 18px;
+        font-size: 16px;
         margin-bottom: 5px;
     }
 
@@ -29990,7 +29990,7 @@ ul.grid-2 {
         }
 
 .list-style-1.list-lg li {
-    padding: 18px 5px 18px 75px;
+    padding: 16px 5px 16px 75px;
 }
 
     .list-style-1.list-lg li:before {
@@ -30032,7 +30032,7 @@ ul.grid-2 {
         width: 50px;
         height: 50px;
         line-height: 50px;
-        font-size: 18px;
+        font-size: 16px;
     }
 
     .list-style-1.list-sm li .title {
@@ -30264,7 +30264,7 @@ ul.grid-2 {
         justify-content: center;
         margin-left: auto;
         text-decoration: none;
-        font-size: 18px;
+        font-size: 16px;
     }
 
     .video-bx1.video-sm {
@@ -30308,7 +30308,7 @@ ul.grid-2 {
             }
 
         .video-bx1.video-lg span {
-            font-size: 18px;
+            font-size: 16px;
         }
 
         .video-bx1.video-lg .btn-link {
@@ -30672,7 +30672,7 @@ ul.grid-2 {
 
     .video-btn.style-2 .text {
         font-weight: 500;
-        font-size: 18px;
+        font-size: 16px;
         padding-right: 30px;
         margin: 0;
         color: #000;
@@ -30743,7 +30743,7 @@ ul.grid-2 {
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 18px;
+    font-size: 16px;
     z-index: 1;
     margin: 0 5px;
     -webkit-transition: all 0.5s;
@@ -30902,7 +30902,7 @@ ul.grid-2 {
 
     .slider__pagination .slider__current,
     .slider__pagination .slider__total {
-        font-size: 18px;
+        font-size: 16px;
         color: #000;
         font-weight: 500;
         width: 25px;
@@ -31041,7 +31041,7 @@ ul.grid-2 {
 
 @media only screen and (max-width: 991px) {
     .dummy-box .month-number .timeline-number {
-        padding: 10px 18px;
+        padding: 10px 16px;
         font-size: 10px;
     }
 }
@@ -31206,8 +31206,8 @@ ul.grid-2 {
         }
 
             .download-file ul li a i {
-                width: 18px;
-                height: 18px;
+                width: 16px;
+                height: 16px;
                 position: relative;
             }
 
@@ -31946,7 +31946,7 @@ footer:not(.style-4) .widget_rss ul li {
                 right: 10px;
                 left: auto;
                 top: 50%;
-                font-size: 18px;
+                font-size: 16px;
                 color: #7b114a;
                 -webkit-transition: all 0.5s;
                 -ms-transition: all 0.5s;
@@ -32165,7 +32165,7 @@ footer:not(.style-4) .widget_rss ul li {
         left: 0;
         font-family: "feather" !important;
         font-weight: 100;
-        font-size: 18px;
+        font-size: 16px;
         top: 9px;
     }
 
@@ -32412,7 +32412,7 @@ select {
     }
 
         .widget_schedule .widget-title .title {
-            font-size: 18px;
+            font-size: 16px;
         }
 
 .widget_info {
@@ -32642,9 +32642,9 @@ select {
 }
 
     .inquiry-modal .modal-content .custom-checkbox .form-check-input {
-        width: 18px;
-        height: 18px;
-        min-width: 18px;
+        width: 16px;
+        height: 16px;
+        min-width: 16px;
         margin-right: 12px;
         background-color: #D9D9D9;
         cursor: pointer;
@@ -33032,9 +33032,9 @@ select {
             background: #fff;
             color: #000;
             display: block;
-            font-size: 18px;
+            font-size: 16px;
             margin-bottom: 4px;
-            padding: 10px 18px;
+            padding: 10px 16px;
             margin-bottom: 0;
             border: 0;
             width: 100%;
@@ -33319,7 +33319,7 @@ select {
             width: 50px;
             height: 50px;
             line-height: 50px;
-            font-size: 18px;
+            font-size: 16px;
             display: block;
             border-radius: 50%;
             border: 1px solid var(--bs-body-color);
@@ -34144,7 +34144,7 @@ select {
     }
 
         .timeline-wrapper.style-1 .timeline-info .title {
-            font-size: 18px;
+            font-size: 16px;
         }
 
         .timeline-wrapper.style-1 .timeline-info p {
@@ -34215,7 +34215,7 @@ select {
         height: 45px;
         width: 45px;
         line-height: 45px;
-        font-size: 18px;
+        font-size: 16px;
     }
 }
 
@@ -34415,7 +34415,7 @@ select {
                     background-color: transparent !important;
                     border: 0 !important;
                     color: #000;
-                    font-size: 18px;
+                    font-size: 16px;
                     font-weight: 600;
                     opacity: 1;
                     display: flex;
@@ -35572,7 +35572,7 @@ blockquote.wp-block-pullquote.alignleft {
             blockquote.wp-block-pullquote.alignright.style-1 p,
             blockquote.wp-block-pullquote.alignleft.style-1 p,
             blockquote.style-1 p {
-                font-size: 18px;
+                font-size: 16px;
                 line-height: 1.5;
                 color: #7b114a;
             }
@@ -35668,7 +35668,7 @@ blockquote.wp-block-pullquote.alignleft {
             blockquote.wp-block-pullquote.alignleft.style-2 cite,
             blockquote.style-2 cite {
                 color: #777777;
-                font-size: 18px;
+                font-size: 16px;
                 font-family: var(--font-family-title);
             }
 
@@ -35733,7 +35733,7 @@ blockquote.wp-block-pullquote.alignleft {
             blockquote.wp-block-pullquote.alignright.style-3 cite,
             blockquote.wp-block-pullquote.alignleft.style-3 cite,
             blockquote.style-3 cite {
-                font-size: 18px;
+                font-size: 16px;
             }
 
                 .wp-block-quote.is-large.style-3 cite:before,
@@ -35777,7 +35777,7 @@ blockquote.wp-block-pullquote.alignleft {
             blockquote.wp-block-pullquote.alignleft.style-4 cite,
             blockquote.style-4 cite {
                 color: #fff;
-                font-size: 18px;
+                font-size: 16px;
                 font-family: var(--font-family-title);
             }
 
@@ -36144,7 +36144,7 @@ pre {
     margin-bottom: 30px;
     font-weight: 400;
     color: #000;
-    font-size: 18px;
+    font-size: 16px;
 }
 
 @media only screen and (max-width: 575px) {
@@ -37493,7 +37493,7 @@ pre {
         height: 40px;
         width: 40px;
         line-height: 40px;
-        font-size: 18px;
+        font-size: 16px;
     }
 }
 
@@ -37931,7 +37931,7 @@ pre {
 
 @media only screen and (max-width: 575px) {
     .error-page.style-1 .text {
-        font-size: 18px;
+        font-size: 16px;
     }
 }
 
@@ -38164,7 +38164,7 @@ pre {
 }
 
 .shop-filter aside > div > .title i {
-    font-size: 18px;
+    font-size: 16px;
 }
 
 .shop-filter .shop-xl {
@@ -38330,7 +38330,7 @@ pre {
                 .form-wizard .nav-wizard li .nav-link div {
                     padding-right: 35px;
                     color: #131045;
-                    font-size: 18px;
+                    font-size: 16px;
                     font-weight: 600;
                     padding-left: 35px;
                 }
@@ -38492,7 +38492,7 @@ pre {
             font-family: "Font Awesome 6 free";
             border: 0;
             font-weight: 700;
-            margin-left: 18px;
+            margin-left: 16px;
             font-size: 14px;
             color: #000;
         }
@@ -38598,7 +38598,7 @@ pre {
 }
 
     .tag-btn i {
-        font-size: 18px;
+        font-size: 16px;
         color: #000;
     }
 
@@ -38801,7 +38801,7 @@ pre {
     }
 
 .dz-product-detail .dz-content p {
-    font-size: 18px;
+    font-size: 16px;
     font-weight: 300;
 }
 
@@ -38839,7 +38839,7 @@ pre {
 
 .dz-product-detail .dz-content .dz-rating {
     display: flex;
-    line-height: 18px;
+    line-height: 16px;
 }
 
 .dz-product-detail .dz-content .review-num {
@@ -39069,7 +39069,7 @@ pre {
     text-align: center;
     line-height: 60px;
     font-size: 22px;
-    margin-left: 18px;
+    margin-left: 16px;
 }
 
 .dz-product-detail .dz-info {
@@ -39128,7 +39128,7 @@ pre {
 }
 
     .detail-bx p {
-        font-size: 18px;
+        font-size: 16px;
         color: #000;
         margin-bottom: 40px;
         font-weight: 300;
@@ -39327,7 +39327,7 @@ pre {
         }
 
             .card-container .my-account-content .ecommerce-box .ecommerce-content .ecommerce-address-title .title {
-                font-size: 18px;
+                font-size: 16px;
             }
 
             .card-container .my-account-content .ecommerce-box .ecommerce-content .ecommerce-address-title a {
@@ -39344,7 +39344,7 @@ pre {
     }
 
     .card-container .my-account-content .check-tbl.style-1 tbody tr td {
-        padding: 5px 18px;
+        padding: 5px 16px;
     }
 
         .card-container .my-account-content .check-tbl.style-1 tbody tr td:first-child {
@@ -39933,7 +39933,7 @@ pre {
         transition: all 0.5s;
         border: 1px solid;
         border-color: #777777;
-        font-size: 18px;
+        font-size: 16px;
         background-color: #fff;
     }
 
@@ -39966,7 +39966,7 @@ pre {
 .woocommerce ul.cart_list li a,
 .woocommerce ul.product_list_widget li a {
     font-family: var(--font-family-base);
-    font-size: 18px;
+    font-size: 16px;
     line-height: 20px;
     font-weight: 600;
     color: #000;
@@ -40024,7 +40024,7 @@ pre {
     .woocommerce ul.cart_list li,
     .woocommerce ul.product_list_widget li .amount {
         color: #7b114a;
-        font-size: 18px;
+        font-size: 16px;
         font-weight: 600;
     }
 
@@ -40205,7 +40205,7 @@ pre {
     .woocommerce div.product p.price,
     .woocommerce div.product span.price,
     .woocommerce div.product .price ins span {
-        font-size: 18px !important;
+        font-size: 16px !important;
     }
 
         .woocommerce div.product p.price .woocommerce-Price-currencySymbol,
@@ -40300,7 +40300,7 @@ pre {
 }
 
 .cart .quantity input.input-text {
-    font-size: 18px;
+    font-size: 16px;
     height: 50px !important;
     border-radius: var(--border-radius-base) !important;
     text-align: left;
@@ -40551,7 +40551,7 @@ pre {
                 }
 
 .woocommerce .star-rating {
-    font-size: 18px;
+    font-size: 16px;
     color: #7b114a;
     width: 5em;
 }
@@ -40741,7 +40741,7 @@ pre {
 .woocommerce .cart_totals h2, .woocommerce .cart_totals .h2 {
     font-family: var(--font-family-title);
     background: #7b114a;
-    font-size: 18px;
+    font-size: 16px;
     color: #fff;
     text-transform: uppercase;
     padding: 15px 20px;
@@ -41044,9 +41044,9 @@ pre {
 
     .payment_methods input + label:after {
         content: "";
-        width: 18px;
-        height: 18px;
-        border-radius: 18px;
+        width: 16px;
+        height: 16px;
+        border-radius: 16px;
         background: #fff;
         border: 2px solid #7b114a;
         position: absolute;
@@ -41113,7 +41113,7 @@ pre {
     height: 48px;
     width: 48px;
     cursor: pointer;
-    font-size: 18px;
+    font-size: 16px;
     text-align: center;
     line-height: 48px;
     border-radius: var(--border-radius-base);
@@ -41642,7 +41642,7 @@ table.wishlist_table {
 
 .woocommerce-mini-cart__empty-message {
     padding: 20px 20px;
-    font-size: 18px;
+    font-size: 16px;
     color: #1a1668 !important;
 }
 
@@ -41881,7 +41881,7 @@ table.wishlist_table {
     }
 
     .service-card .dz-info p {
-        font-size: 18px;
+        font-size: 16px;
     }
 
 @media only screen and (max-width: 1480px) {
@@ -41929,7 +41929,7 @@ table.wishlist_table {
 }
 
 .service-section .left-content .list-check li {
-    font-size: 18px;
+    font-size: 16px;
     font-weight: 600;
     line-height: 2.2rem;
 }
@@ -41958,7 +41958,7 @@ table.wishlist_table {
 
 @media only screen and (max-width: 991px) {
     .service-section .right-content .icon-bx-wraper .icon-content .dz-title {
-        font-size: 18px;
+        font-size: 16px;
     }
 }
 
@@ -42042,7 +42042,7 @@ table.wishlist_table {
     }
 
     .under-construct-wrapper p {
-        font-size: 18px;
+        font-size: 16px;
     }
 
     .under-construct-wrapper .under-construct-logo {
@@ -42149,7 +42149,7 @@ table.wishlist_table {
     }
 
     .dz-coming-soon p {
-        font-size: 18px;
+        font-size: 16px;
     }
 
     .dz-coming-soon .dzSubscribe {
@@ -42583,8 +42583,8 @@ table.wishlist_table {
         display: flex;
         align-items: center;
         justify-content: center;
-        min-height: 18px;
-        min-width: 18px;
+        min-height: 16px;
+        min-width: 16px;
         font-weight: 600;
         background-color: #fff;
         color: #000;
@@ -42601,7 +42601,7 @@ table.wishlist_table {
 @media only screen and (max-width: 767px) {
     .site-header .extra-nav .extra-cell ul li .btn {
         font-size: 14px;
-        padding: 10px 18px;
+        padding: 10px 16px;
         border-radius: 10px;
     }
 }
@@ -42667,7 +42667,7 @@ table.wishlist_table {
     background: #000;
     line-height: 45px;
     text-align: center;
-    font-size: 18px;
+    font-size: 16px;
     border-radius: var(--border-radius-base);
 }
 
@@ -42775,7 +42775,7 @@ table.wishlist_table {
 
 @media only screen and (max-width: 991px) {
     .w3menu-toggler {
-        margin: 18px 0px 16px 20px;
+        margin: 16px 0px 16px 20px;
     }
 }
 
@@ -43227,7 +43227,7 @@ table.wishlist_table {
     color: inherit;
     display: block;
     float: right;
-    font-size: 18px;
+    font-size: 16px;
     opacity: 1;
     margin-top: 0px;
 }
@@ -44051,7 +44051,7 @@ table.wishlist_table {
         right: 25px;
         width: 25px;
         height: 25px;
-        font-size: 18px;
+        font-size: 16px;
         background-color: #000;
         transform: translateY(-50%);
         display: flex;
@@ -44098,7 +44098,7 @@ table.wishlist_table {
 
             .browse-category-menu .category-menu-items .navbar-nav > li > a > i {
                 margin-right: 15px;
-                font-size: 18px;
+                font-size: 16px;
                 color: #7b114a;
             }
 
@@ -44541,7 +44541,7 @@ table.wishlist_table {
 .site-header.box-header-white.box-header .logo-header {
     border-right: 1px solid #EBEBEB;
     padding-right: 15px;
-    margin-right: 18px;
+    margin-right: 16px;
 }
 
 .site-header.box-header-white.box-header .extra-nav .extra-cell > * {
@@ -44618,7 +44618,7 @@ table.wishlist_table {
 }
 
     .site-header.box-header2 .main-bar .container .header-part-left .navicon {
-        margin: 18px 20px 16px 0px;
+        margin: 16px 20px 16px 0px;
     }
 
 @media only screen and (max-width: 991px) {
@@ -45300,36 +45300,42 @@ table.wishlist_table {
 
 .header-nav.w3menu .nav > li > a {
     color: #fff;
-    font-size: 18px;
+    font-size: 22px;
     padding: 11px 9px;
-    font-family: var(--font-family-title);
+    font-family: Georgia, 'Times New Roman', serif;
     cursor: pointer;
-    font-weight: 500;
-    display: inline-block;
+    font-weight: 700;
+    display: inline-flex;
+    align-items: center;
     position: relative;
-    line-height: 24px;
+    line-height: 20px;
 }
 
 @media only screen and (max-width: 1380px) {
     .header-nav.w3menu .nav > li > a {
-        font-size: 16px;
+        font-size: 15px;
+        padding-left: 7px;
+        padding-right: 7px;
     }
 }
 
 @media only screen and (max-width: 1199px) {
     .header-nav.w3menu .nav > li > a {
-        font-size: 15px;
-        padding-left: 10px;
-        padding-right: 10px;
+        font-size: 14px;
+        padding-left: 5px;
+        padding-right: 5px;
     }
 }
 
 @media only screen and (max-width: 991px) {
     .header-nav.w3menu .nav > li > a {
-        padding: 8px 0;
-        display: block;
-        line-height: 30px;
+        padding: 10px 0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        line-height: 32px;
         font-size: 16px;
+        color: #1a1a1a;
     }
 }
 
@@ -45554,7 +45560,7 @@ table.wishlist_table {
     color: inherit;
     display: block;
     float: right;
-    font-size: 18px;
+    font-size: 16px;
     opacity: 1;
     margin-top: 0px;
 }
@@ -46376,7 +46382,7 @@ table.wishlist_table {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 18px 0;
+    padding: 16px 0;
     margin-bottom: 10px;
 }
 
@@ -46491,7 +46497,7 @@ table.wishlist_table {
     }
 
         .dz-bnr-inr .dz-btn a {
-            font-size: 18px;
+            font-size: 16px;
         }
 
         .dz-bnr-inr .dz-btn .left-icon {
@@ -46525,7 +46531,7 @@ table.wishlist_table {
             width: 38px;
             min-width: 38px;
             height: 38px;
-            margin: -10px 10px -10px -18px;
+            margin: -10px 10px -10px -16px;
         }
 }
 
@@ -46664,7 +46670,7 @@ table.wishlist_table {
 
 .dz-bnr-inr p {
     color: #fff;
-    font-size: 18px;
+    font-size: 16px;
     max-width: 560px;
     margin-left: auto;
     margin-right: auto;
@@ -47491,7 +47497,7 @@ footer.site-footer.footer-dark {
 
 @media only screen and (max-width: 1199px) {
     .widget_getintuch ul li h5, .widget_getintuch ul li .h5 {
-        font-size: 18px;
+        font-size: 16px;
         line-height: 1.2;
     }
 }
@@ -47623,7 +47629,7 @@ footer.site-footer.footer-dark {
     position: relative;
     font-family: var(--font-family-title);
     color: #000;
-    font-size: 18px;
+    font-size: 16px;
     font-weight: 500;
 }
 
@@ -47780,7 +47786,7 @@ footer.site-footer.footer-dark {
 
 .site-footer.style-1 .widget.widget_about p {
     font-weight: 300;
-    font-size: 18px;
+    font-size: 16px;
     line-height: 1.2;
 }
 
@@ -48235,7 +48241,7 @@ a.video-btn.style-2 {
         width: 100%;
         text-align: center;
         letter-spacing: 0.5px;
-        font-size: 18px;
+        font-size: 16px;
         box-shadow: 0 -0.5rem 12px rgb(0 0 0 / 18%);
         border-bottom-right-radius: 12px;
         border-bottom-left-radius: 12px;
