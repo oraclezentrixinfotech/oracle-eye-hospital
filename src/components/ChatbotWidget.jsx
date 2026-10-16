@@ -90,7 +90,7 @@ export default function ChatbotWidget({ settings = {} }) {
       {
         id: "msg-welcome-2",
         sender: "bot",
-        text: "I am your patient care assistant. How can we help you today? You can choose a quick topic below or type your question about our services, doctors, timings, or appointments.",
+        text: "You can choose about our services, doctors, timings, or appointments.",
         type: "welcome_actions",
         time: getFormattedTime(),
       },
@@ -1398,28 +1398,6 @@ export default function ChatbotWidget({ settings = {} }) {
               </button>
             </div>
 
-            {/* Input Composer */}
-            <form onSubmit={handleSendMessage} className="oeh-chat-composer">
-              <input
-                ref={inputRef}
-                type="text"
-                className="oeh-composer-input"
-                placeholder="Ask us about your eye care..."
-                value={inputVal}
-                onChange={(e) => setInputVal(e.target.value)}
-                disabled={isTyping}
-                aria-label="Message Oracle Eye Hospital Assistant"
-              />
-              <button
-                type="submit"
-                disabled={!inputVal.trim() || isTyping}
-                className="oeh-composer-send"
-                aria-label="Send Message"
-                title="Send Message"
-              >
-                <Send className="w-4 h-4" />
-              </button>
-            </form>
 
             <div className="oeh-footer-disclaimer">
               <span>Oracle Assistant provides general care info • Helpline: {hospitalPhone}</span>
