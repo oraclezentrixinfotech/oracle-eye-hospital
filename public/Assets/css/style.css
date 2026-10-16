@@ -531,6 +531,7 @@ body {
     text-align: var(--bs-body-text-align);
     background-color: var(--bs-body-bg);
     -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
     -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
 }
 
@@ -753,8 +754,8 @@ caption {
 }
 
 th {
-    text-align: inherit;
     text-align: -webkit-match-parent;
+    text-align: match-parent;
 }
 
 thead,
@@ -2621,41 +2622,35 @@ progress {
 
 .table-responsive {
     overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
 }
 
 @media (max-width: 575.98px) {
     .table-responsive-sm {
         overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
     }
 }
 
 @media (max-width: 767.98px) {
     .table-responsive-md {
         overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
     }
 }
 
 @media (max-width: 991.98px) {
     .table-responsive-lg {
         overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
     }
 }
 
 @media (max-width: 1199.98px) {
     .table-responsive-xl {
         overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
     }
 }
 
 @media (max-width: 1399.98px) {
     .table-responsive-xxl {
         overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
     }
 }
 
@@ -2964,6 +2959,7 @@ textarea.form-control-lg {
     background-position: center;
     background-size: contain;
     border: var(--bs-border-width) solid var(--bs-border-color);
+    -webkit-print-color-adjust: exact;
     print-color-adjust: exact;
 }
 
@@ -3633,6 +3629,7 @@ textarea.form-control-lg {
     text-decoration: none;
     vertical-align: middle;
     cursor: pointer;
+    -webkit-user-select: none;
     user-select: none;
     border: var(--bs-btn-border-width) solid var(--bs-btn-border-color);
     border-radius: var(--bs-btn-border-radius);
@@ -17636,67 +17633,67 @@ section {
 }
 
 .scale8 {
-    transform: scale(1.85);
     -moz-transform: scale(1.85);
     -webkit-transform: scale(1.85);
     -ms-transform: scale(1.85);
     -o-transform: scale(1.85);
+    transform: scale(1.85);
 }
 
 .scale7 {
-    transform: scale(1.7);
     -moz-transform: scale(1.7);
     -webkit-transform: scale(1.7);
     -ms-transform: scale(1.7);
     -o-transform: scale(1.7);
+    transform: scale(1.7);
 }
 
 .scale5 {
-    transform: scale(1.5);
     -moz-transform: scale(1.5);
     -webkit-transform: scale(1.5);
     -ms-transform: scale(1.5);
     -o-transform: scale(1.5);
+    transform: scale(1.5);
 }
 
 .scale3 {
-    transform: scale(1.3);
     -moz-transform: scale(1.3);
     -webkit-transform: scale(1.3);
     -ms-transform: scale(1.3);
     -o-transform: scale(1.3);
+    transform: scale(1.3);
 }
 
 .scale2 {
-    transform: scale(1.2);
     -moz-transform: scale(1.2);
     -webkit-transform: scale(1.2);
     -ms-transform: scale(1.2);
     -o-transform: scale(1.2);
+    transform: scale(1.2);
 }
 
 .scale08 {
-    transform: scale(0.8);
     -moz-transform: scale(0.8);
     -webkit-transform: scale(0.8);
     -ms-transform: scale(0.8);
     -o-transform: scale(0.8);
+    transform: scale(0.8);
 }
 
 .scale05 {
-    transform: scale(0.5);
     -moz-transform: scale(0.5);
     -webkit-transform: scale(0.5);
     -ms-transform: scale(0.5);
     -o-transform: scale(0.5);
+    transform: scale(0.5);
 }
 
 .tl {
-    transform-origin: left;
     -moz-transform-origin: left;
     -webkit-transform-origin: left;
     -ms-transform-origin: left;
     -o-transform-origin: left;
+    transform-origin: left;
 }
 
 .shadow-none {
@@ -20575,19 +20572,19 @@ section {
             height: 1px;
             width: 0;
             background-color: #7b114a;
-            transition: all 0.3s linear;
             -webkit-transition: all 0.3s linear;
             -moz-transition: all 0.3s linear;
             -o-transition: all 0.3s linear;
+            transition: all 0.3s linear;
         }
 
     .list-hover1 > li > a:hover > span:after, .list-hover1 > li > a.active > span:after {
         width: 100%;
-        transform-origin: right;
         -moz-transform-origin: right;
         -webkit-transform-origin: right;
         -ms-transform-origin: right;
         -o-transform-origin: right;
+        transform-origin: right;
         right: auto;
         left: 0;
     }
@@ -23364,11 +23361,11 @@ select, button {
         top: 50%;
         left: 50%;
         background: #fff;
-        transform: translate(-50%, -50%);
         -moz-transform: translate(-50%, -50%);
         -webkit-transform: translate(-50%, -50%);
         -ms-transform: translate(-50%, -50%);
         -o-transform: translate(-50%, -50%);
+        transform: translate(-50%, -50%);
         -webkit-transition: all 0.5s;
         -ms-transition: all 0.5s;
         transition: all 0.5s;
@@ -24617,8 +24614,8 @@ label.error {
             }
 
                 .form-select .dropdown-menu ul li a img {
-                    border-radius: 100%;
                     -webkit-border-radius: 100%;
+                    border-radius: 100%;
                     margin-right: 5px;
                 }
 
@@ -25284,14 +25281,14 @@ input[type=number] {
 @media only screen and (max-width: 575px) {
     #rc-imageselect,
     .g-recaptcha {
-        transform: scale(0.85);
         -moz-transform: scale(0.85);
         -o-transform: scale(0.85);
         -webkit-transform: scale(0.85);
-        transform-origin: 0 0;
+        transform: scale(0.85);
         -moz-transform-origin: 0 0;
         -o-transform-origin: 0 0;
         -webkit-transform-origin: 0 0;
+        transform-origin: 0 0;
     }
 }
 
@@ -26907,8 +26904,8 @@ table {
     }
 
         .site-filters li.btn {
-            box-shadow: none;
             -webkit-box-shadow: none;
+            box-shadow: none;
             outline: none !important;
             border: 0;
         }
@@ -27576,10 +27573,10 @@ table {
         top: auto;
         bottom: 0;
         width: 100%;
-        transform: translate(0);
         -o-transform: translate(0);
         -moz-transform: translate(0);
         -webkit-transform: translate(0);
+        transform: translate(0);
     }
 
     .overlay-bx .align-m {
@@ -27589,10 +27586,10 @@ table {
         margin: 0;
         position: absolute;
         top: 50%;
-        transform: translate(-50%, -50%);
         -o-transform: translate(-50%, -50%);
         -moz-transform: translate(-50%, -50%);
         -webkit-transform: translate(-50%, -50%);
+        transform: translate(-50%, -50%);
         width: 100%;
         padding: 0 10px;
     }
@@ -27604,10 +27601,10 @@ table {
     margin: 0;
     position: absolute;
     top: 50%;
-    transform: translate(-50%, -50%);
     -o-transform: translate(-50%, -50%);
     -moz-transform: translate(-50%, -50%);
     -webkit-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
     width: 100%;
     padding: 0 10px;
 }
@@ -27811,10 +27808,10 @@ table {
     right: auto;
     text-align: center;
     top: auto;
-    transform: translateY(-50%);
     -o-transform: translateY(-50%);
     -moz-transform: translateY(-50%);
     -webkit-transform: translateY(-50%);
+    transform: translateY(-50%);
     width: auto;
 }
 
@@ -27841,10 +27838,10 @@ table {
     right: auto;
     text-align: center;
     top: auto;
-    transform: translateY(-50%);
     -o-transform: translateY(-50%);
     -moz-transform: translateY(-50%);
     -webkit-transform: translateY(-50%);
+    transform: translateY(-50%);
     width: auto;
 }
 
@@ -27912,10 +27909,10 @@ table {
     left: 0;
     top: 50%;
     margin: 0;
-    transform: translateY(-50%);
     -o-transform: translateY(-50%);
     -moz-transform: translateY(-50%);
     -webkit-transform: translateY(-50%);
+    transform: translateY(-50%);
     cursor: pointer;
 }
 
@@ -28186,9 +28183,9 @@ table {
         margin: 0;
         width: 100%;
         height: auto;
-        box-shadow: 0 0 0 rgba(0, 0, 0, 0);
         -webkit-box-shadow: 0 0 0 rgba(0, 0, 0, 0);
         -moz-box-shadow: 0 0 0 rgba(0, 0, 0, 0);
+        box-shadow: 0 0 0 rgba(0, 0, 0, 0);
         -webkit-transition: all 0.2s;
         -ms-transition: all 0.2s;
         transition: all 0.2s;
@@ -28199,52 +28196,52 @@ table {
     }
 
     .dz-img-effect.zoom-slow img {
-        transition: all 10s;
         -moz-transition: all 10s;
         -webkit-transition: all 10s;
         -o-transition: all 10s;
+        transition: all 10s;
     }
 
     .dz-img-effect.zoom-slow:hover img {
-        transform: scale(1.2);
         -moz-transform: scale(1.2);
         -webkit-transform: scale(1.2);
         -ms-transform: scale(1.2);
         -o-transform: scale(1.2);
+        transform: scale(1.2);
     }
 
     .dz-img-effect.zoom:hover img {
-        transform: scale(1.5);
         -moz-transform: scale(1.5);
         -webkit-transform: scale(1.5);
         -ms-transform: scale(1.5);
         -o-transform: scale(1.5);
+        transform: scale(1.5);
     }
 
     .dz-img-effect.shrink:hover img {
-        transform: scale(0.8);
         -moz-transform: scale(0.8);
         -webkit-transform: scale(0.8);
         -ms-transform: scale(0.8);
         -o-transform: scale(0.8);
+        transform: scale(0.8);
     }
 
     .dz-img-effect.side-pan:hover img {
         margin-left: -11%;
-        transform: scale(1.2);
         -moz-transform: scale(1.2);
         -webkit-transform: scale(1.2);
         -ms-transform: scale(1.2);
         -o-transform: scale(1.2);
+        transform: scale(1.2);
     }
 
     .dz-img-effect.vertical-pan:hover img {
         margin-top: -10%;
-        transform: scale(1.2);
         -moz-transform: scale(1.2);
         -webkit-transform: scale(1.2);
         -ms-transform: scale(1.2);
         -o-transform: scale(1.2);
+        transform: scale(1.2);
     }
 
     .dz-img-effect.fade-in {
@@ -28287,62 +28284,62 @@ table {
     }
 
     .dz-img-effect.blurr:hover img {
-        filter: blur(3px);
         -webkit-filter: blur(3px);
         -moz-filter: blur(3px);
         -o-filter: blur(3px);
         -ms-filter: blur(3px);
+        filter: blur(3px);
     }
 
     .dz-img-effect.blurr-invert img {
         -webkit-transition: all 0.2s;
         -ms-transition: all 0.2s;
         transition: all 0.2s;
-        filter: blur(3px);
         -webkit-filter: blur(3px);
         -moz-filter: blur(3px);
         -o-filter: blur(3px);
         -ms-filter: blur(3px);
+        filter: blur(3px);
     }
 
     .dz-img-effect.blurr-invert:hover img {
-        filter: blur(0px);
         -webkit-filter: blur(0px);
         -moz-filter: blur(0px);
         -o-filter: blur(0px);
         -ms-filter: blur(0px);
+        filter: blur(0px);
     }
 
     .dz-img-effect.off-color img {
-        filter: grayscale(0);
         -webkit-filter: grayscale(0);
         -moz-filter: grayscale(0);
         -o-filter: grayscale(0);
         -ms-filter: grayscale(0);
+        filter: grayscale(0);
     }
 
     .dz-img-effect.off-color:hover img {
-        filter: grayscale(1);
         -webkit-filter: grayscale(1);
         -moz-filter: grayscale(1);
         -o-filter: grayscale(1);
         -ms-filter: grayscale(1);
+        filter: grayscale(1);
     }
 
     .dz-img-effect.on-color img {
-        filter: grayscale(1);
         -webkit-filter: grayscale(1);
         -moz-filter: grayscale(1);
         -o-filter: grayscale(1);
         -ms-filter: grayscale(1);
+        filter: grayscale(1);
     }
 
     .dz-img-effect.on-color:hover img {
-        filter: grayscale(0);
         -webkit-filter: grayscale(0);
         -moz-filter: grayscale(0);
         -o-filter: grayscale(0);
         -ms-filter: grayscale(0);
+        filter: grayscale(0);
     }
 
 .dz-box:hover .dz-img-effect.rotate img {
@@ -30429,31 +30426,31 @@ ul.grid-2 {
 }
 
 .video-bx2 .video-btn:before {
-    animation: animationSignal1;
-    animation-iteration-count: infinite;
-    animation-duration: 3s;
     -webkit-animation: animationSignal1;
     -webkit-animation-iteration-count: infinite;
     -webkit-animation-duration: 3s;
-    transform: scale(1);
+    animation: animationSignal1;
+    animation-iteration-count: infinite;
+    animation-duration: 3s;
     -moz-transform: scale(1);
     -webkit-transform: scale(1);
     -ms-transform: scale(1);
     -o-transform: scale(1);
+    transform: scale(1);
 }
 
 .video-bx2 .video-btn:after {
-    animation: animationSignal2;
-    animation-iteration-count: infinite;
-    animation-duration: 3s;
     -webkit-animation: animationSignal2;
     -webkit-animation-iteration-count: infinite;
     -webkit-animation-duration: 3s;
-    transform: scale(1);
+    animation: animationSignal2;
+    animation-iteration-count: infinite;
+    animation-duration: 3s;
     -moz-transform: scale(1);
     -webkit-transform: scale(1);
     -ms-transform: scale(1);
     -o-transform: scale(1);
+    transform: scale(1);
 }
 
 .video-bx2 svg {
@@ -30526,76 +30523,76 @@ ul.grid-2 {
 @keyframes animationSignal1 {
     0% {
         opacity: 0.8;
-        transform: scale(0.9);
         -moz-transform: scale(0.9);
         -ms-transform: scale(0.9);
         -o-transform: scale(0.9);
         -webkit-transform: scale(0.9);
+        transform: scale(0.9);
     }
 
     100% {
-        transform: scale(1.5);
         -moz-transform: scale(1.5);
         -ms-transform: scale(1.5);
         -o-transform: scale(1.5);
         -webkit-transform: scale(1.5);
+        transform: scale(1.5);
         opacity: 0;
     }
 }
 
 @-webkit-keyframes animationSignal1 {
     0% {
-        transform: scale(0.9);
         -moz-transform: scale(0.9);
         -ms-transform: scale(0.9);
         -o-transform: scale(0.9);
         -webkit-transform: scale(0.9);
+        transform: scale(0.9);
     }
 
     100% {
-        transform: scale(1.5);
         -moz-transform: scale(1.5);
         -ms-transform: scale(1.5);
         -o-transform: scale(1.5);
         -webkit-transform: scale(1.5);
+        transform: scale(1.5);
         opacity: 0;
     }
 }
 
 @keyframes animationSignal2 {
     0% {
-        transform: scale(0.9);
         -moz-transform: scale(0.9);
         -webkit-transform: scale(0.9);
         -ms-transform: scale(0.9);
         -o-transform: scale(0.9);
+        transform: scale(0.9);
     }
 
     100% {
-        transform: scale(1.9);
         -moz-transform: scale(1.9);
         -webkit-transform: scale(1.9);
         -ms-transform: scale(1.9);
         -o-transform: scale(1.9);
+        transform: scale(1.9);
         opacity: 0;
     }
 }
 
 @-webkit-keyframes animationSignal2 {
     0% {
-        transform: scale(0.9);
         -moz-transform: scale(0.9);
         -webkit-transform: scale(0.9);
         -ms-transform: scale(0.9);
         -o-transform: scale(0.9);
+        transform: scale(0.9);
     }
 
     100% {
-        transform: scale(1.9);
         -moz-transform: scale(1.9);
         -webkit-transform: scale(1.9);
         -ms-transform: scale(1.9);
         -o-transform: scale(1.9);
+        transform: scale(1.9);
         opacity: 0;
     }
 }
@@ -31954,11 +31951,11 @@ footer:not(.style-4) .widget_rss ul li {
                 -webkit-transition: all 0.5s;
                 -ms-transition: all 0.5s;
                 transition: all 0.5s;
-                transform: translate(-50%, -50%);
                 -moz-transform: translate(-50%, -50%);
                 -webkit-transform: translate(-50%, -50%);
                 -ms-transform: translate(-50%, -50%);
                 -o-transform: translate(-50%, -50%);
+                transform: translate(-50%, -50%);
             }
 
         .service_menu_nav ul li:hover a, .service_menu_nav ul li.current-menu-item a, .service_menu_nav ul li.active a {
@@ -39772,11 +39769,11 @@ pre {
         -webkit-transition: all 0.5s;
         -ms-transition: all 0.5s;
         transition: all 0.5s;
-        transform: translateY(100px);
         -moz-transform: translateY(100px);
         -webkit-transform: translateY(100px);
         -ms-transform: translateY(100px);
         -o-transform: translateY(100px);
+        transform: translateY(100px);
         opacity: 0;
         left: 0;
     }
@@ -39829,11 +39826,11 @@ pre {
                     }
 
                         .dz-box.product .item-box .item-info-in ul li a:hover i {
-                            transform: scale(1.25);
                             -moz-transform: scale(1.25);
                             -webkit-transform: scale(1.25);
                             -ms-transform: scale(1.25);
                             -o-transform: scale(1.25);
+                            transform: scale(1.25);
                         }
 
                     .dz-box.product .item-box .item-info-in ul li a.add_to_cart_button.added i:before {
@@ -39857,21 +39854,21 @@ pre {
     }
 
     .dz-box.product:hover .item-box .item-img .item-info-in {
-        transform: translateY(0);
         -moz-transform: translateY(0);
         -webkit-transform: translateY(0);
         -ms-transform: translateY(0);
         -o-transform: translateY(0);
+        transform: translateY(0);
         opacity: 1;
     }
 
     .dz-box.product:hover {
         box-shadow: 0 10px 60px 0 rgba(0, 0, 0, 0.15);
-        transform: translateY(-15px);
         -moz-transform: translateY(-15px);
         -webkit-transform: translateY(-15px);
         -ms-transform: translateY(-15px);
         -o-transform: translateY(-15px);
+        transform: translateY(-15px);
     }
 
 .woocommerce div.product .dz-box .woocommerce-product-rating {
@@ -41058,10 +41055,10 @@ pre {
         -webkit-transition: all 1s;
         -ms-transition: all 1s;
         transition: all 1s;
-        transform: translateY(-50%);
         -moz-transform: translateY(-50%);
         -webkit-transform: translateY(-50%);
         -ms-transform: translateY(-50%);
+        transform: translateY(-50%);
     }
 
 .payment_methods input:checked + label:after {
@@ -43170,10 +43167,10 @@ table.wishlist_table {
         line-height: 20px;
         text-transform: capitalize;
         position: relative;
-        transition: all 0.15s linear;
         -webkit-transition: all 0.15s linear;
         -moz-transition: all 0.15s linear;
         -o-transition: all 0.15s linear;
+        transition: all 0.15s linear;
         font-weight: 400;
     }
 
@@ -43758,10 +43755,10 @@ table.wishlist_table {
         position: fixed;
         width: 280px;
         height: 100vh !important;
-        transition: all 0.5s;
         -webkit-transition: all 0.5s;
         -moz-transition: all 0.5s;
         -o-transition: all 0.5s;
+        transition: all 0.5s;
         top: 0;
         background-color: #fff;
         margin: 0;
@@ -43770,10 +43767,10 @@ table.wishlist_table {
 
         .mo-left.show,
         .mo-right.show {
-            transition: all 0.5s;
             -webkit-transition: all 0.5s;
             -moz-transition: all 0.5s;
             -o-transition: all 0.5s;
+            transition: all 0.5s;
             margin: 0;
             transition-delay: 0.2s;
         }
@@ -45459,10 +45456,10 @@ table.wishlist_table {
         line-height: 20px;
         text-transform: capitalize;
         position: relative;
-        transition: all 0.15s linear;
         -webkit-transition: all 0.15s linear;
         -moz-transition: all 0.15s linear;
         -o-transition: all 0.15s linear;
+        transition: all 0.15s linear;
         font-weight: 400;
     }
 
@@ -45871,10 +45868,10 @@ table.wishlist_table {
     width: 0;
     height: 100%;
     opacity: 0.5;
-    transition: all 0.3s;
     -webkit-transition: all 0.3s;
     -moz-transition: all 0.3s;
     -o-transition: all 0.3s;
+    transition: all 0.3s;
     z-index: 999;
 }
 
@@ -45895,10 +45892,10 @@ table.wishlist_table {
 
 .w3menu-toggler.open ~ .menu-close.fade-left, .w3menu-toggler.open ~ .menu-close.fade-right {
     width: 100%;
-    transition: all 0.3s;
     -webkit-transition: all 0.3s;
     -moz-transition: all 0.3s;
     -o-transition: all 0.3s;
+    transition: all 0.3s;
 }
 
 .w3menu-toggler.open ~ .menu-close.fade-overlay {
@@ -47986,11 +47983,11 @@ footer.site-footer.footer-dark {
 }
 
 .boxed .is-fixed .main-bar {
-    transition: none;
     -moz-transition: none;
     -ms-transition: none;
     -webkit-transition: none;
     -o-transition: none;
+    transition: none;
     position: unset;
 }
 
@@ -48413,9 +48410,9 @@ select#service.form-control {
     color: #fff !important; 
     background-color: transparent !important;
     border-bottom: 2px solid #fff !important; 
-    appearance: none; 
     -webkit-appearance: none;
     -moz-appearance: none;
+    appearance: none; 
     cursor: pointer;
 }
 
