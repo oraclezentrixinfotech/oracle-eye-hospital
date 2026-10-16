@@ -3683,34 +3683,34 @@ iframe.video_frame {
         bottom: 0 !important;
         right: 0 !important;
         left: auto !important;
-        width: 260px !important;
-        max-width: calc(100vw - 16px) !important;
-        height: 315px !important;
+        width: 228px !important;
+        max-width: calc(100vw - 12px) !important;
+        height: 310px !important;
         max-height: 48vh !important;
         border-radius: 14px 0 0 0 !important;
         box-shadow: -2px 6px 20px rgba(87, 7, 47, 0.22) !important;
     }
 
     .oeh-chat-window.oeh-minimized {
-        height: 42px !important;
-        min-height: 42px !important;
+        height: 38px !important;
+        min-height: 38px !important;
     }
 
     .oeh-chat-header {
-        min-height: 42px !important;
+        min-height: 38px !important;
         height: auto !important;
-        padding: 5px 8px !important;
+        padding: 4px 6px !important;
     }
 
     .oeh-avatar-box {
-        width: 26px !important;
-        height: 26px !important;
+        width: 22px !important;
+        height: 22px !important;
         padding: 1px !important;
     }
 
     .oeh-header-title {
-        font-size: 11.5px !important;
-        max-width: 115px !important;
+        font-size: 10.5px !important;
+        max-width: 95px !important;
         line-height: 1.2 !important;
         white-space: nowrap !important;
         overflow: hidden !important;
@@ -3722,24 +3722,24 @@ iframe.video_frame {
     }
 
     .oeh-header-status {
-        font-size: 8px !important;
+        font-size: 7px !important;
         margin-top: 1px !important;
     }
 
     .oeh-status-pulse {
-        width: 4.5px !important;
-        height: 4.5px !important;
+        width: 4px !important;
+        height: 4px !important;
     }
 
     .oeh-btn-icon {
-        width: 22px !important;
-        height: 22px !important;
+        width: 19px !important;
+        height: 19px !important;
         border-radius: 4px !important;
     }
 
     .oeh-btn-icon svg {
-        width: 11px !important;
-        height: 11px !important;
+        width: 9.5px !important;
+        height: 9.5px !important;
     }
 
     .oeh-chat-body {
@@ -3901,7 +3901,7 @@ iframe.video_frame {
 /* Extra Small Mobile (< 360px) */
 @media (max-width: 360px) {
     .oeh-chat-window {
-        width: 230px !important;
+        width: 210px !important;
         height: 290px !important;
         max-height: 48vh !important;
     }
