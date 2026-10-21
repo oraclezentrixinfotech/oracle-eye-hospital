@@ -82,5 +82,26 @@ export default async function sitemap() {
     /* DB offline: sitemap still works without posts */
   }
 
+  try {
+    const seoPages = await prisma.seoPage.findMany({
+      where: { status: "published" },
+      select: { slug: true, createdAt: true, updatedAt: true },
+    });
+    seoPages.forEach((sp) => {
+      // Avoid duplicate if already in entries
+      const pageUrl = `${SITE_URL}/services/${sp.slug}`;
+      if (!entries.some((e) => e.url === pageUrl)) {
+        entries.push({
+          url: pageUrl,
+          lastModified: sp.updatedAt || sp.createdAt || new Date(),
+          changeFrequency: "weekly",
+          priority: 0.9,
+        });
+      }
+    });
+  } catch {
+    /* DB offline: sitemap still works without seoPages */
+  }
+
   return entries;
 }
