@@ -25,6 +25,7 @@ import {
 } from "lucide-react";
 import ImageUpload from "../../components/ImageUpload";
 import { toast } from "../../components/Toast";
+import SmartContentImporter from "./SmartContentImporter";
 import "../../admin.css";
 import "../../components/datatable.css";
 
@@ -96,6 +97,48 @@ export default function SeoPageForm({ initialData = null, doctorsList = [], allP
   const [slugLocked, setSlugLocked] = useState(isEditing);
   const [saving, setSaving] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
+  const [showImporter, setShowImporter] = useState(false);
+
+  function handleApplyImported(data) {
+    if (!data) return;
+    setForm((prev) => ({
+      ...prev,
+      slug: data.slug || prev.slug,
+      status: data.status || prev.status,
+      metaTitle: data.metaTitle || prev.metaTitle,
+      metaDescription: data.metaDescription || prev.metaDescription,
+      keywords: data.keywords || prev.keywords,
+      canonicalUrl: data.canonicalUrl || prev.canonicalUrl,
+      ogImage: data.ogImage || prev.ogImage,
+      heroBadge: data.heroBadge || prev.heroBadge,
+      h1Title: data.h1Title || prev.h1Title,
+      heroSubtitle: data.heroSubtitle || prev.heroSubtitle,
+      heroImage: data.heroImage || prev.heroImage,
+      heroChips:
+        Array.isArray(data.heroChips) && data.heroChips.length > 0
+          ? data.heroChips
+          : prev.heroChips,
+      ctaPrimaryText: data.ctaPrimaryText || prev.ctaPrimaryText,
+      ctaPhone: data.ctaPhone || prev.ctaPhone,
+      sections:
+        Array.isArray(data.sections) && data.sections.length > 0
+          ? data.sections
+          : prev.sections,
+      doctorIds:
+        Array.isArray(data.doctorIds) && data.doctorIds.length > 0
+          ? data.doctorIds
+          : prev.doctorIds,
+      faqs:
+        Array.isArray(data.faqs) && data.faqs.length > 0 ? data.faqs : prev.faqs,
+      relatedIds:
+        Array.isArray(data.relatedIds) && data.relatedIds.length > 0
+          ? data.relatedIds
+          : prev.relatedIds,
+    }));
+    setSlugLocked(true);
+    toast("Content successfully imported! All fields populated.", "success");
+    setActiveTab("sections");
+  }
 
   // Handle H1 title change (auto-update slug if not locked)
   function handleH1Change(e) {
@@ -361,6 +404,28 @@ export default function SeoPageForm({ initialData = null, doctorsList = [], allP
         </div>
 
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+          <button
+            type="button"
+            onClick={() => setShowImporter(true)}
+            style={{
+              background: "linear-gradient(135deg, #137c8b 0%, #0d9488 100%)",
+              color: "#ffffff",
+              fontWeight: 700,
+              fontSize: 13,
+              padding: "9px 16px",
+              borderRadius: 6,
+              border: "none",
+              cursor: "pointer",
+              display: "inline-flex",
+              alignItems: "center",
+              gap: 8,
+              boxShadow: "0 2px 8px rgba(19, 124, 139, 0.25)",
+            }}
+          >
+            <Sparkles size={16} />
+            <span>⚡ Import Content / Auto-Fill</span>
+          </button>
+
           <button
             type="button"
             onClick={handleSubmit}
@@ -1390,6 +1455,14 @@ export default function SeoPageForm({ initialData = null, doctorsList = [], allP
           </div>
         </form>
       </div>
+
+      <SmartContentImporter
+        isOpen={showImporter}
+        onClose={() => setShowImporter(false)}
+        onApply={handleApplyImported}
+        doctorsList={doctorsList}
+        allPages={allPages}
+      />
     </div>
   );
 }
