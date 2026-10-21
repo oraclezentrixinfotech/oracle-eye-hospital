@@ -9,15 +9,20 @@ export const metadata = { title: "Video Gallery — Admin | Oracle Eye Hospital"
 export default async function VideoGalleryAdminPage() {
   if (!isAdmin()) redirect("/admin/login");
 
-  const videos = await prisma.video.findMany({
-    orderBy: [{ sortOrder: "asc" }, { createdAt: "desc" }],
-  });
+  let videos = [];
+  try {
+    videos = await prisma.video.findMany({
+      orderBy: [{ sortOrder: "asc" }, { createdAt: "desc" }],
+    });
+  } catch (err) {
+    console.error("VideoGalleryAdminPage DB error:", err?.message || err);
+  }
 
   // Serialize dates for client component
-  const rows = videos.map(v => ({
+  const rows = (videos || []).map((v) => ({
     ...v,
-    createdAt: v.createdAt.toISOString(),
-    updatedAt: v.updatedAt.toISOString(),
+    createdAt: v.createdAt ? v.createdAt.toISOString() : null,
+    updatedAt: v.updatedAt ? v.updatedAt.toISOString() : null,
   }));
 
   return <VideoClient rows={rows} />;
