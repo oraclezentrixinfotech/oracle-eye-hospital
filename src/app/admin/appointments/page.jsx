@@ -9,12 +9,17 @@ export const metadata = { title: "Appointments — Admin | Oracle Eye Hospital" 
 export default async function AppointmentsAdminPage() {
   if (!isAdmin()) redirect("/admin/login");
 
-  const appointments = await prisma.appointment.findMany({
-    orderBy: { createdAt: "desc" },
-  });
+  let appointments = [];
+  try {
+    appointments = await prisma.appointment.findMany({
+      orderBy: { createdAt: "desc" },
+    });
+  } catch (err) {
+    console.error("AppointmentsAdminPage DB error:", err?.message || err);
+  }
 
   // Serialize dates for client component
-  const rows = appointments.map((a) => ({
+  const rows = (appointments || []).map((a) => ({
     ...a,
     createdAt: a.createdAt ? a.createdAt.toISOString() : null,
     preferredDate: a.preferredDate ? a.preferredDate.toISOString() : null,

@@ -9,12 +9,17 @@ export const metadata = { title: "Photo Gallery — Admin | Oracle Eye Hospital"
 export default async function PhotoGalleryAdminPage() {
   if (!isAdmin()) redirect("/admin/login");
 
-  const photos = await prisma.photo.findMany({
-    orderBy: [{ sortOrder: "asc" }, { createdAt: "desc" }],
-  });
+  let photos = [];
+  try {
+    photos = await prisma.photo.findMany({
+      orderBy: [{ sortOrder: "asc" }, { createdAt: "desc" }],
+    });
+  } catch (err) {
+    console.error("PhotoGalleryAdminPage DB error:", err?.message || err);
+  }
 
   // Serialize dates for client component
-  const rows = photos.map((p) => ({
+  const rows = (photos || []).map((p) => ({
     ...p,
     createdAt: p.createdAt ? p.createdAt.toISOString() : null,
   }));

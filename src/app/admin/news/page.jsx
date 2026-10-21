@@ -9,12 +9,17 @@ export const metadata = { title: "Manage News — Admin | Oracle Eye Hospital" }
 export default async function AdminNewsPage() {
   if (!isAdmin()) redirect("/admin/login");
 
-  const posts = await prisma.post.findMany({
-    where: { type: "NEWS" },
-    orderBy: { createdAt: "desc" },
-  });
+  let posts = [];
+  try {
+    posts = await prisma.post.findMany({
+      where: { type: "NEWS" },
+      orderBy: { createdAt: "desc" },
+    });
+  } catch (err) {
+    console.error("AdminNewsPage DB error:", err?.message || err);
+  }
 
-  const rows = posts.map((p) => ({
+  const rows = (posts || []).map((p) => ({
     ...p,
     createdAt: p.createdAt ? p.createdAt.toISOString() : null,
   }));

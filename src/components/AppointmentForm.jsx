@@ -15,10 +15,11 @@ const EMPTY = {
   website: "",
 };
 
-export default function AppointmentForm({ initialDoctor = "" }) {
+export default function AppointmentForm({ initialDoctor = "", initialService = "" }) {
   const [form, setForm] = useState(() => ({
     ...EMPTY,
     doctor: DOCTORS.some((doctor) => doctor.name === initialDoctor) ? initialDoctor : "",
+    service: SERVICES.some((s) => s.title === initialService) ? initialService : (initialService || ""),
   }));
   const [state, setState] = useState("idle");
   const [error, setError] = useState("");

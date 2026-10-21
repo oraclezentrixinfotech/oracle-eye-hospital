@@ -13875,12 +13875,12 @@ textarea.form-control-lg {
     }
 
 html {
-    overflow: unset !important;
+    overflow: visible !important;
 }
 
 body {
     overflow-x: clip !important;
-    overflow-y: scroll !important;
+    overflow-y: visible !important;
 }
 
     body.fixed {
@@ -48695,7 +48695,7 @@ select#service.form-control {
 }
 html, body {
     max-width: 100% !important;
-    overflow-x: hidden !important;
+    overflow-x: clip !important;
 }
 .facility_divv {
     width:80%;

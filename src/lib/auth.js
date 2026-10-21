@@ -4,9 +4,43 @@ import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
+import fs from "fs";
+import path from "path";
+
+function ensureEnvLoaded() {
+  if (process.env.AUTH_SECRET && process.env.ADMIN_EMAIL) return;
+  try {
+    const envPath = path.resolve(process.cwd(), ".env");
+    if (fs.existsSync(envPath)) {
+      const content = fs.readFileSync(envPath, "utf8");
+      content.split(/\r?\n/).forEach((line) => {
+        const trimmed = line.trim();
+        if (!trimmed || trimmed.startsWith("#")) return;
+        const eqIdx = trimmed.indexOf("=");
+        if (eqIdx !== -1) {
+          const key = trimmed.slice(0, eqIdx).trim();
+          let val = trimmed.slice(eqIdx + 1).trim();
+          if (
+            (val.startsWith('"') && val.endsWith('"')) ||
+            (val.startsWith("'") && val.endsWith("'"))
+          ) {
+            val = val.slice(1, -1);
+          }
+          process.env[key] = val;
+        }
+      });
+    }
+  } catch (err) {
+    // ignore
+  }
+}
+
+ensureEnvLoaded();
+
 export const COOKIE_NAME = "oeh_admin";
 
 function secret() {
+  ensureEnvLoaded();
   const s = process.env.AUTH_SECRET;
   if (!s || s.length < 16) throw new Error("AUTH_SECRET must be set (16+ characters)");
   return s;
