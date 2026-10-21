@@ -32,10 +32,30 @@ export function verifyToken(token) {
 export async function checkCredentials(email, password) {
   if (!email || !password) return false;
   const normalizedEmail = String(email).toLowerCase().trim();
+  const inputPassword = String(password);
+
+  // 1. Check against environment variables (for local development or env credentials)
+  const envEmail = process.env.ADMIN_EMAIL
+    ? String(process.env.ADMIN_EMAIL).trim().replace(/^["']|["']$/g, "").toLowerCase()
+    : null;
+  const envPassword = process.env.ADMIN_PASSWORD
+    ? String(process.env.ADMIN_PASSWORD).trim().replace(/^["']|["']$/g, "")
+    : null;
+
+  if (
+    envEmail &&
+    envPassword &&
+    normalizedEmail === envEmail &&
+    (inputPassword === envPassword || inputPassword.trim() === envPassword)
+  ) {
+    return true;
+  }
+
+  // 2. Fall back to database lookup (for deployed/production database)
   try {
     const user = await prisma.user.findUnique({ where: { email: normalizedEmail } });
     if (!user || !user.active || user.role !== "ADMIN") return false;
-    return bcrypt.compare(String(password), user.passwordHash);
+    return bcrypt.compare(inputPassword, user.passwordHash);
   } catch {
     return false;
   }
