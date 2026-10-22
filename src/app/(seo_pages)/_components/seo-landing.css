@@ -2,22 +2,22 @@
    Oracle Eye Hospital - SEO Landing Page Premium Design System
    ========================================================================== */
 
-/* Hero Banner */
+/* Hero Banner - 30% Compact Height with Retained Premium Feel */
 .seo-hero-section {
   position: relative;
   background: linear-gradient(135deg, #07242c 0%, #0d3b45 50%, #07242c 100%);
   color: #ffffff;
-  padding: 50px 0 60px;
+  padding: 30px 0 34px;
   overflow: hidden;
 }
 
 .seo-hero-section::before {
   content: "";
   position: absolute;
-  top: -100px;
-  left: -100px;
-  width: 400px;
-  height: 400px;
+  top: -80px;
+  left: -80px;
+  width: 320px;
+  height: 320px;
   border-radius: 50%;
   background: radial-gradient(circle, rgba(19, 124, 139, 0.25) 0%, transparent 70%);
   pointer-events: none;
@@ -26,18 +26,18 @@
 .seo-hero-section::after {
   content: "";
   position: absolute;
-  bottom: -100px;
-  right: -50px;
-  width: 450px;
-  height: 450px;
+  bottom: -80px;
+  right: -40px;
+  width: 360px;
+  height: 360px;
   border-radius: 50%;
   background: radial-gradient(circle, rgba(232, 163, 61, 0.18) 0%, transparent 70%);
   pointer-events: none;
 }
 
 .seo-breadcrumb {
-  margin-bottom: 20px;
-  font-size: 13px;
+  margin-bottom: 8px;
+  font-size: 12.5px;
   color: rgba(255, 255, 255, 0.7);
 }
 
@@ -59,53 +59,54 @@
 .seo-trust-badge {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  padding: 6px 14px;
+  gap: 6px;
+  padding: 4px 12px;
   background: rgba(255, 255, 255, 0.1);
   border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: 50px;
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 600;
   color: #cfe7ea;
   backdrop-filter: blur(8px);
-  margin-bottom: 16px;
+  margin-bottom: 10px;
 }
 
 .seo-hero-h1 {
-  font-size: clamp(28px, 4.2vw, 44px);
+  font-size: clamp(22px, 2.9vw, 32px);
   font-weight: 800;
-  line-height: 1.2;
+  line-height: 1.25;
   color: #ffffff;
-  margin-bottom: 16px;
+  margin-bottom: 10px;
 }
 
 .seo-hero-intro {
-  font-size: 16px;
-  line-height: 1.65;
-  color: rgba(255, 255, 255, 0.85);
-  margin-bottom: 24px;
+  font-size: 14px;
+  line-height: 1.5;
+  color: rgba(255, 255, 255, 0.88);
+  margin-bottom: 14px;
   max-width: 620px;
 }
 
 .seo-hero-actions {
   display: flex;
   flex-wrap: wrap;
-  gap: 12px;
+  gap: 10px;
   align-items: center;
-  margin-bottom: 28px;
+  margin-bottom: 16px;
 }
 
 .seo-btn-appointment {
   background-color: #e8a33d;
   color: #ffffff !important;
   font-weight: 700;
-  padding: 12px 24px;
+  padding: 9px 20px;
+  font-size: 13.5px;
   border-radius: 8px;
   display: inline-flex;
   align-items: center;
   gap: 8px;
   text-decoration: none;
-  box-shadow: 0 8px 20px rgba(232, 163, 61, 0.3);
+  box-shadow: 0 6px 16px rgba(232, 163, 61, 0.3);
   transition: all 0.3s ease;
 }
 
@@ -120,7 +121,8 @@
   color: #ffffff !important;
   border: 1px solid rgba(255, 255, 255, 0.3);
   font-weight: 700;
-  padding: 12px 22px;
+  padding: 9px 18px;
+  font-size: 13.5px;
   border-radius: 8px;
   display: inline-flex;
   align-items: center;
@@ -138,22 +140,22 @@
 .seo-highlights-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 12px;
-  padding-top: 18px;
+  gap: 10px;
+  padding-top: 12px;
   border-top: 1px solid rgba(255, 255, 255, 0.12);
-  margin-bottom: 24px;
+  margin-bottom: 0;
 }
 
 .seo-highlight-item {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
 }
 
 .seo-highlight-icon {
-  width: 36px;
-  height: 36px;
-  min-width: 36px;
+  width: 32px;
+  height: 32px;
+  min-width: 32px;
   border-radius: 8px;
   background: rgba(232, 163, 61, 0.18);
   display: flex;
@@ -163,13 +165,13 @@
 }
 
 .seo-highlight-item .label {
-  font-size: 11px;
+  font-size: 10.5px;
   color: rgba(255, 255, 255, 0.65);
   display: block;
 }
 
 .seo-highlight-item .val {
-  font-size: 13px;
+  font-size: 12.5px;
   font-weight: 700;
   color: #ffffff;
   display: block;
@@ -178,18 +180,29 @@
 /* Hero Media Image Box */
 .seo-hero-media {
   position: relative;
-  border-radius: 14px;
+  border-radius: 12px;
   overflow: hidden;
-  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.35);
-  border: 2px solid rgba(255, 255, 255, 0.15);
-  max-width: 100%;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.35);
+  border: 1.5px solid rgba(255, 255, 255, 0.18);
+  background: #061e24;
+  height: 240px;
+  max-height: 240px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .seo-hero-media img {
   width: 100%;
-  height: 340px;
+  height: 240px !important;
   object-fit: cover;
+  object-position: center;
   display: block;
+  transition: transform 0.4s ease;
+}
+
+.seo-hero-media:hover img {
+  transform: scale(1.03);
 }
 
 .seo-hero-media-badge {
@@ -197,13 +210,14 @@
   bottom: 0;
   left: 0;
   right: 0;
-  background: linear-gradient(to top, rgba(7, 36, 44, 0.95), rgba(7, 36, 44, 0.6));
-  padding: 10px 16px;
+  background: linear-gradient(to top, rgba(7, 36, 44, 0.95) 0%, rgba(7, 36, 44, 0.65) 65%, transparent 100%);
+  padding: 8px 14px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-size: 12px;
+  font-size: 11px;
   color: #ffffff;
+  backdrop-filter: blur(4px);
 }
 
 /* Hero Lead Form Card */
@@ -1002,7 +1016,8 @@
   border-radius: 14px;
   padding: 12px 14px;
   box-shadow: 0 4px 15px rgba(10, 42, 51, 0.05);
-  margin-bottom: 12px;
+  margin-top: 14px;
+  margin-bottom: 0;
 }
 
 .seo-sidebar-toc-header {
@@ -1184,20 +1199,105 @@
 /* Mobile Responsiveness */
 @media (max-width: 991.98px) {
   .seo-hero-section {
-    padding: 35px 0 45px;
+    padding: 24px 0 28px;
   }
 
+  /* Both buttons in a single row on phone view */
+  .seo-hero-actions {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 8px !important;
+    margin-bottom: 14px !important;
+    width: 100% !important;
+  }
+
+  .seo-btn-appointment,
+  .seo-btn-call {
+    width: 100% !important;
+    padding: 9px 6px !important;
+    font-size: 11.5px !important;
+    justify-content: center !important;
+    text-align: center !important;
+    white-space: nowrap !important;
+    gap: 5px !important;
+    border-radius: 8px !important;
+  }
+
+  .seo-btn-appointment span,
+  .seo-btn-call span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  /* All 3 highlights in a single row on phone view */
   .seo-highlights-grid {
-    grid-template-columns: 1fr;
-    gap: 14px;
+    display: grid !important;
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 6px !important;
+    padding-top: 10px !important;
+    margin-bottom: 0 !important;
+  }
+
+  .seo-highlight-item {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    text-align: center !important;
+    padding: 7px 4px !important;
+    background: rgba(255, 255, 255, 0.07) !important;
+    border-radius: 8px !important;
+    border: 1px solid rgba(255, 255, 255, 0.12) !important;
+    gap: 3px !important;
+    min-width: 0 !important;
+  }
+
+  .seo-highlight-icon {
+    width: 26px !important;
+    height: 26px !important;
+    min-width: 26px !important;
+    border-radius: 6px !important;
+    margin-bottom: 1px !important;
+  }
+
+  .seo-highlight-icon svg {
+    width: 13px !important;
+    height: 13px !important;
+  }
+
+  .seo-highlight-item .label {
+    font-size: 9px !important;
+    line-height: 1.2 !important;
+    color: rgba(255, 255, 255, 0.7) !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    max-width: 100% !important;
+    display: block !important;
+  }
+
+  .seo-highlight-item .val {
+    font-size: 10.5px !important;
+    line-height: 1.2 !important;
+    font-weight: 700 !important;
+    color: #ffffff !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    max-width: 100% !important;
+    display: block !important;
   }
 
   .seo-hero-media {
-    margin-top: 24px;
+    margin-top: 0;
+    margin-bottom: 14px;
+    height: 200px;
+    max-height: 200px;
+    border-radius: 10px;
   }
 
   .seo-hero-media img {
-    height: 220px !important;
+    height: 200px !important;
   }
 
   .seo-hero-form-card {

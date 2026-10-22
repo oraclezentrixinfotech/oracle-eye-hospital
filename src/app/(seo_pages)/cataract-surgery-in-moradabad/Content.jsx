@@ -336,7 +336,16 @@ export default function Content({ faqs = DEFAULT_CATARACT_FAQS }) {
                 id="sidebar-appointment"
                 style={sidebarStyle}
               >
-                {/* Table of Contents Card (Placed Above Form) */}
+                {/* Book an Appointment Form Box (Placed First) */}
+                <div className="seo-sidebar-box seo-sidebar-form-box" style={{ marginBottom: "14px" }}>
+                  <h4>
+                    <Calendar size={18} color="#e8a33d" />
+                    <span>Book an Appointment</span>
+                  </h4>
+                  <AppointmentForm initialService="Cataract Service" initialDoctor="Dr Girjesh Kain" />
+                </div>
+
+                {/* Table of Contents Card (Placed Below Form) */}
                 <div className="seo-sidebar-box seo-sidebar-toc-box">
                   <div
                     className="seo-sidebar-toc-header"
@@ -375,15 +384,6 @@ export default function Content({ faqs = DEFAULT_CATARACT_FAQS }) {
                       </ul>
                     </div>
                   )}
-                </div>
-
-                {/* Book an Appointment Form Box */}
-                <div className="seo-sidebar-box seo-sidebar-form-box">
-                  <h4>
-                    <Calendar size={18} color="#e8a33d" />
-                    <span>Book an Appointment</span>
-                  </h4>
-                  <AppointmentForm initialService="Cataract Service" initialDoctor="Dr Girjesh Kain" />
                 </div>
               </aside>
             </div>

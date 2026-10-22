@@ -3,9 +3,10 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { Plus, ExternalLink, Edit2, Trash2, Eye } from "lucide-react";
+import { Plus, ExternalLink, Edit2, Trash2, Eye, UploadCloud } from "lucide-react";
 import DataTable from "../components/DataTable";
 import ConfirmModal from "../components/ConfirmModal";
+import DocumentImportModal from "./components/DocumentImportModal";
 import { toast } from "../components/Toast";
 import "../admin.css";
 import "../components/datatable.css";
@@ -24,10 +25,11 @@ function formatDate(iso) {
   }
 }
 
-export default function SeoPageListClient({ rows = [] }) {
+export default function SeoPageListClient({ rows = [], doctorsList = [], allPages = [] }) {
   const router = useRouter();
   const [deleteTarget, setDeleteTarget] = useState(null);
   const [deleting, setDeleting] = useState(false);
+  const [importModalOpen, setImportModalOpen] = useState(false);
 
   async function handleDelete() {
     if (!deleteTarget) return;
@@ -55,11 +57,6 @@ export default function SeoPageListClient({ rows = [] }) {
 
   const columns = [
     {
-      key: "srNo",
-      label: "Sr. No",
-      render: (_, idx) => <span style={{ color: "#6b7280", fontSize: 13 }}>{idx + 1}</span>,
-    },
-    {
       key: "h1Title",
       label: "Thumbnail & Title",
       render: (r) => (
@@ -80,11 +77,17 @@ export default function SeoPageListClient({ rows = [] }) {
             </div>
           )}
           <div>
-            <div style={{ fontWeight: 600, color: "#111827", fontSize: 14 }}>{r.h1Title}</div>
+            <Link
+              href={`/admin/seo-pages/${r.id}/edit`}
+              title="Click to edit this page"
+              style={{ fontWeight: 600, color: "#0f766e", fontSize: 14, textDecoration: "none" }}
+            >
+              {r.h1Title}
+            </Link>
             {r.heroBadge && (
-              <span style={{ fontSize: 11, color: "#0d9488", fontWeight: 500 }}>
+              <div style={{ fontSize: 11, color: "#0d9488", fontWeight: 500, marginTop: 2 }}>
                 {r.heroBadge}
-              </span>
+              </div>
             )}
           </div>
         </div>
@@ -130,63 +133,74 @@ export default function SeoPageListClient({ rows = [] }) {
     {
       key: "actions",
       label: "Actions",
+      sortable: false,
       render: (r) => (
-        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+        <div style={{ display: "inline-flex", alignItems: "center", gap: 6, whiteSpace: "nowrap" }}>
           <a
             href={`/services/${r.slug}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="adt-btn-action"
             title="View live page in new tab"
             style={{
               display: "inline-flex",
               alignItems: "center",
               gap: 4,
-              padding: "4px 8px",
+              padding: "5px 10px",
               background: "#eff6ff",
               color: "#2563eb",
-              borderRadius: 4,
+              borderRadius: 6,
               fontSize: 12,
-              fontWeight: 500,
+              fontWeight: 600,
               textDecoration: "none",
+              border: "1px solid #bfdbfe",
             }}
           >
             <Eye size={13} />
             <span>View</span>
             <ExternalLink size={11} />
           </a>
+
           <Link
             href={`/admin/seo-pages/${r.id}/edit`}
-            className="adt-btn-edit"
-            title="Edit page"
+            title="Edit SEO page content and metadata"
             style={{
               display: "inline-flex",
               alignItems: "center",
-              padding: "5px",
+              gap: 4,
+              padding: "5px 10px",
               background: "#fef3c7",
-              color: "#d97706",
-              borderRadius: 4,
+              color: "#b45309",
+              borderRadius: 6,
+              fontSize: 12,
+              fontWeight: 600,
+              textDecoration: "none",
+              border: "1px solid #fde68a",
             }}
           >
-            <Edit2 size={14} />
+            <Edit2 size={13} />
+            <span>Edit</span>
           </Link>
+
           <button
             type="button"
-            className="adt-btn-del"
             title="Delete page"
             onClick={() => setDeleteTarget(r)}
             style={{
               display: "inline-flex",
               alignItems: "center",
-              padding: "5px",
+              gap: 4,
+              padding: "5px 10px",
               background: "#fee2e2",
               color: "#dc2626",
-              border: "none",
-              borderRadius: 4,
+              borderRadius: 6,
+              fontSize: 12,
+              fontWeight: 600,
+              border: "1px solid #fecaca",
               cursor: "pointer",
             }}
           >
-            <Trash2 size={14} />
+            <Trash2 size={13} />
+            <span>Delete</span>
           </button>
         </div>
       ),
@@ -203,9 +217,26 @@ export default function SeoPageListClient({ rows = [] }) {
             Create and manage keyword-targeted landing pages under <code>/services/[slug]</code>.
           </p>
         </div>
-        <Link href="/admin/seo-pages/new" className="adt-btn-save" style={{ textDecoration: "none" }}>
-          <Plus size={15} /> Add SEO Page
-        </Link>
+        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+          <button
+            type="button"
+            onClick={() => setImportModalOpen(true)}
+            className="adt-btn-save"
+            style={{
+              background: "#0284c7",
+              borderColor: "#0284c7",
+              cursor: "pointer",
+              display: "inline-flex",
+              alignItems: "center",
+              gap: 6,
+            }}
+          >
+            <UploadCloud size={16} /> Import SEO Page
+          </button>
+          <Link href="/admin/seo-pages/new" className="adt-btn-save" style={{ textDecoration: "none" }}>
+            <Plus size={15} /> Add SEO Page
+          </Link>
+        </div>
       </div>
 
       {/* Table Card */}
@@ -216,6 +247,16 @@ export default function SeoPageListClient({ rows = [] }) {
           searchKeys={["h1Title", "slug", "metaTitle", "keywords", "heroBadge"]}
         />
       </div>
+
+      {/* Document Import Modal */}
+      {importModalOpen && (
+        <DocumentImportModal
+          isOpen={importModalOpen}
+          onClose={() => setImportModalOpen(false)}
+          doctorsList={doctorsList}
+          allPages={allPages}
+        />
+      )}
 
       {/* Delete Confirmation Modal */}
       {deleteTarget && (

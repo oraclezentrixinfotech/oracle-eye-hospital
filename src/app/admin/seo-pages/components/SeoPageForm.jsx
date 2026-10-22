@@ -22,10 +22,13 @@ import {
   ListOrdered,
   CheckSquare,
   AlertCircle,
+  Eye,
+  UploadCloud,
 } from "lucide-react";
 import ImageUpload from "../../components/ImageUpload";
 import { toast } from "../../components/Toast";
-import SmartContentImporter from "./SmartContentImporter";
+import DocumentImportModal from "./DocumentImportModal";
+import SeoPagePreviewModal from "./SeoPagePreviewModal";
 import "../../admin.css";
 import "../../components/datatable.css";
 
@@ -98,68 +101,187 @@ export default function SeoPageForm({ initialData = null, doctorsList = [], allP
   const [saving, setSaving] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
   const [showImporter, setShowImporter] = useState(false);
+  const [showPreview, setShowPreview] = useState(false);
 
-  function handleApplyImported(data) {
+  function handleApplyImported(data, mode = "merge") {
     if (!data) return;
-    setForm((prev) => ({
-      ...prev,
-      slug: data.slug || prev.slug,
-      status: data.status || prev.status,
-      metaTitle: data.metaTitle || prev.metaTitle,
-      metaDescription: data.metaDescription || prev.metaDescription,
-      keywords: data.keywords || prev.keywords,
-      canonicalUrl: data.canonicalUrl || prev.canonicalUrl,
-      ogImage: data.ogImage || prev.ogImage,
-      heroBadge: data.heroBadge || prev.heroBadge,
-      h1Title: data.h1Title || prev.h1Title,
-      heroSubtitle: data.heroSubtitle || prev.heroSubtitle,
-      heroImage: data.heroImage || prev.heroImage,
-      heroChips:
-        Array.isArray(data.heroChips) && data.heroChips.length > 0
-          ? data.heroChips
-          : prev.heroChips,
-      ctaPrimaryText: data.ctaPrimaryText || prev.ctaPrimaryText,
-      ctaPhone: data.ctaPhone || prev.ctaPhone,
-      sections:
-        Array.isArray(data.sections) && data.sections.length > 0
-          ? data.sections
-          : prev.sections,
-      doctorIds:
-        Array.isArray(data.doctorIds) && data.doctorIds.length > 0
-          ? data.doctorIds
-          : prev.doctorIds,
-      faqs:
-        Array.isArray(data.faqs) && data.faqs.length > 0 ? data.faqs : prev.faqs,
-      relatedIds:
-        Array.isArray(data.relatedIds) && data.relatedIds.length > 0
-          ? data.relatedIds
-          : prev.relatedIds,
-    }));
+
+    function isDefaultSection(secs) {
+      if (!secs || secs.length === 0) return true;
+      if (
+        secs.length === 1 &&
+        secs[0]?.id === "overview" &&
+        secs[0]?.heading === "Overview of Treatment"
+      ) {
+        return true;
+      }
+      return false;
+    }
+
+    function isDefaultFaq(f) {
+      if (!f || f.length === 0) return true;
+      if (
+        f.length === 1 &&
+        f[0]?.question === "How long does the recovery take?"
+      ) {
+        return true;
+      }
+      return false;
+    }
+
+    function isDefaultChips(c) {
+      if (!c || c.length === 0) return true;
+      if (c.length === 3 && c[0]?.label === "Recovery Time") return true;
+      return false;
+    }
+
+    if (mode === "replace") {
+      setForm((prev) => ({
+        ...prev,
+        slug: data.slug || prev.slug,
+        status: data.status || prev.status,
+        metaTitle: data.metaTitle || "",
+        metaDescription: data.metaDescription || "",
+        keywords: data.keywords || "",
+        canonicalUrl:
+          data.canonicalUrl ||
+          (data.slug ? `https://www.oracleeyehospital.com/services/${data.slug}` : ""),
+        ogImage: data.ogImage || prev.ogImage,
+        heroBadge: data.heroBadge || "",
+        h1Title: data.h1Title || "",
+        heroSubtitle: data.heroSubtitle || "",
+        heroImage: data.heroImage || prev.heroImage,
+        heroChips:
+          Array.isArray(data.heroChips) && data.heroChips.length > 0
+            ? data.heroChips
+            : [],
+        ctaPrimaryText: data.ctaPrimaryText || "Book Consultation",
+        ctaPhone: data.ctaPhone || "+919458422606",
+        sections:
+          Array.isArray(data.sections) && data.sections.length > 0
+            ? data.sections
+            : [],
+        doctorIds: Array.isArray(data.doctorIds) ? data.doctorIds : [],
+        faqs: Array.isArray(data.faqs) && data.faqs.length > 0 ? data.faqs : [],
+        relatedIds: Array.isArray(data.relatedIds) ? data.relatedIds : [],
+      }));
+      toast("Replaced form content with imported data!", "success");
+    } else {
+      // Merge mode: fill empty fields, merge arrays without overwriting existing entries
+      setForm((prev) => {
+        const nextSlug = prev.slug.trim() ? prev.slug : (data.slug || "");
+        const nextMetaTitle = prev.metaTitle.trim() ? prev.metaTitle : (data.metaTitle || "");
+        const nextMetaDesc = prev.metaDescription.trim() ? prev.metaDescription : (data.metaDescription || "");
+        const nextKeywords = prev.keywords.trim() ? prev.keywords : (data.keywords || "");
+        const nextHeroBadge = prev.heroBadge.trim() ? prev.heroBadge : (data.heroBadge || "");
+        const nextH1 = prev.h1Title.trim() ? prev.h1Title : (data.h1Title || "");
+        const nextSubtitle = prev.heroSubtitle.trim() ? prev.heroSubtitle : (data.heroSubtitle || "");
+
+        let nextSections = prev.sections;
+        if (isDefaultSection(prev.sections)) {
+          nextSections =
+            Array.isArray(data.sections) && data.sections.length > 0
+              ? data.sections
+              : prev.sections;
+        } else if (Array.isArray(data.sections) && data.sections.length > 0) {
+          nextSections = [...prev.sections, ...data.sections];
+        }
+
+        let nextFaqs = prev.faqs;
+        if (isDefaultFaq(prev.faqs)) {
+          nextFaqs =
+            Array.isArray(data.faqs) && data.faqs.length > 0 ? data.faqs : prev.faqs;
+        } else if (Array.isArray(data.faqs) && data.faqs.length > 0) {
+          nextFaqs = [...prev.faqs, ...data.faqs];
+        }
+
+        let nextChips = prev.heroChips;
+        if (isDefaultChips(prev.heroChips)) {
+          nextChips =
+            Array.isArray(data.heroChips) && data.heroChips.length > 0
+              ? data.heroChips
+              : prev.heroChips;
+        } else if (Array.isArray(data.heroChips) && data.heroChips.length > 0) {
+          nextChips = [...prev.heroChips, ...data.heroChips];
+        }
+
+        const mergedDoctorIds = Array.from(
+          new Set([...(prev.doctorIds || []), ...(data.doctorIds || [])])
+        );
+        const mergedRelatedIds = Array.from(
+          new Set([...(prev.relatedIds || []), ...(data.relatedIds || [])])
+        );
+
+        return {
+          ...prev,
+          slug: nextSlug,
+          metaTitle: nextMetaTitle,
+          metaDescription: nextMetaDesc,
+          keywords: nextKeywords,
+          heroBadge: nextHeroBadge,
+          h1Title: nextH1,
+          heroSubtitle: nextSubtitle,
+          heroChips: nextChips,
+          sections: nextSections,
+          doctorIds: mergedDoctorIds,
+          faqs: nextFaqs,
+          relatedIds: mergedRelatedIds,
+          canonicalUrl:
+            prev.canonicalUrl ||
+            data.canonicalUrl ||
+            (nextSlug ? `https://www.oracleeyehospital.com/services/${nextSlug}` : ""),
+        };
+      });
+      toast("Imported content merged into form!", "success");
+    }
+
     setSlugLocked(true);
-    toast("Content successfully imported! All fields populated.", "success");
     setActiveTab("sections");
   }
 
   // Handle H1 title change (auto-update slug if not locked)
   function handleH1Change(e) {
     const title = e.target.value;
-    setForm((prev) => ({
-      ...prev,
-      h1Title: title,
-      slug: !slugLocked ? slugify(title) : prev.slug,
-      metaTitle: !prev.metaTitle ? `${title} | Oracle Eye Hospital` : prev.metaTitle,
-    }));
+    const generatedSlug = slugify(title);
+    setForm((prev) => {
+      const nextSlug = !slugLocked ? generatedSlug : prev.slug;
+      return {
+        ...prev,
+        h1Title: title,
+        slug: nextSlug,
+        metaTitle: !prev.metaTitle ? `${title} | Oracle Eye Hospital` : prev.metaTitle,
+        canonicalUrl:
+          !prev.canonicalUrl ||
+          prev.canonicalUrl.startsWith("https://www.oracleeyehospital.com/services/")
+            ? `https://www.oracleeyehospital.com/services/${nextSlug}`
+            : prev.canonicalUrl,
+      };
+    });
   }
 
   // Handle manual slug input
   function handleSlugChange(e) {
+    const clean = slugify(e.target.value);
     setSlugLocked(true);
-    setForm((prev) => ({ ...prev, slug: slugify(e.target.value) }));
+    setForm((prev) => ({
+      ...prev,
+      slug: clean,
+      canonicalUrl:
+        !prev.canonicalUrl ||
+        prev.canonicalUrl.startsWith("https://www.oracleeyehospital.com/services/")
+          ? `https://www.oracleeyehospital.com/services/${clean}`
+          : prev.canonicalUrl,
+    }));
   }
 
   // Sync slug with current H1
   function syncSlugWithH1() {
-    setForm((prev) => ({ ...prev, slug: slugify(prev.h1Title) }));
+    const generated = slugify(form.h1Title);
+    setForm((prev) => ({
+      ...prev,
+      slug: generated,
+      canonicalUrl: `https://www.oracleeyehospital.com/services/${generated}`,
+    }));
     setSlugLocked(false);
   }
 
@@ -339,6 +461,13 @@ export default function SeoPageForm({ initialData = null, doctorsList = [], allP
       return;
     }
 
+    if (isSlugDuplicate) {
+      setErrorMsg(`The URL slug "${form.slug}" is already in use by another page. Please choose a unique slug.`);
+      setActiveTab("seo");
+      toast(`Duplicate slug: "/services/${form.slug}" is already taken.`, "error");
+      return;
+    }
+
     setSaving(true);
     const endpoint = isEditing ? `/api/admin/seo-pages/${initialData.id}` : "/api/admin/seo-pages";
     const method = isEditing ? "PUT" : "POST";
@@ -370,6 +499,16 @@ export default function SeoPageForm({ initialData = null, doctorsList = [], allP
 
   // Filter other pages for related selection (exclude self)
   const availableRelatedPages = allPages.filter((p) => p.id !== initialData?.id);
+
+  // Check if current slug is already taken by another page
+  const isSlugDuplicate = Boolean(
+    form.slug.trim() &&
+    allPages.some(
+      (p) =>
+        p.slug?.toLowerCase().trim() === form.slug.toLowerCase().trim() &&
+        p.id !== initialData?.id
+    )
+  );
 
   return (
     <div style={{ maxWidth: 1100, margin: "0 auto", paddingBottom: 60 }}>
@@ -422,8 +561,29 @@ export default function SeoPageForm({ initialData = null, doctorsList = [], allP
               boxShadow: "0 2px 8px rgba(19, 124, 139, 0.25)",
             }}
           >
-            <Sparkles size={16} />
-            <span>⚡ Import Content / Auto-Fill</span>
+            <UploadCloud size={16} />
+            <span>⚡ Import Word / TXT File</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setShowPreview(true)}
+            style={{
+              background: "#0284c7",
+              color: "#ffffff",
+              fontWeight: 600,
+              fontSize: 13,
+              padding: "9px 14px",
+              borderRadius: 6,
+              border: "none",
+              cursor: "pointer",
+              display: "inline-flex",
+              alignItems: "center",
+              gap: 6,
+            }}
+          >
+            <Eye size={16} />
+            <span>Preview Page</span>
           </button>
 
           <button
@@ -608,49 +768,90 @@ export default function SeoPageForm({ initialData = null, doctorsList = [], allP
                     placeholder="cataract-surgery-in-moradabad"
                     value={form.slug}
                     onChange={handleSlugChange}
-                    style={{ flex: 1 }}
+                    style={{
+                      flex: 1,
+                      borderColor: isSlugDuplicate ? "#dc2626" : undefined,
+                    }}
                   />
                 </div>
+                {isSlugDuplicate && (
+                  <div
+                    style={{
+                      fontSize: 12,
+                      color: "#dc2626",
+                      marginTop: 5,
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 5,
+                      fontWeight: 600,
+                    }}
+                  >
+                    <AlertCircle size={14} />
+                    <span>The slug &quot;{form.slug}&quot; is already in use by another page. Please choose a unique slug.</span>
+                  </div>
+                )}
               </div>
 
               {/* Meta Title */}
               <div className="adt-field">
-                <div style={{ display: "flex", justifyContent: "space-between" }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                   <label>Meta Title</label>
                   <span
                     style={{
                       fontSize: 12,
-                      color: form.metaTitle.length > 60 ? "#d97706" : "#6b7280",
+                      fontWeight: 600,
+                      color:
+                        (form.metaTitle || "").length > 60
+                          ? "#d97706"
+                          : (form.metaTitle || "").length >= 50
+                          ? "#0d9488"
+                          : "#6b7280",
                     }}
                   >
-                    {form.metaTitle.length}/60 characters (50–60 recommended)
+                    {(form.metaTitle || "").length}/60 characters
+                    {(form.metaTitle || "").length === 0
+                      ? " (empty)"
+                      : (form.metaTitle || "").length > 60
+                      ? " (too long)"
+                      : " (50–60 recommended)"}
                   </span>
                 </div>
                 <input
                   type="text"
-                  placeholder="Cataract Surgery in Moradabad | Oracle Eye Hospital"
-                  value={form.metaTitle}
+                  placeholder="e.g. Cataract Surgery in Moradabad | Oracle Eye Hospital"
+                  value={form.metaTitle || ""}
                   onChange={(e) => setForm((prev) => ({ ...prev, metaTitle: e.target.value }))}
                 />
               </div>
 
               {/* Meta Description */}
               <div className="adt-field">
-                <div style={{ display: "flex", justifyContent: "space-between" }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                   <label>Meta Description</label>
                   <span
                     style={{
                       fontSize: 12,
-                      color: form.metaDescription.length > 160 ? "#d97706" : "#6b7280",
+                      fontWeight: 600,
+                      color:
+                        (form.metaDescription || "").length > 160
+                          ? "#d97706"
+                          : (form.metaDescription || "").length >= 140
+                          ? "#0d9488"
+                          : "#6b7280",
                     }}
                   >
-                    {form.metaDescription.length}/160 characters (140–160 recommended)
+                    {(form.metaDescription || "").length}/160 characters
+                    {(form.metaDescription || "").length === 0
+                      ? " (empty)"
+                      : (form.metaDescription || "").length > 160
+                      ? " (too long)"
+                      : " (140–160 recommended)"}
                   </span>
                 </div>
                 <textarea
                   rows={3}
-                  placeholder="Looking for advanced cataract surgery in Moradabad? Oracle Eye Hospital offers stitchless phacoemulsification, robotic precision & premium IOLs. Book today!"
-                  value={form.metaDescription}
+                  placeholder="e.g. Looking for advanced cataract surgery in Moradabad? Oracle Eye Hospital offers stitchless phacoemulsification, robotic precision & premium IOLs. Book today!"
+                  value={form.metaDescription || ""}
                   onChange={(e) =>
                     setForm((prev) => ({ ...prev, metaDescription: e.target.value }))
                   }
@@ -1167,7 +1368,11 @@ export default function SeoPageForm({ initialData = null, doctorsList = [], allP
                       {doc.image ? (
                         <img
                           src={doc.image}
-                          alt=""
+                          alt={doc.name || "Doctor"}
+                          onError={(e) => {
+                            e.currentTarget.onerror = null;
+                            e.currentTarget.src = "/Assets/img/team/1.png";
+                          }}
                           style={{
                             width: 44,
                             height: 44,
@@ -1456,13 +1661,27 @@ export default function SeoPageForm({ initialData = null, doctorsList = [], allP
         </form>
       </div>
 
-      <SmartContentImporter
-        isOpen={showImporter}
-        onClose={() => setShowImporter(false)}
-        onApply={handleApplyImported}
-        doctorsList={doctorsList}
-        allPages={allPages}
-      />
+      {/* Reusable Template Live Preview Modal */}
+      {showPreview && (
+        <SeoPagePreviewModal
+          isOpen={showPreview}
+          onClose={() => setShowPreview(false)}
+          pageData={form}
+          doctorsList={doctorsList}
+          allPages={allPages}
+        />
+      )}
+
+      {/* Document Importer Modal */}
+      {showImporter && (
+        <DocumentImportModal
+          isOpen={showImporter}
+          onClose={() => setShowImporter(false)}
+          onApplyToForm={(data) => handleApplyImported(data, "replace")}
+          doctorsList={doctorsList}
+          allPages={allPages}
+        />
+      )}
     </div>
   );
 }

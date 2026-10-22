@@ -141,11 +141,35 @@ export default function ServiceContentClient({
 
           <div className="row align-items-center">
             {/* Left Column: Keyword Heading, Clinical Value, CTAs, Highlights */}
-            <div className="col-lg-7 mb-4 mb-lg-0">
+            <div className="col-lg-7 mb-0">
               {/* Accreditation Badge */}
               <div className="seo-trust-badge">
                 <ShieldCheck size={16} color="#e8a33d" />
                 <span>{page.heroBadge || "NABH-Aligned Centre • 25,000+ Surgeries"}</span>
+              </div>
+
+              {/* Mobile Hero Graphic - Shown before Title on Phone view */}
+              <div className="d-block d-lg-none my-3">
+                <div className="seo-hero-media">
+                  <Image
+                    src={
+                      page.heroImage ||
+                      "/Assets/img/services/Cataract-Service.png"
+                    }
+                    alt={`${page.h1Title} at Oracle Eye Hospital`}
+                    width={640}
+                    height={360}
+                    priority
+                    className="img-fluid"
+                    style={{ width: "100%", height: "200px", objectFit: "cover", objectPosition: "center" }}
+                  />
+                  <div className="seo-hero-media-badge">
+                    <strong className="text-white">
+                      {page.heroBadge ? page.heroBadge.split("•")[0].trim() : "Centurion® Vision Phaco System"}
+                    </strong>
+                    <span className="badge bg-warning text-dark">Alcon US-FDA Approved</span>
+                  </div>
+                </div>
               </div>
 
               {/* Exactly One H1 with Target Keyword */}
@@ -159,12 +183,12 @@ export default function ServiceContentClient({
               {/* Primary Action Buttons */}
               <div className="seo-hero-actions">
                 <a href="#sidebar-appointment" className="seo-btn-appointment">
-                  <Calendar size={18} />
+                  <Calendar size={16} />
                   <span>{page.ctaPrimaryText || "Book Appointment"}</span>
                 </a>
 
                 <a href={`tel:${cleanPhone}`} className="seo-btn-call">
-                  <Phone size={18} color="#e8a33d" />
+                  <Phone size={16} color="#e8a33d" />
                   <span>Call Now: {helpline}</span>
                 </a>
               </div>
@@ -178,7 +202,7 @@ export default function ServiceContentClient({
                     return (
                       <div key={idx} className="seo-highlight-item">
                         <div className="seo-highlight-icon">
-                          <IconComponent size={18} />
+                          <IconComponent size={16} />
                         </div>
                         <div>
                           <span className="label">{chip.label}</span>
@@ -191,8 +215,8 @@ export default function ServiceContentClient({
               )}
             </div>
 
-            {/* Right Column: Hero Medical Graphic */}
-            <div className="col-lg-5">
+            {/* Right Column: Hero Medical Graphic (Desktop view only) */}
+            <div className="col-lg-5 d-none d-lg-block">
               <div className="seo-hero-media">
                 <Image
                   src={
@@ -204,7 +228,7 @@ export default function ServiceContentClient({
                   height={360}
                   priority
                   className="img-fluid"
-                  style={{ width: "100%", height: "340px", objectFit: "cover" }}
+                  style={{ width: "100%", height: "240px", objectFit: "cover", objectPosition: "center" }}
                 />
                 <div className="seo-hero-media-badge">
                   <strong className="text-white">
@@ -241,12 +265,43 @@ export default function ServiceContentClient({
                     >
                       <h2 className="seo-article-h2">{sec.heading}</h2>
 
-                      {/* Paragraph text */}
+                      {/* Paragraph text / Rich HTML */}
                       {paragraphs.map((pText, pIdx) => (
-                        <p key={pIdx} className="seo-article-p">
-                          {pText}
-                        </p>
+                        <p
+                          key={pIdx}
+                          className="seo-article-p"
+                          dangerouslySetInnerHTML={{ __html: pText }}
+                        />
                       ))}
+
+                      {/* Structured Table (if present) */}
+                      {sec.table && Array.isArray(sec.table.headers) && sec.table.headers.length > 0 && (
+                        <div className="table-responsive my-4" style={{ overflowX: "auto" }}>
+                          <table className="table table-bordered table-hover" style={{ width: "100%", background: "#fff", borderCollapse: "collapse", borderRadius: 8, overflow: "hidden", border: "1px solid #e2e8f0" }}>
+                            <thead style={{ background: "#0d9488", color: "#ffffff" }}>
+                              <tr>
+                                {sec.table.headers.map((th, thIdx) => (
+                                  <th key={thIdx} style={{ padding: "12px 16px", fontWeight: 600, fontSize: 14 }}>
+                                    {th}
+                                  </th>
+                                ))}
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {Array.isArray(sec.table.rows) &&
+                                sec.table.rows.map((row, rIdx) => (
+                                  <tr key={rIdx} style={{ borderBottom: "1px solid #f1f5f9" }}>
+                                    {row.map((cell, cIdx) => (
+                                      <td key={cIdx} style={{ padding: "10px 16px", fontSize: 14, color: "#334155" }}>
+                                        {cell}
+                                      </td>
+                                    ))}
+                                  </tr>
+                                ))}
+                            </tbody>
+                          </table>
+                        </div>
+                      )}
 
                       {/* Layout Type: Highlight Callout Box */}
                       {sec.type === "highlight" &&
@@ -256,9 +311,11 @@ export default function ServiceContentClient({
                             <h4>Why Choose Oracle Eye Hospital?</h4>
                             <ul style={{ margin: "10px 0 0 0", paddingLeft: 20 }}>
                               {sec.items.map((hItem, hIdx) => (
-                                <li key={hIdx} style={{ marginBottom: 6 }}>
-                                  {hItem}
-                                </li>
+                                <li
+                                  key={hIdx}
+                                  style={{ marginBottom: 6 }}
+                                  dangerouslySetInnerHTML={{ __html: hItem }}
+                                />
                               ))}
                             </ul>
                           </div>
@@ -271,7 +328,7 @@ export default function ServiceContentClient({
                           <ul className="seo-article-list">
                             {sec.items.map((item, itemIdx) => (
                               <li key={itemIdx}>
-                                <span>{item}</span>
+                                <span dangerouslySetInnerHTML={{ __html: item }} />
                               </li>
                             ))}
                           </ul>
@@ -312,9 +369,10 @@ export default function ServiceContentClient({
                                 >
                                   {stepIdx + 1}
                                 </div>
-                                <div style={{ fontSize: 14, lineHeight: 1.6, color: "#334155" }}>
-                                  {step}
-                                </div>
+                                <div
+                                  style={{ fontSize: 14, lineHeight: 1.6, color: "#334155" }}
+                                  dangerouslySetInnerHTML={{ __html: step }}
+                                />
                               </div>
                             ))}
                           </div>
@@ -332,7 +390,19 @@ export default function ServiceContentClient({
                 id="sidebar-appointment"
                 style={sidebarStyle}
               >
-                {/* Table of Contents Card (Placed Above Form) */}
+                {/* Book an Appointment Form Box (Placed First) */}
+                <div className="seo-sidebar-box seo-sidebar-form-box" style={{ marginBottom: "14px" }}>
+                  <h4>
+                    <Calendar size={18} color="#e8a33d" />
+                    <span>Book an Appointment</span>
+                  </h4>
+                  <AppointmentForm
+                    initialService={page.h1Title}
+                    initialDoctor={doctors[0]?.name || "Dr Girjesh Kain"}
+                  />
+                </div>
+
+                {/* Table of Contents Card (Placed Below Form) */}
                 <div className="seo-sidebar-box seo-sidebar-toc-box">
                   <div
                     className="seo-sidebar-toc-header"
@@ -378,18 +448,6 @@ export default function ServiceContentClient({
                       </ul>
                     </div>
                   )}
-                </div>
-
-                {/* Book an Appointment Form Box */}
-                <div className="seo-sidebar-box seo-sidebar-form-box">
-                  <h4>
-                    <Calendar size={18} color="#e8a33d" />
-                    <span>Book an Appointment</span>
-                  </h4>
-                  <AppointmentForm
-                    initialService={page.h1Title}
-                    initialDoctor={doctors[0]?.name || "Dr Girjesh Kain"}
-                  />
                 </div>
               </aside>
             </div>
