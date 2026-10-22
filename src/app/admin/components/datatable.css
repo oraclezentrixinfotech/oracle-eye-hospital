@@ -1339,6 +1339,82 @@
   white-space: nowrap;
 }
 
+.ad-root .adt-root .adt-data-table .adt-col-heroimage,
+.adt-col-heroimage {
+  width: 68px;
+  min-width: 68px;
+  text-align: center;
+}
+
+.ad-root .adt-root .adt-data-table .adt-col-h1title,
+.adt-col-h1title {
+  min-width: 200px;
+}
+
+.ad-root .adt-root .adt-data-table .adt-col-slug,
+.adt-col-slug {
+  min-width: 140px;
+}
+
+.ad-root .adt-root .adt-data-table .adt-col-actions,
+.adt-col-actions {
+  width: 120px;
+  min-width: 120px;
+  text-align: center;
+}
+
+/* SEO Pages Action Icon Buttons */
+.adt-action-btn {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 32px !important;
+  height: 32px !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border-radius: 6px !important;
+  border: 1px solid transparent !important;
+  cursor: pointer !important;
+  line-height: 1 !important;
+  box-sizing: border-box !important;
+  vertical-align: middle !important;
+  text-decoration: none !important;
+  transition: all 0.15s ease !important;
+}
+
+.adt-action-btn svg {
+  display: block !important;
+  flex-shrink: 0 !important;
+  pointer-events: none !important;
+}
+
+.adt-action-view {
+  background: #eff6ff !important;
+  color: #2563eb !important;
+  border-color: #bfdbfe !important;
+}
+.adt-action-view:hover {
+  background: #dbeafe !important;
+}
+
+.adt-action-edit {
+  background: #fef3c7 !important;
+  color: #b45309 !important;
+  border-color: #fde68a !important;
+}
+.adt-action-edit:hover {
+  background: #fde68a !important;
+}
+
+.adt-action-delete {
+  background: #fee2e2 !important;
+  color: #dc2626 !important;
+  border-color: #fecaca !important;
+}
+.adt-action-delete:hover {
+  background: #fecaca !important;
+}
+
 .ad-root .adt-root .adt-data-table .adt-col-status {
   width: 112px;
   white-space: nowrap;
