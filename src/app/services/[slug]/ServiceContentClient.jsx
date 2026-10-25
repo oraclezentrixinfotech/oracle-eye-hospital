@@ -267,7 +267,7 @@ export default function ServiceContentClient({
 
                       {/* Paragraph text / Rich HTML */}
                       {paragraphs.map((pText, pIdx) => (
-                        <p
+                        <div
                           key={pIdx}
                           className="seo-article-p"
                           dangerouslySetInnerHTML={{ __html: pText }}

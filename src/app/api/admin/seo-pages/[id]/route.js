@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { isAdmin, unauthorized } from "@/lib/auth";
 import { clean, cleanMultiline, slugify } from "@/lib/validate";
 import { revalidatePath } from "next/cache";
+import { sanitizeSeoFaqs, sanitizeSeoSections } from "@/lib/sanitizeSeoPage";
 
 export const dynamic = "force-dynamic";
 
@@ -76,11 +77,15 @@ export async function PUT(req, { params }) {
   const heroChips = Array.isArray(body.heroChips) ? body.heroChips : existing.heroChips;
   const ctaPrimaryText = clean(body.ctaPrimaryText || body.cta_primary_text, 100) || "Book Consultation";
   const ctaPhone = clean(body.ctaPhone || body.cta_phone, 50) || "+919458422606";
-  const sections = Array.isArray(body.sections) ? body.sections : existing.sections;
+  const sections = Array.isArray(body.sections)
+    ? sanitizeSeoSections(body.sections)
+    : existing.sections;
   const doctorIds = Array.isArray(body.doctorIds)
     ? body.doctorIds.map(Number).filter((n) => !isNaN(n))
     : existing.doctorIds;
-  const faqs = Array.isArray(body.faqs) ? body.faqs : existing.faqs;
+  const faqs = Array.isArray(body.faqs)
+    ? sanitizeSeoFaqs(body.faqs)
+    : existing.faqs;
   const relatedIds = Array.isArray(body.relatedIds)
     ? body.relatedIds.map(Number).filter((n) => !isNaN(n))
     : existing.relatedIds;

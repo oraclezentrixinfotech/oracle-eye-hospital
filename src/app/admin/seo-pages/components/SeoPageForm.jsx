@@ -15,9 +15,6 @@ import {
   Layers,
   Sparkles,
   FileText,
-  UserCheck,
-  HelpCircle,
-  Link2,
   CheckCircle2,
   ListOrdered,
   CheckSquare,
@@ -26,6 +23,7 @@ import {
   UploadCloud,
 } from "lucide-react";
 import ImageUpload from "../../components/ImageUpload";
+import RichHtmlEditor from "./RichHtmlEditor";
 import { toast } from "../../components/Toast";
 import DocumentImportModal from "./DocumentImportModal";
 import SeoPagePreviewModal from "./SeoPagePreviewModal";
@@ -45,7 +43,7 @@ export default function SeoPageForm({ initialData = null, doctorsList = [], allP
   const router = useRouter();
   const isEditing = Boolean(initialData && initialData.id);
 
-  // Active Tab: "seo" | "hero" | "sections" | "doctors" | "faqs" | "related"
+  // Active Tab: "seo" | "hero" | "content"
   const [activeTab, setActiveTab] = useState("seo");
 
   // Form State
@@ -236,7 +234,7 @@ export default function SeoPageForm({ initialData = null, doctorsList = [], allP
     }
 
     setSlugLocked(true);
-    setActiveTab("sections");
+    setActiveTab("content");
   }
 
   // Handle H1 title change (auto-update slug if not locked)
@@ -642,10 +640,11 @@ export default function SeoPageForm({ initialData = null, doctorsList = [], allP
         {[
           { id: "seo", label: "1. SEO & Metadata", icon: Sparkles },
           { id: "hero", label: "2. Hero Banner", icon: Layers },
-          { id: "sections", label: `3. Content Sections (${form.sections.length})`, icon: FileText },
-          { id: "doctors", label: `4. Specialists (${form.doctorIds.length})`, icon: UserCheck },
-          { id: "faqs", label: `5. FAQs (${form.faqs.length})`, icon: HelpCircle },
-          { id: "related", label: `6. Related Services (${form.relatedIds.length})`, icon: Link2 },
+          {
+            id: "content",
+            label: `3. Page Content (${form.sections.length + form.doctorIds.length + form.faqs.length + form.relatedIds.length})`,
+            icon: FileText,
+          },
         ].map((tab) => {
           const Icon = tab.icon;
           const isActive = activeTab === tab.id;
@@ -1043,7 +1042,7 @@ export default function SeoPageForm({ initialData = null, doctorsList = [], allP
           {/* ======================================================== */}
           {/* TAB 3: CONTENT SECTIONS */}
           {/* ======================================================== */}
-          {activeTab === "sections" && (
+          {activeTab === "content" && (
             <div>
               <div
                 style={{
@@ -1224,11 +1223,11 @@ export default function SeoPageForm({ initialData = null, doctorsList = [], allP
                             (Blank lines represent paragraph breaks)
                           </span>
                         </label>
-                        <textarea
-                          rows={4}
+                        <RichHtmlEditor
+                          value={sec.content || ""}
+                          onChange={(html) => updateSection(idx, "content", html)}
                           placeholder="Section paragraph content..."
-                          value={sec.content}
-                          onChange={(e) => updateSection(idx, "content", e.target.value)}
+                          minHeight={130}
                         />
                       </div>
 
@@ -1288,15 +1287,14 @@ export default function SeoPageForm({ initialData = null, doctorsList = [], allP
                                 <span style={{ fontSize: 12, color: "#64748b", width: 20 }}>
                                   {sec.type === "numbered" ? `${itemIdx + 1}.` : "•"}
                                 </span>
-                                <input
-                                  type="text"
-                                  placeholder={`Item #${itemIdx + 1}`}
-                                  value={item}
-                                  onChange={(e) =>
-                                    updateSectionItem(idx, itemIdx, e.target.value)
-                                  }
-                                  style={{ flex: 1 }}
-                                />
+                                <div style={{ flex: 1 }}>
+                                  <RichHtmlEditor
+                                    value={item || ""}
+                                    onChange={(html) => updateSectionItem(idx, itemIdx, html)}
+                                    placeholder={`Item #${itemIdx + 1}`}
+                                    minHeight={70}
+                                  />
+                                </div>
                                 <button
                                   type="button"
                                   onClick={() => removeSectionItem(idx, itemIdx)}
@@ -1331,7 +1329,7 @@ export default function SeoPageForm({ initialData = null, doctorsList = [], allP
           {/* ======================================================== */}
           {/* TAB 4: DOCTORS */}
           {/* ======================================================== */}
-          {activeTab === "doctors" && (
+          {activeTab === "content" && (
             <div>
               <h3 style={{ margin: "0 0 6px 0", fontSize: 16, color: "#111827", fontWeight: 700 }}>
                 Specialist Eye Surgeons
@@ -1422,7 +1420,7 @@ export default function SeoPageForm({ initialData = null, doctorsList = [], allP
           {/* ======================================================== */}
           {/* TAB 5: FAQS */}
           {/* ======================================================== */}
-          {activeTab === "faqs" && (
+          {activeTab === "content" && (
             <div>
               <div
                 style={{
@@ -1542,11 +1540,11 @@ export default function SeoPageForm({ initialData = null, doctorsList = [], allP
                       </div>
                       <div className="adt-field">
                         <label>Answer</label>
-                        <textarea
-                          rows={3}
+                        <RichHtmlEditor
+                          value={faq.answer || ""}
+                          onChange={(html) => updateFaq(idx, "answer", html)}
                           placeholder="Provide a clear, clinical, patient-friendly answer..."
-                          value={faq.answer}
-                          onChange={(e) => updateFaq(idx, "answer", e.target.value)}
+                          minHeight={100}
                         />
                       </div>
                     </div>
@@ -1559,7 +1557,7 @@ export default function SeoPageForm({ initialData = null, doctorsList = [], allP
           {/* ======================================================== */}
           {/* TAB 6: RELATED SERVICES */}
           {/* ======================================================== */}
-          {activeTab === "related" && (
+          {activeTab === "content" && (
             <div>
               <h3 style={{ margin: "0 0 6px 0", fontSize: 16, color: "#111827", fontWeight: 700 }}>
                 Related Services &amp; Internal Linking

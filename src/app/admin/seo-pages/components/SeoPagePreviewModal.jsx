@@ -46,6 +46,7 @@ export default function SeoPagePreviewModal({
         zIndex: 99999,
         display: "flex",
         flexDirection: "column",
+        height: "100dvh",
         overflow: "hidden",
       }}
     >
@@ -174,7 +175,11 @@ export default function SeoPagePreviewModal({
       <div
         style={{
           flex: 1,
+          minHeight: 0,
+          height: 0,
           overflowY: "auto",
+          overscrollBehavior: "contain",
+          WebkitOverflowScrolling: "touch",
           background: "#090d16",
           display: "flex",
           justifyContent: "center",

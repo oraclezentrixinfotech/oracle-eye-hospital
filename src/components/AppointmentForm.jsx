@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { DOCTORS, SERVICES, SITE } from "@/lib/content";
 
@@ -23,7 +23,11 @@ export default function AppointmentForm({ initialDoctor = "", initialService = "
   }));
   const [state, setState] = useState("idle");
   const [error, setError] = useState("");
-  const today = new Date().toISOString().slice(0, 10);
+  const [today, setToday] = useState("");
+
+  useEffect(() => {
+    setToday(new Date().toISOString().slice(0, 10));
+  }, []);
 
   const set = (key) => (event) => setForm((current) => ({ ...current, [key]: event.target.value }));
 

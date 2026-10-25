@@ -758,6 +758,14 @@
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
 }
 
+.seo-article-container img {
+  display: block;
+  max-width: 100%;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+}
+
 .seo-article-block {
   margin-bottom: 42px;
   padding-bottom: 34px;
