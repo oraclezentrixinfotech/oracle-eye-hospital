@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import { Settings, Megaphone, Image as ImageIcon, Video, Mail, Calendar, Layout, Tv, Play } from "lucide-react";
+import { Settings, Megaphone, Image as ImageIcon, Video, Mail, Calendar, Layout, Tv, Play, FileText } from "lucide-react";
 import "./admin.css";
 
 export default function AdminPanel({ counts }) {
@@ -89,6 +89,25 @@ export default function AdminPanel({ counts }) {
           </div>
           <div className="ad-stat-box-bottom">
             <Calendar size={14} color="#8bc34a" /> Doctor Appointments
+          </div>
+        </Link>
+
+        {/* Total SEO Pages */}
+        <Link href="/admin/seo-pages" className="ad-stat-box" style={{ textDecoration: 'none', cursor: 'pointer' }}>
+          <div className="ad-stat-box-float bg-teal">
+            <FileText size={28} color="#fff" />
+          </div>
+          <div className="ad-stat-box-top">
+            <div className="ad-stat-box-title text-teal">Total SEO Pages</div>
+            <div className="ad-stat-box-value">{counts.seoPages ?? 0}</div>
+          </div>
+          <div className="ad-stat-box-bottom" style={{ justifyContent: 'space-between' }}>
+            <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+              <FileText size={14} color="#0d9488" /> Manage SEO Pages
+            </span>
+            <span style={{ fontSize: 11, fontWeight: 600, color: '#0d9488', background: '#ccfbf1', padding: '2px 6px', borderRadius: 4 }}>
+              {counts.seoPagesPublished ?? 0} Published
+            </span>
           </div>
         </Link>
 

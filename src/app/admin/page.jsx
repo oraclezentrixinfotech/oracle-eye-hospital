@@ -22,13 +22,17 @@ export default async function AdminPage() {
       enquiriesCount, 
       newsCount, 
       photosCount, 
-      videosCount
+      videosCount,
+      seoPagesTotal,
+      seoPagesPublished,
     ] = await Promise.all([
       prisma.appointment.count().catch(() => 0),
       prisma.enquiry.count().catch(() => 0),
       prisma.post.count({ where: { type: "NEWS" } }).catch(() => 0),
       prisma.photo.count().catch(() => 0),
       prisma.video.count().catch(() => 0),
+      prisma.seoPage.count().catch(() => 0),
+      prisma.seoPage.count({ where: { status: "published" } }).catch(() => 0),
     ]);
 
     counts = {
@@ -37,6 +41,8 @@ export default async function AdminPage() {
       news: newsCount || 0,
       photos: photosCount || 0,
       videos: videosCount || 0,
+      seoPages: seoPagesTotal || 0,
+      seoPagesPublished: seoPagesPublished || 0,
     };
   } catch (err) {
     console.error("Failed to load admin counts from database:", err?.message || err);

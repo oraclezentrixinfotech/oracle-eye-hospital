@@ -819,10 +819,98 @@
   color: #0a2a33;
 }
 
+/* Content Images in SEO Articles */
+.content-img,
+.seo-article-p img {
+  max-width: 420px;
+  width: 100%;
+  height: auto;
+  border-radius: 4px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  margin-top: 6px;
+  margin-bottom: 12px;
+  display: block;
+}
+
+/* 1. LEFT / RIGHT image = passport size (140px fixed on desktop) */
+.content-img[data-align="left"],
+.seo-article-p img[data-align="left"] {
+  float: left !important;
+  width: 140px !important;
+  max-width: 140px !important;
+  height: auto !important;
+  object-fit: cover !important;
+  margin: 4px 16px 8px 0 !important;
+  border-radius: 4px !important;
+  border: 1px solid #e2e8f0 !important;
+}
+
+.content-img[data-align="right"],
+.seo-article-p img[data-align="right"] {
+  float: right !important;
+  width: 140px !important;
+  max-width: 140px !important;
+  height: auto !important;
+  object-fit: cover !important;
+  margin: 4px 0 8px 16px !important;
+  border-radius: 4px !important;
+  border: 1px solid #e2e8f0 !important;
+}
+
+/* 4. CENTER image = pehle jaisa (max-width: 420px; width: 100%; display: block; margin: 0 auto;) */
+.content-img[data-align="center"],
+.seo-article-p img[data-align="center"] {
+  float: none !important;
+  max-width: 420px !important;
+  width: 100% !important;
+  height: auto !important;
+  margin: 12px auto 16px auto !important;
+  display: block !important;
+  clear: both !important;
+  border-radius: 6px !important;
+}
+
+/* 3. CHECKLIST / LIST ITEMS image ke neeche hi dikhein (clear: both) */
+.seo-article-list,
+.seo-article-callout,
+.seo-article-p ul,
+.seo-article-p ol,
+.seo-article-block .table-responsive,
+.seo-article-block table {
+  clear: both;
+}
+
+/* Clear both after paragraph wrapper */
+.seo-article-block::after,
+.seo-article-p::after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+/* 5. MOBILE (max-width: 640px): unfloat left/right and center image */
+@media (max-width: 640px) {
+  .content-img,
+  .seo-article-p img,
+  .content-img[data-align="left"],
+  .seo-article-p img[data-align="left"],
+  .content-img[data-align="right"],
+  .seo-article-p img[data-align="right"] {
+    float: none !important;
+    margin: 10px auto 14px auto !important;
+    display: block !important;
+    max-width: 200px !important;
+    width: 100% !important;
+    clear: both !important;
+  }
+}
+
 .seo-article-list {
   list-style: none;
   padding-left: 0;
   margin: 18px 0 24px;
+  clear: both;
 }
 
 .seo-article-list li {
@@ -850,6 +938,7 @@
   border-radius: 0 12px 12px 0;
   padding: 22px 26px;
   margin: 24px 0;
+  clear: both;
 }
 
 .seo-article-callout h4 {

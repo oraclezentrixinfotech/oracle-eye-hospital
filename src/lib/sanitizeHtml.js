@@ -18,7 +18,7 @@ const ALLOWED_ATTRIBUTES = {
   td: new Set(["colspan", "rowspan", "align"]),
   span: new Set(["class"]),
   code: new Set(["class"]),
-  img: new Set(["src", "alt", "width", "height", "loading"]),
+  img: new Set(["src", "alt", "width", "height", "loading", "class", "data-align"]),
 };
 
 export function sanitizeHtml(rawHtml) {

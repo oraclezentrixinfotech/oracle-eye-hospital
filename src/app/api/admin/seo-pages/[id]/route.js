@@ -129,6 +129,44 @@ export async function PUT(req, { params }) {
   }
 }
 
+export async function PATCH(req, { params }) {
+  if (!isAdmin()) return unauthorized();
+
+  const id = parseInt(params?.id, 10);
+  if (isNaN(id)) {
+    return NextResponse.json({ error: "Invalid page ID." }, { status: 400 });
+  }
+
+  const existing = await prisma.seoPage.findUnique({ where: { id } });
+  if (!existing) {
+    return NextResponse.json({ error: "SEO page not found." }, { status: 404 });
+  }
+
+  const body = await req.json().catch(() => ({}));
+  if (typeof body.status !== "string") {
+    return NextResponse.json({ error: "Status is required." }, { status: 400 });
+  }
+
+  const status = body.status === "published" ? "published" : "draft";
+
+  try {
+    const updated = await prisma.seoPage.update({
+      where: { id },
+      data: { status },
+      select: { id: true, status: true, slug: true },
+    });
+
+    revalidatePath("/services/" + existing.slug);
+    revalidatePath("/admin/seo-pages");
+    revalidatePath("/sitemap.xml");
+
+    return NextResponse.json({ ok: true, id: updated.id, status: updated.status });
+  } catch (err) {
+    console.error("PATCH /api/admin/seo-pages/[id] error:", err?.message || err);
+    return NextResponse.json({ error: "Failed to update page status." }, { status: 500 });
+  }
+}
+
 export async function DELETE(req, { params }) {
   if (!isAdmin()) return unauthorized();
 

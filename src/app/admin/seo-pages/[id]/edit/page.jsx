@@ -20,7 +20,10 @@ export default async function EditSeoPage({ params }) {
     page = await prisma.seoPage.findUnique({
       where: { id },
     });
-    if (!page) notFound();
+    if (!page) {
+      console.log(`[EditSeoPage] Page not found for id ${id}`);
+      notFound();
+    }
 
     doctors = await prisma.doctor.findMany({
       where: { active: true },
@@ -34,7 +37,7 @@ export default async function EditSeoPage({ params }) {
     });
   } catch (err) {
     console.error("EditSeoPage DB load error:", err?.message || err);
-    notFound();
+    throw err;
   }
 
   // Serialize page dates

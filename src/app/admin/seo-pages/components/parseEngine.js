@@ -445,8 +445,15 @@ export function parseBasicText(rawText, doctorsList = [], allPages = [], extraMe
     // Callouts are NOT headings
     if (t.startsWith(">")) return false;
 
-    // FAQs start
-    if (/^(?:##\s*)?(?:Frequently Asked Questions|FAQs?)(?:\s*:)?$/i.test(t)) return false;
+    // FAQs start - never treat as a regular section heading
+    if (
+      /^(?:#{1,6}\s*|<h[1-6][^>]*>)?(?:\*\*)?(?:Frequently Asked Questions|Patient FAQs|General FAQs|FAQs?)(?:\*\*)?(?:<\/h[1-6]>)?(?:\s*:)?$/i.test(
+        t.replace(/<[^>]*>/g, "").trim()
+      ) ||
+      /^(?:Frequently Asked Questions|FAQs?)(?:\s*:)?$/i.test(t)
+    ) {
+      return false;
+    }
 
     // Trailing metadata keys are NOT headings
     if (/^(?:DOCTORS|RELATED):\s*/i.test(t)) return false;
@@ -490,8 +497,14 @@ export function parseBasicText(rawText, doctorsList = [], allPages = [], extraMe
       continue;
     }
 
-    // 1. FAQ Block Trigger
-    if (/^(?:##\s*)?(?:Frequently Asked Questions|FAQs?)(?:\s*:)?$/i.test(trimmed)) {
+    // 1. FAQ Block Trigger: Matches "## Frequently Asked Questions", "### FAQs", "<h3>FAQs</h3>", "FAQs:", "Frequently Asked Questions", etc.
+    const isFaqHeader =
+      /^(?:#{1,6}\s*|<h[1-6][^>]*>)?(?:\*\*)?(?:Frequently Asked Questions|Patient FAQs|General FAQs|FAQs?)(?:\*\*)?(?:<\/h[1-6]>)?(?:\s*:)?$/i.test(
+        trimmed.replace(/<[^>]*>/g, "").trim()
+      ) ||
+      /^(?:Frequently Asked Questions|FAQs?)(?:\s*:)?$/i.test(trimmed);
+
+    if (isFaqHeader) {
       inFaqBlock = true;
       if (currentSection) {
         sections.push(currentSection);
@@ -502,41 +515,60 @@ export function parseBasicText(rawText, doctorsList = [], allPages = [], extraMe
 
     // 2. Inside FAQ Block
     if (inFaqBlock) {
-      const isQExplicit = /^(?:Q\d*|Question\s*\d*):\s*(.+)$/i.exec(trimmed);
-      const isQQuestionMark = !isQExplicit && trimmed.endsWith("?") && trimmed.length < 180;
+      const cleanLine = trimmed.replace(/^<[^>]+>|<\/[^>]+>$/g, "").trim();
 
-      if (isQExplicit || isQQuestionMark) {
+      // Check explicit Q: or Question: or "Q1." or "Q1:"
+      const isQExplicit = /^(?:Q\d*|Question\s*\d*)\s*[:\.\-]\s*(.+)$/i.exec(cleanLine);
+      // Check question ending with question mark '?'
+      const isQQuestionMark =
+        !isQExplicit &&
+        (cleanLine.endsWith("?") || cleanLine.endsWith("?</strong>") || cleanLine.endsWith("?</b>")) &&
+        cleanLine.length < 250;
+      // Check markdown heading inside FAQ (### Is it safe?)
+      const isQHeading =
+        !isQExplicit &&
+        !isQQuestionMark &&
+        /^(?:#{2,6}\s+|<h[2-6]>)(.+?)(?:<\/h[2-6]>)?$/i.test(trimmed);
+
+      if (isQExplicit || isQQuestionMark || isQHeading) {
         if (currentFaq && currentFaq.question && currentFaq.answer) {
           faqs.push(currentFaq);
         }
-        const qText = isQExplicit ? isQExplicit[1].trim() : trimmed;
+        let qText = "";
+        if (isQExplicit) {
+          qText = isQExplicit[1].trim();
+        } else if (isQHeading) {
+          const match = trimmed.match(/^(?:#{2,6}\s+|<h[2-6]>)(.+?)(?:<\/h[2-6]>)?$/i);
+          qText = match ? match[1].replace(/<[^>]*>/g, "").trim() : cleanLine.replace(/^#+\s*/, "");
+        } else {
+          qText = cleanLine.replace(/<[^>]*>/g, "").trim();
+        }
+        // Remove leading markdown hashes or bold wrappers if any
+        qText = qText.replace(/^#+\s*/, "").replace(/^\*\*(.+)\*\*$/, "$1").trim();
+
         currentFaq = { question: qText, answer: "" };
         continue;
       }
 
-      const aMatch = trimmed.match(/^(?:A\d*|Answer\s*\d*):\s*(.+)$/i);
+      const aMatch = cleanLine.match(/^(?:A\d*|Answer\s*\d*)\s*[:\.\-]\s*(.+)$/i);
       if (aMatch && currentFaq) {
-        currentFaq.answer = aMatch[1].trim();
+        const aText = formatInlineMarkdown(aMatch[1].trim());
+        currentFaq.answer = currentFaq.answer ? `${currentFaq.answer}\n\n${aText}` : aText;
         continue;
       }
 
       if (currentFaq) {
+        const formatted = formatInlineMarkdown(trimmed);
         if (!currentFaq.answer) {
-          currentFaq.answer = trimmed;
-          continue;
+          currentFaq.answer = formatted;
         } else {
-          // currentFaq already had an answer! Push completed FAQ and treat unexpected subsequent line as unmapped
-          faqs.push(currentFaq);
-          currentFaq = null;
+          // If subsequent lines belong to the answer (multiline answer)
+          currentFaq.answer += `\n\n${formatted}`;
         }
+        continue;
       }
 
-      // If in FAQ block but line does not fit question or answer, flag as unmapped
-      unmappedContent.push({
-        label: "FAQ Unmapped Content",
-        content: trimmed,
-        reason: "Content inside FAQ section did not match a Question or Answer pattern.",
-      });
+      // If in FAQ block before any question is encountered
       continue;
     }
 

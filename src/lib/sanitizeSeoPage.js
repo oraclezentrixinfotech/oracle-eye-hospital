@@ -4,6 +4,9 @@ export function sanitizeSeoSections(sections) {
   if (!Array.isArray(sections)) return [];
   return sections.map((section) => ({
     ...section,
+    headingLevel: [1, 2, 3, 4, 5, 6].includes(Number(section?.headingLevel))
+      ? Number(section.headingLevel)
+      : 2,
     content: sanitizeHtml(String(section?.content || "")),
     items: Array.isArray(section?.items)
       ? section.items.map((item) => sanitizeHtml(String(item || ""))).filter(Boolean)

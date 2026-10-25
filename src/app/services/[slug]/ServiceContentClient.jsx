@@ -257,13 +257,15 @@ export default function ServiceContentClient({
                     .split(/\n\s*\n/)
                     .filter((p) => p.trim());
 
+                  const HeadingTag = `h${Math.min(Math.max(Number(sec.headingLevel) || 2, 1), 6)}`;
+
                   return (
                     <div
                       key={sectionId}
                       className="seo-article-block"
                       id={sectionId}
                     >
-                      <h2 className="seo-article-h2">{sec.heading}</h2>
+                      <HeadingTag className="seo-article-h2">{sec.heading}</HeadingTag>
 
                       {/* Paragraph text / Rich HTML */}
                       {paragraphs.map((pText, pIdx) => (

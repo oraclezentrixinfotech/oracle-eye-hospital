@@ -1,9 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { Plus, ExternalLink, Edit2, Trash2, Eye, UploadCloud, Download } from "lucide-react";
+import { Plus, ExternalLink, Edit2, Trash2, Eye, UploadCloud, Download, ChevronDown } from "lucide-react";
 import DataTable from "../components/DataTable";
 import ConfirmModal from "../components/ConfirmModal";
 import DocumentImportModal from "./components/DocumentImportModal";
@@ -187,11 +187,103 @@ function ActionButtons({ r, onOpenDelete }) {
   );
 }
 
+function StatusCell({ r, onStatusChange }) {
+  const [updating, setUpdating] = useState(false);
+  const isPublished = r.status === "published";
+
+  async function handleToggle(nextStatus) {
+    if (nextStatus === r.status || updating) return;
+    setUpdating(true);
+    await onStatusChange(r.id, nextStatus, r.status);
+    setUpdating(false);
+  }
+
+  return (
+    <div style={{ display: "inline-flex", alignItems: "center", position: "relative" }}>
+      <select
+        value={r.status}
+        disabled={updating}
+        onChange={(e) => handleToggle(e.target.value)}
+        aria-label="Change status"
+        style={{
+          appearance: "none",
+          WebkitAppearance: "none",
+          background: isPublished ? "#e8f5e9" : "#f1f5f9",
+          color: isPublished ? "#2e7d32" : "#64748b",
+          border: `1px solid ${isPublished ? "#a5d6a7" : "#cbd5e1"}`,
+          padding: "3px 22px 3px 9px",
+          borderRadius: 999,
+          fontSize: 11.5,
+          fontWeight: 700,
+          cursor: updating ? "wait" : "pointer",
+          outline: "none",
+          transition: "all 0.15s ease",
+          opacity: updating ? 0.6 : 1,
+        }}
+        title="Click to toggle between Published & Draft"
+      >
+        <option value="published">Published</option>
+        <option value="draft">Draft</option>
+      </select>
+      <ChevronDown
+        size={11}
+        style={{
+          position: "absolute",
+          right: 7,
+          pointerEvents: "none",
+          color: isPublished ? "#2e7d32" : "#64748b",
+          opacity: 0.8,
+        }}
+      />
+    </div>
+  );
+}
+
 export default function SeoPageListClient({ rows = [], doctorsList = [], allPages = [] }) {
   const router = useRouter();
+  const [listRows, setListRows] = useState(rows);
   const [deleteTarget, setDeleteTarget] = useState(null);
   const [deleting, setDeleting] = useState(false);
   const [importModalOpen, setImportModalOpen] = useState(false);
+
+  // Sync if parent rows change
+  useEffect(() => {
+    setListRows(rows);
+  }, [rows]);
+
+  async function handleStatusChange(pageId, nextStatus, oldStatus) {
+    // 1. Optimistic update
+    setListRows((prev) =>
+      prev.map((item) => (item.id === pageId ? { ...item, status: nextStatus } : item))
+    );
+
+    try {
+      const res = await fetch(`/api/admin/seo-pages/${pageId}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status: nextStatus }),
+      });
+
+      const data = await res.json().catch(() => ({}));
+
+      if (!res.ok) {
+        // Rollback
+        setListRows((prev) =>
+          prev.map((item) => (item.id === pageId ? { ...item, status: oldStatus } : item))
+        );
+        toast(data.error || "Failed to update status.", "error");
+      } else {
+        toast(`Status changed to ${nextStatus === "published" ? "Published" : "Draft"}!`, "success");
+        router.refresh();
+      }
+    } catch {
+      // Rollback on network error
+      setListRows((prev) =>
+        prev.map((item) => (item.id === pageId ? { ...item, status: oldStatus } : item))
+      );
+      toast("Network error. Could not update status.", "error");
+    }
+  }
 
   async function handleDelete() {
     if (!deleteTarget) return;
@@ -207,6 +299,7 @@ export default function SeoPageListClient({ rows = [], doctorsList = [], allPage
         toast(data.error || "Delete failed.", "error");
       } else {
         toast("SEO page deleted successfully.", "success");
+        setListRows((prev) => prev.filter((item) => item.id !== deleteTarget.id));
         router.refresh();
       }
     } catch {
@@ -272,15 +365,7 @@ export default function SeoPageListClient({ rows = [], doctorsList = [], allPage
       key: "status",
       label: "Status",
       sortable: true,
-      render: (r) => (
-        <span
-          className={`adt-badge ${
-            r.status === "published" ? "adt-badge-active" : "adt-badge-inactive"
-          }`}
-        >
-          {r.status === "published" ? "Published" : "Draft"}
-        </span>
-      ),
+      render: (r) => <StatusCell r={r} onStatusChange={handleStatusChange} />,
     },
     {
       key: "createdAt",
@@ -354,7 +439,7 @@ export default function SeoPageListClient({ rows = [], doctorsList = [], allPage
       <div className="adt-content-card">
         <DataTable
           columns={columns}
-          rows={rows}
+          rows={listRows}
           searchKeys={["h1Title", "slug", "metaTitle", "keywords", "heroBadge"]}
         />
       </div>

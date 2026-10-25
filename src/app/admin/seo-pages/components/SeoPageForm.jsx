@@ -20,12 +20,10 @@ import {
   CheckSquare,
   AlertCircle,
   Eye,
-  UploadCloud,
 } from "lucide-react";
 import ImageUpload from "../../components/ImageUpload";
 import RichHtmlEditor from "./RichHtmlEditor";
 import { toast } from "../../components/Toast";
-import DocumentImportModal from "./DocumentImportModal";
 import SeoPagePreviewModal from "./SeoPagePreviewModal";
 import "../../admin.css";
 import "../../components/datatable.css";
@@ -98,144 +96,7 @@ export default function SeoPageForm({ initialData = null, doctorsList = [], allP
   const [slugLocked, setSlugLocked] = useState(isEditing);
   const [saving, setSaving] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
-  const [showImporter, setShowImporter] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
-
-  function handleApplyImported(data, mode = "merge") {
-    if (!data) return;
-
-    function isDefaultSection(secs) {
-      if (!secs || secs.length === 0) return true;
-      if (
-        secs.length === 1 &&
-        secs[0]?.id === "overview" &&
-        secs[0]?.heading === "Overview of Treatment"
-      ) {
-        return true;
-      }
-      return false;
-    }
-
-    function isDefaultFaq(f) {
-      if (!f || f.length === 0) return true;
-      if (
-        f.length === 1 &&
-        f[0]?.question === "How long does the recovery take?"
-      ) {
-        return true;
-      }
-      return false;
-    }
-
-    function isDefaultChips(c) {
-      if (!c || c.length === 0) return true;
-      if (c.length === 3 && c[0]?.label === "Recovery Time") return true;
-      return false;
-    }
-
-    if (mode === "replace") {
-      setForm((prev) => ({
-        ...prev,
-        slug: data.slug || prev.slug,
-        status: data.status || prev.status,
-        metaTitle: data.metaTitle || "",
-        metaDescription: data.metaDescription || "",
-        keywords: data.keywords || "",
-        canonicalUrl:
-          data.canonicalUrl ||
-          (data.slug ? `https://www.oracleeyehospital.com/services/${data.slug}` : ""),
-        ogImage: data.ogImage || prev.ogImage,
-        heroBadge: data.heroBadge || "",
-        h1Title: data.h1Title || "",
-        heroSubtitle: data.heroSubtitle || "",
-        heroImage: data.heroImage || prev.heroImage,
-        heroChips:
-          Array.isArray(data.heroChips) && data.heroChips.length > 0
-            ? data.heroChips
-            : [],
-        ctaPrimaryText: data.ctaPrimaryText || "Book Consultation",
-        ctaPhone: data.ctaPhone || "+919458422606",
-        sections:
-          Array.isArray(data.sections) && data.sections.length > 0
-            ? data.sections
-            : [],
-        doctorIds: Array.isArray(data.doctorIds) ? data.doctorIds : [],
-        faqs: Array.isArray(data.faqs) && data.faqs.length > 0 ? data.faqs : [],
-        relatedIds: Array.isArray(data.relatedIds) ? data.relatedIds : [],
-      }));
-      toast("Replaced form content with imported data!", "success");
-    } else {
-      // Merge mode: fill empty fields, merge arrays without overwriting existing entries
-      setForm((prev) => {
-        const nextSlug = prev.slug.trim() ? prev.slug : (data.slug || "");
-        const nextMetaTitle = prev.metaTitle.trim() ? prev.metaTitle : (data.metaTitle || "");
-        const nextMetaDesc = prev.metaDescription.trim() ? prev.metaDescription : (data.metaDescription || "");
-        const nextKeywords = prev.keywords.trim() ? prev.keywords : (data.keywords || "");
-        const nextHeroBadge = prev.heroBadge.trim() ? prev.heroBadge : (data.heroBadge || "");
-        const nextH1 = prev.h1Title.trim() ? prev.h1Title : (data.h1Title || "");
-        const nextSubtitle = prev.heroSubtitle.trim() ? prev.heroSubtitle : (data.heroSubtitle || "");
-
-        let nextSections = prev.sections;
-        if (isDefaultSection(prev.sections)) {
-          nextSections =
-            Array.isArray(data.sections) && data.sections.length > 0
-              ? data.sections
-              : prev.sections;
-        } else if (Array.isArray(data.sections) && data.sections.length > 0) {
-          nextSections = [...prev.sections, ...data.sections];
-        }
-
-        let nextFaqs = prev.faqs;
-        if (isDefaultFaq(prev.faqs)) {
-          nextFaqs =
-            Array.isArray(data.faqs) && data.faqs.length > 0 ? data.faqs : prev.faqs;
-        } else if (Array.isArray(data.faqs) && data.faqs.length > 0) {
-          nextFaqs = [...prev.faqs, ...data.faqs];
-        }
-
-        let nextChips = prev.heroChips;
-        if (isDefaultChips(prev.heroChips)) {
-          nextChips =
-            Array.isArray(data.heroChips) && data.heroChips.length > 0
-              ? data.heroChips
-              : prev.heroChips;
-        } else if (Array.isArray(data.heroChips) && data.heroChips.length > 0) {
-          nextChips = [...prev.heroChips, ...data.heroChips];
-        }
-
-        const mergedDoctorIds = Array.from(
-          new Set([...(prev.doctorIds || []), ...(data.doctorIds || [])])
-        );
-        const mergedRelatedIds = Array.from(
-          new Set([...(prev.relatedIds || []), ...(data.relatedIds || [])])
-        );
-
-        return {
-          ...prev,
-          slug: nextSlug,
-          metaTitle: nextMetaTitle,
-          metaDescription: nextMetaDesc,
-          keywords: nextKeywords,
-          heroBadge: nextHeroBadge,
-          h1Title: nextH1,
-          heroSubtitle: nextSubtitle,
-          heroChips: nextChips,
-          sections: nextSections,
-          doctorIds: mergedDoctorIds,
-          faqs: nextFaqs,
-          relatedIds: mergedRelatedIds,
-          canonicalUrl:
-            prev.canonicalUrl ||
-            data.canonicalUrl ||
-            (nextSlug ? `https://www.oracleeyehospital.com/services/${nextSlug}` : ""),
-        };
-      });
-      toast("Imported content merged into form!", "success");
-    }
-
-    setSlugLocked(true);
-    setActiveTab("content");
-  }
 
   // Handle H1 title change (auto-update slug if not locked)
   function handleH1Change(e) {
@@ -316,6 +177,7 @@ export default function SeoPageForm({ initialData = null, doctorsList = [], allP
         {
           id: newId,
           heading: "New Section Heading",
+          headingLevel: 2,
           type: "text",
           content: "",
           items: [],
@@ -541,28 +403,6 @@ export default function SeoPageForm({ initialData = null, doctorsList = [], allP
         </div>
 
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-          <button
-            type="button"
-            onClick={() => setShowImporter(true)}
-            style={{
-              background: "linear-gradient(135deg, #137c8b 0%, #0d9488 100%)",
-              color: "#ffffff",
-              fontWeight: 700,
-              fontSize: 13,
-              padding: "9px 16px",
-              borderRadius: 6,
-              border: "none",
-              cursor: "pointer",
-              display: "inline-flex",
-              alignItems: "center",
-              gap: 8,
-              boxShadow: "0 2px 8px rgba(19, 124, 139, 0.25)",
-            }}
-          >
-            <UploadCloud size={16} />
-            <span>⚡ Import Word / TXT File</span>
-          </button>
-
           <button
             type="button"
             onClick={() => setShowPreview(true)}
@@ -1184,7 +1024,35 @@ export default function SeoPageForm({ initialData = null, doctorsList = [], allP
                         }}
                       >
                         <div className="adt-field">
-                          <label>Section Heading (H2) *</label>
+                          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
+                            <label style={{ margin: 0 }}>
+                              Section Heading (H{sec.headingLevel || 2}) *
+                            </label>
+                            <div style={{ display: "inline-flex", alignItems: "center", gap: 5 }}>
+                              <span style={{ fontSize: 11, color: "#64748b", fontWeight: 600 }}>Tag:</span>
+                              <select
+                                value={sec.headingLevel || 2}
+                                onChange={(e) => updateSection(idx, "headingLevel", parseInt(e.target.value, 10))}
+                                style={{
+                                  padding: "2px 6px",
+                                  fontSize: 12,
+                                  fontWeight: 700,
+                                  borderRadius: 4,
+                                  border: "1px solid #cbd5e1",
+                                  background: "#f8fafc",
+                                  color: "#0f766e",
+                                  cursor: "pointer",
+                                }}
+                                title="Change heading tag level for SEO"
+                              >
+                                {[1, 2, 3, 4, 5, 6].map((lvl) => (
+                                  <option key={lvl} value={lvl}>
+                                    H{lvl}
+                                  </option>
+                                ))}
+                              </select>
+                            </div>
+                          </div>
                           <input
                             type="text"
                             required
@@ -1288,11 +1156,23 @@ export default function SeoPageForm({ initialData = null, doctorsList = [], allP
                                   {sec.type === "numbered" ? `${itemIdx + 1}.` : "•"}
                                 </span>
                                 <div style={{ flex: 1 }}>
-                                  <RichHtmlEditor
+                                  <input
+                                    type="text"
                                     value={item || ""}
-                                    onChange={(html) => updateSectionItem(idx, itemIdx, html)}
-                                    placeholder={`Item #${itemIdx + 1}`}
-                                    minHeight={70}
+                                    onChange={(e) => updateSectionItem(idx, itemIdx, e.target.value)}
+                                    placeholder={`Item #${itemIdx + 1} (e.g. Carry all reports, scans, and medicines)`}
+                                    style={{
+                                      width: "100%",
+                                      padding: "8px 12px",
+                                      border: "1px solid #cbd5e1",
+                                      borderRadius: 6,
+                                      fontSize: 13,
+                                      background: "#fff",
+                                      outline: "none",
+                                      transition: "border-color 0.15s ease",
+                                    }}
+                                    onFocus={(e) => (e.target.style.borderColor = "#0d9488")}
+                                    onBlur={(e) => (e.target.style.borderColor = "#cbd5e1")}
                                   />
                                 </div>
                                 <button
@@ -1665,17 +1545,6 @@ export default function SeoPageForm({ initialData = null, doctorsList = [], allP
           isOpen={showPreview}
           onClose={() => setShowPreview(false)}
           pageData={form}
-          doctorsList={doctorsList}
-          allPages={allPages}
-        />
-      )}
-
-      {/* Document Importer Modal */}
-      {showImporter && (
-        <DocumentImportModal
-          isOpen={showImporter}
-          onClose={() => setShowImporter(false)}
-          onApplyToForm={(data) => handleApplyImported(data, "replace")}
           doctorsList={doctorsList}
           allPages={allPages}
         />
