@@ -9,12 +9,17 @@ export const metadata = { title: "Manage Blog — Admin | Oracle Eye Hospital" }
 export default async function AdminBlogPage() {
   if (!isAdmin()) redirect("/admin/login");
 
-  const posts = await prisma.post.findMany({
-    where: { type: "BLOG" },
-    orderBy: { createdAt: "desc" },
-  });
+  let posts = [];
+  try {
+    posts = await prisma.post.findMany({
+      where: { type: "BLOG" },
+      orderBy: { createdAt: "desc" },
+    });
+  } catch (err) {
+    console.error("AdminBlogPage DB error:", err?.message || err);
+  }
 
-  const rows = posts.map((p) => ({
+  const rows = (posts || []).map((p) => ({
     ...p,
     createdAt: p.createdAt ? p.createdAt.toISOString() : null,
   }));

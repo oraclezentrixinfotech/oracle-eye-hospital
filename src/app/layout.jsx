@@ -6,7 +6,7 @@ import AosAnimationProvider from "@/components/AosAnimationProvider";
 import SiteChrome from "@/components/SiteChrome";
 import { getSettings } from "@/lib/settings";
 export const metadata = {
-  metadataBase: new URL("https://oracleeyehospital.com"),
+  metadataBase: new URL("https://www.oracleeyehospital.com"),
   title: "Oracle Eye Hospital - Best Eye Hospital in Moradabad | Cataract, LASIK & Retina Care",
   description:
     "Oracle Eye Hospital in Moradabad offers advanced cataract surgery, LASIK laser vision correction, retinal surgery, pediatric eye care, and glaucoma treatment. Book your appointment today.",
@@ -16,7 +16,7 @@ export const metadata = {
   openGraph: {
     title: "Oracle Eye Hospital - Best Eye Hospital in Moradabad",
     description: "Clear vision awaits at Oracle Eye Hospital. Advanced technology & compassionate eye care.",
-    url: "https://oracleeyehospital.com",
+    url: "https://www.oracleeyehospital.com",
     siteName: "Oracle Eye Hospital",
     images: [{ url: "/uploads/logos/232296ca-9c85-445b-b965-033a97fe7008.png" }],
     locale: "en_IN",
@@ -48,7 +48,7 @@ export default async function RootLayout({ children }) {
         <link rel="stylesheet" type="text/css" href="/Assets/icons/fontawesome/css/all.min.css" />
         <link rel="stylesheet" type="text/css" href="/Assets/icons/flaticon/flaticon.css" />
         <link rel="stylesheet" type="text/css" href="/Assets/vendor/swiper/swiper-bundle.min.css" />
-        <link rel="stylesheet" type="text/css" href="/Assets/css/style.css" />
+        <link rel="stylesheet" type="text/css" href="/Assets/css/style.css?v=20261021" />
       </head>
       <body id="bg" data-typography="typography_1">
         <AosAnimationProvider />

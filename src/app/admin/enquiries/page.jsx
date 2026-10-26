@@ -9,12 +9,17 @@ export const metadata = { title: "Contact Messages — Admin | Oracle Eye Hospit
 export default async function EnquiriesAdminPage() {
   if (!isAdmin()) redirect("/admin/login");
 
-  const enquiries = await prisma.enquiry.findMany({
-    orderBy: { createdAt: "desc" },
-  });
+  let enquiries = [];
+  try {
+    enquiries = await prisma.enquiry.findMany({
+      orderBy: { createdAt: "desc" },
+    });
+  } catch (err) {
+    console.error("EnquiriesAdminPage DB error:", err?.message || err);
+  }
 
   // Serialize dates for client component
-  const rows = enquiries.map((e) => ({
+  const rows = (enquiries || []).map((e) => ({
     ...e,
     createdAt: e.createdAt ? e.createdAt.toISOString() : null,
   }));

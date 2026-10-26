@@ -673,14 +673,14 @@ html {
 
 html,
 body {
-    overflow-x: hidden !important;
+    overflow-x: clip !important;
     max-width: 100vw;
     width: 100%;
     position: relative;
 }
 
 .page-wraper {
-    overflow-x: hidden !important;
+    overflow-x: clip !important;
     width: 100%;
     position: relative;
 }

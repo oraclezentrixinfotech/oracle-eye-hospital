@@ -100,3 +100,47 @@ model Setting {
   key   String @unique
   value String @db.Text
 }
+
+model Doctor {
+  id            Int      @id @default(autoincrement())
+  name          String
+  role          String?
+  qualification String?
+  image         String?
+  bio           String?
+  badgeText     String?  @map("badge_text")
+  profileHref   String?  @map("profile_href")
+  sortOrder     Int      @default(0) @map("sort_order")
+  active        Boolean  @default(true)
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
+  @@map("doctors")
+}
+
+model SeoPage {
+  id              Int      @id @default(autoincrement())
+  slug            String   @unique
+  status          String   @default("draft")
+  metaTitle       String?  @map("meta_title")
+  metaDescription String?  @map("meta_description")
+  keywords        String?
+  canonicalUrl    String?  @map("canonical_url")
+  ogImage         String?  @map("og_image")
+  heroBadge       String?  @map("hero_badge")
+  h1Title         String   @map("h1_title")
+  heroSubtitle    String?  @map("hero_subtitle")
+  heroImage       String?  @map("hero_image")
+  heroChips       Json?    @default("[]") @map("hero_chips")
+  ctaPrimaryText  String?  @default("Book Consultation") @map("cta_primary_text")
+  ctaPhone        String?  @default("+919458422606") @map("cta_phone")
+  sections        Json?    @default("[]")
+  doctorIds       Int[]    @default([]) @map("doctor_ids")
+  faqs            Json?    @default("[]")
+  relatedIds      Int[]    @default([]) @map("related_ids")
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+
+  @@index([status, slug])
+  @@map("seo_pages")
+}

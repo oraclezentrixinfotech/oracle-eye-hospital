@@ -135,12 +135,14 @@
 .bg-pink { background-color: #f06292; }
 .bg-green { background-color: #8bc34a; }
 .bg-orange { background-color: #ff8a65; }
+.bg-teal { background-color: #0d9488; }
 
 .text-blue { color: #4e7cff; }
 .text-red { color: #ff5c7c; }
 .text-pink { color: #f06292; }
 .text-green { color: #8bc34a; }
 .text-orange { color: #ff8a65; }
+.text-teal { color: #0d9488; }
 
 /* Main Area */
 .ad-main-area {
