@@ -899,7 +899,7 @@ export function sanitizeParsedOutput(data, doctorsList = [], allPages = [], full
     metaTitle,
     metaDescription,
     keywords: data.keywords || "",
-    canonicalUrl: data.canonicalUrl || (slug ? `https://www.oracleeyehospital.com/services/${slug}` : ""),
+    canonicalUrl: data.canonicalUrl || (slug ? `https://www.oracleeyehospital.com/${slug}` : ""),
     ogImage: data.ogImage || data.heroImage || "/Assets/img/services/Cataract-Service.png",
     heroBadge,
     heroSubtitle: sanitizeHtml(data.hero_subtitle || data.heroSubtitle || metaDescription),

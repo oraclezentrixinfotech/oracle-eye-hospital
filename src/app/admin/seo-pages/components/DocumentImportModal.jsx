@@ -192,7 +192,7 @@ export default function DocumentImportModal({
     const updated = { ...parsedData, [field]: value };
     if (field === "slug") {
       updated.slug = slugify(value);
-      updated.canonicalUrl = `https://www.oracleeyehospital.com/services/${updated.slug}`;
+      updated.canonicalUrl = `https://www.oracleeyehospital.com/${updated.slug}`;
     }
     setParsedData(updated);
 
@@ -829,7 +829,7 @@ export default function DocumentImportModal({
                         }}
                       />
                       <span style={{ fontSize: 11, color: "#64748b" }}>
-                        Public URL: <code>/services/{parsedData.slug || "your-slug"}</code>
+                        Public URL: <code>/{parsedData.slug || "your-slug"}</code>
                       </span>
                     </div>
 

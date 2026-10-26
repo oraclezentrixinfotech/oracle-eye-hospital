@@ -238,6 +238,12 @@ export default async function ServicePage({ params }) {
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(medicalWebPageSchema) }}
         />
+        {seoPage.customSchema && (
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{ __html: seoPage.customSchema }}
+          />
+        )}
 
         {/* Dynamic SEO Content with Sticky TOC & Interactive Elements */}
         <ServiceContentClient

@@ -60,6 +60,8 @@ export default function RichHtmlEditor({
   onChange,
   placeholder = "Write content...",
   minHeight = 140,
+  onToggleBulletList,
+  onToggleOrderedList,
 }) {
   const [sourceMode, setSourceMode] = useState(false);
   const [source, setSource] = useState(value || "");
@@ -465,18 +467,30 @@ export default function RichHtmlEditor({
         <div style={{ display: "flex", alignItems: "center", gap: 2 }}>
           <button
             type="button"
-            title="Bullet List"
+            title="Highlight Bullet Points (Items List)"
             onMouseDown={preventBlur}
-            onClick={() => editor?.chain().focus().toggleBulletList().run()}
+            onClick={() => {
+              if (onToggleBulletList) {
+                onToggleBulletList();
+              } else {
+                editor?.chain().focus().toggleBulletList().run();
+              }
+            }}
             className={`tb-btn ${editor?.isActive("bulletList") ? "active" : ""}`}
           >
             <List size={14} />
           </button>
           <button
             type="button"
-            title="Numbered List"
+            title="Numbered Step Items (Items List)"
             onMouseDown={preventBlur}
-            onClick={() => editor?.chain().focus().toggleOrderedList().run()}
+            onClick={() => {
+              if (onToggleOrderedList) {
+                onToggleOrderedList();
+              } else {
+                editor?.chain().focus().toggleOrderedList().run();
+              }
+            }}
             className={`tb-btn ${editor?.isActive("orderedList") ? "active" : ""}`}
           >
             <ListOrdered size={14} />

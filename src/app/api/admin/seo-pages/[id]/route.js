@@ -86,6 +86,9 @@ export async function PUT(req, { params }) {
   const faqs = Array.isArray(body.faqs)
     ? sanitizeSeoFaqs(body.faqs)
     : existing.faqs;
+  const customSchema = body.customSchema !== undefined
+    ? (body.customSchema ? String(body.customSchema).trim() : null)
+    : existing.customSchema;
   const relatedIds = Array.isArray(body.relatedIds)
     ? body.relatedIds.map(Number).filter((n) => !isNaN(n))
     : existing.relatedIds;
@@ -99,7 +102,7 @@ export async function PUT(req, { params }) {
         metaTitle,
         metaDescription,
         keywords,
-        canonicalUrl: canonicalUrl || `https://www.oracleeyehospital.com/services/${slug}`,
+        canonicalUrl: canonicalUrl || `https://www.oracleeyehospital.com/${slug}`,
         ogImage: ogImage || heroImage,
         heroBadge,
         h1Title,
@@ -111,13 +114,16 @@ export async function PUT(req, { params }) {
         sections,
         doctorIds,
         faqs,
+        customSchema,
         relatedIds,
       },
     });
 
     if (existing.slug !== updated.slug) {
+      revalidatePath("/" + existing.slug);
       revalidatePath("/services/" + existing.slug);
     }
+    revalidatePath("/" + updated.slug);
     revalidatePath("/services/" + updated.slug);
     revalidatePath("/admin/seo-pages");
     revalidatePath("/sitemap.xml");

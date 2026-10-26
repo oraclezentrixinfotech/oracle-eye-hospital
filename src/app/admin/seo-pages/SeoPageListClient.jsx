@@ -158,7 +158,7 @@ function ActionButtons({ r, onOpenDelete }) {
   return (
     <div style={{ display: "inline-flex", alignItems: "center", gap: 6, whiteSpace: "nowrap" }}>
       <a
-        href={`/services/${r.slug}`}
+        href={`/${r.slug}`}
         target="_blank"
         rel="noopener noreferrer"
         title="View live page"
@@ -392,7 +392,7 @@ export default function SeoPageListClient({ rows = [], doctorsList = [], allPage
         <div>
           <h2 className="adt-header-title">Manage SEO Pages</h2>
           <p style={{ margin: "4px 0 0 0", fontSize: 13, color: "#6b7280" }}>
-            Create and manage keyword-targeted landing pages under <code>/services/[slug]</code>.
+            Create and manage keyword-targeted landing pages under <code>/[slug]</code>.
           </p>
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>

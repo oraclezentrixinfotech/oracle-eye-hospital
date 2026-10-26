@@ -20,6 +20,7 @@ import {
   CheckSquare,
   AlertCircle,
   Eye,
+  Code,
 } from "lucide-react";
 import ImageUpload from "../../components/ImageUpload";
 import RichHtmlEditor from "./RichHtmlEditor";
@@ -90,6 +91,7 @@ export default function SeoPageForm({ initialData = null, doctorsList = [], allP
             answer: "Most patients can resume light routine activities within 24 to 48 hours.",
           },
         ],
+    customSchema: initialData?.customSchema || "",
     relatedIds: Array.isArray(initialData?.relatedIds) ? initialData.relatedIds : [],
   });
 
@@ -111,8 +113,8 @@ export default function SeoPageForm({ initialData = null, doctorsList = [], allP
         metaTitle: !prev.metaTitle ? `${title} | Oracle Eye Hospital` : prev.metaTitle,
         canonicalUrl:
           !prev.canonicalUrl ||
-          prev.canonicalUrl.startsWith("https://www.oracleeyehospital.com/services/")
-            ? `https://www.oracleeyehospital.com/services/${nextSlug}`
+          prev.canonicalUrl.startsWith("https://www.oracleeyehospital.com/")
+            ? `https://www.oracleeyehospital.com/${nextSlug}`
             : prev.canonicalUrl,
       };
     });
@@ -127,8 +129,8 @@ export default function SeoPageForm({ initialData = null, doctorsList = [], allP
       slug: clean,
       canonicalUrl:
         !prev.canonicalUrl ||
-        prev.canonicalUrl.startsWith("https://www.oracleeyehospital.com/services/")
-          ? `https://www.oracleeyehospital.com/services/${clean}`
+        prev.canonicalUrl.startsWith("https://www.oracleeyehospital.com/")
+          ? `https://www.oracleeyehospital.com/${clean}`
           : prev.canonicalUrl,
     }));
   }
@@ -139,7 +141,7 @@ export default function SeoPageForm({ initialData = null, doctorsList = [], allP
     setForm((prev) => ({
       ...prev,
       slug: generated,
-      canonicalUrl: `https://www.oracleeyehospital.com/services/${generated}`,
+      canonicalUrl: `https://www.oracleeyehospital.com/${generated}`,
     }));
     setSlugLocked(false);
   }
@@ -324,8 +326,24 @@ export default function SeoPageForm({ initialData = null, doctorsList = [], allP
     if (isSlugDuplicate) {
       setErrorMsg(`The URL slug "${form.slug}" is already in use by another page. Please choose a unique slug.`);
       setActiveTab("seo");
-      toast(`Duplicate slug: "/services/${form.slug}" is already taken.`, "error");
+      toast(`Duplicate slug: "/${form.slug}" is already taken.`, "error");
       return;
+    }
+
+    // Validate Custom Schema if provided
+    if (form.customSchema && form.customSchema.trim()) {
+      let text = form.customSchema.trim();
+      if (text.startsWith("<script") && text.endsWith("</script>")) {
+        text = text.replace(/<script[^>]*>/, "").replace(/<\/script>$/, "").trim();
+      }
+      try {
+        JSON.parse(text);
+      } catch (err) {
+        setErrorMsg(`Custom Schema JSON Syntax Error: ${err.message}. Please fix or click "Format & Validate JSON".`);
+        setActiveTab("schema");
+        toast("Invalid Custom Schema JSON", "error");
+        return;
+      }
     }
 
     setSaving(true);
@@ -397,12 +415,35 @@ export default function SeoPageForm({ initialData = null, doctorsList = [], allP
               {isEditing ? `Edit: ${form.h1Title || "SEO Page"}` : "Add New SEO Page"}
             </h2>
             <div style={{ fontSize: 13, color: "#6b7280", marginTop: 2 }}>
-              Path: <code>/services/{form.slug || "[slug]"}</code>
+              Path: <code>/{form.slug || "[slug]"}</code>
             </div>
           </div>
         </div>
 
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+          {isEditing && form.slug && (
+            <a
+              href={`/${form.slug}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                background: "#0d9488",
+                color: "#ffffff",
+                fontWeight: 600,
+                fontSize: 13,
+                padding: "9px 14px",
+                borderRadius: 6,
+                textDecoration: "none",
+                display: "inline-flex",
+                alignItems: "center",
+                gap: 6,
+              }}
+            >
+              <Eye size={16} />
+              <span>View Live Page</span>
+            </a>
+          )}
+
           <button
             type="button"
             onClick={() => setShowPreview(true)}
@@ -484,6 +525,11 @@ export default function SeoPageForm({ initialData = null, doctorsList = [], allP
             id: "content",
             label: `3. Page Content (${form.sections.length + form.doctorIds.length + form.faqs.length + form.relatedIds.length})`,
             icon: FileText,
+          },
+          {
+            id: "schema",
+            label: `4. Custom Schema ${form.customSchema ? "✓" : ""}`,
+            icon: Code,
           },
         ].map((tab) => {
           const Icon = tab.icon;
@@ -600,7 +646,7 @@ export default function SeoPageForm({ initialData = null, doctorsList = [], allP
                   )}
                 </div>
                 <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-                  <span style={{ fontSize: 13, color: "#6b7280" }}>/services/</span>
+                  <span style={{ fontSize: 13, color: "#6b7280" }}>/</span>
                   <input
                     type="text"
                     required
@@ -713,7 +759,7 @@ export default function SeoPageForm({ initialData = null, doctorsList = [], allP
                 <label>Canonical URL</label>
                 <input
                   type="url"
-                  placeholder={`https://www.oracleeyehospital.com/services/${form.slug || ""}`}
+                  placeholder={`https://www.oracleeyehospital.com/${form.slug || ""}`}
                   value={form.canonicalUrl}
                   onChange={(e) => setForm((prev) => ({ ...prev, canonicalUrl: e.target.value }))}
                 />
@@ -1096,6 +1142,42 @@ export default function SeoPageForm({ initialData = null, doctorsList = [], allP
                           onChange={(html) => updateSection(idx, "content", html)}
                           placeholder="Section paragraph content..."
                           minHeight={130}
+                          onToggleBulletList={() => {
+                            if (sec.type === "highlight") {
+                              updateSection(idx, "type", "text");
+                            } else {
+                              const existingItems = Array.isArray(sec.items) && sec.items.length > 0
+                                ? sec.items
+                                : ["", ""];
+                              setForm((prev) => {
+                                const next = [...prev.sections];
+                                next[idx] = {
+                                  ...next[idx],
+                                  type: "highlight",
+                                  items: existingItems,
+                                };
+                                return { ...prev, sections: next };
+                              });
+                            }
+                          }}
+                          onToggleOrderedList={() => {
+                            if (sec.type === "numbered") {
+                              updateSection(idx, "type", "text");
+                            } else {
+                              const existingItems = Array.isArray(sec.items) && sec.items.length > 0
+                                ? sec.items
+                                : ["", ""];
+                              setForm((prev) => {
+                                const next = [...prev.sections];
+                                next[idx] = {
+                                  ...next[idx],
+                                  type: "numbered",
+                                  items: existingItems,
+                                };
+                                return { ...prev, sections: next };
+                              });
+                            }
+                          }}
                         />
                       </div>
 
@@ -1489,7 +1571,7 @@ export default function SeoPageForm({ initialData = null, doctorsList = [], allP
                             {page.h1Title}
                           </div>
                           <code style={{ fontSize: 11, color: "#64748b" }}>
-                            /services/{page.slug}
+                            /{page.slug}
                           </code>
                         </div>
                       </div>
@@ -1500,7 +1582,198 @@ export default function SeoPageForm({ initialData = null, doctorsList = [], allP
             </div>
           )}
 
-          {/* Form Actions Footer */}
+          {/* ======================================================== */}
+          {/* TAB 4: CUSTOM SCHEMA & JSON-LD */}
+          {/* ======================================================== */}
+          {activeTab === "schema" && (
+            <div style={{ display: "grid", gap: 20 }}>
+              <div>
+                <h3 style={{ margin: "0 0 6px 0", fontSize: 16, color: "#111827", fontWeight: 700 }}>
+                  Custom JSON-LD Schema
+                </h3>
+                <p style={{ margin: 0, fontSize: 13, color: "#6b7280", lineHeight: 1.5 }}>
+                  Add your own custom Schema.org markup (JSON or &lt;script type=&quot;application/ld+json&quot;&gt; tags).
+                  It will be embedded directly into the live page HTML source for search engines and Google Bot.
+                </p>
+              </div>
+
+              {/* Template Buttons */}
+              <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
+                <button
+                  type="button"
+                  onClick={() => {
+                    const sample = JSON.stringify(
+                      {
+                        "@context": "https://schema.org",
+                        "@type": "MedicalProcedure",
+                        name: form.h1Title || "Procedure Name",
+                        description: form.metaDescription || "Procedure Description",
+                        procedureType: "SurgicalProcedure",
+                        bodyLocation: "Eye",
+                        provider: {
+                          "@type": "Hospital",
+                          name: "Oracle Eye Hospital",
+                          url: "https://www.oracleeyehospital.com",
+                        },
+                      },
+                      null,
+                      2
+                    );
+                    setForm((prev) => ({ ...prev, customSchema: sample }));
+                  }}
+                  style={{
+                    padding: "6px 12px",
+                    background: "#f0fdfa",
+                    border: "1px solid #99f6e4",
+                    color: "#0f766e",
+                    borderRadius: 6,
+                    fontSize: 12,
+                    fontWeight: 600,
+                    cursor: "pointer",
+                  }}
+                >
+                  + Load MedicalProcedure Template
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    const sample = JSON.stringify(
+                      {
+                        "@context": "https://schema.org",
+                        "@type": "MedicalBusiness",
+                        name: "Oracle Eye Hospital",
+                        url: `https://www.oracleeyehospital.com/${form.slug || ""}`,
+                        telephone: form.ctaPhone || "+91 8006803111",
+                        address: {
+                          "@type": "PostalAddress",
+                          streetAddress: "Kanth Road",
+                          addressLocality: "Moradabad",
+                          addressRegion: "Uttar Pradesh",
+                          postalCode: "244001",
+                          addressCountry: "IN",
+                        },
+                      },
+                      null,
+                      2
+                    );
+                    setForm((prev) => ({ ...prev, customSchema: sample }));
+                  }}
+                  style={{
+                    padding: "6px 12px",
+                    background: "#f0fdfa",
+                    border: "1px solid #99f6e4",
+                    color: "#0f766e",
+                    borderRadius: 6,
+                    fontSize: 12,
+                    fontWeight: 600,
+                    cursor: "pointer",
+                  }}
+                >
+                  + Load MedicalBusiness Template
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (!form.customSchema.trim()) return;
+                    try {
+                      let text = form.customSchema.trim();
+                      if (text.startsWith("<script") && text.endsWith("</script>")) {
+                        const inner = text.replace(/<script[^>]*>/, "").replace(/<\/script>$/, "");
+                        const formatted = JSON.stringify(JSON.parse(inner), null, 2);
+                        setForm((prev) => ({ ...prev, customSchema: formatted }));
+                      } else {
+                        const formatted = JSON.stringify(JSON.parse(text), null, 2);
+                        setForm((prev) => ({ ...prev, customSchema: formatted }));
+                      }
+                      toast("JSON Schema is valid and formatted!", "success");
+                    } catch (err) {
+                      toast("Invalid JSON syntax: " + err.message, "error");
+                    }
+                  }}
+                  style={{
+                    padding: "6px 12px",
+                    background: "#f8fafc",
+                    border: "1px solid #cbd5e1",
+                    color: "#334155",
+                    borderRadius: 6,
+                    fontSize: 12,
+                    fontWeight: 600,
+                    cursor: "pointer",
+                  }}
+                >
+                  Format &amp; Validate JSON
+                </button>
+
+                {form.customSchema && (
+                  <button
+                    type="button"
+                    onClick={() => setForm((prev) => ({ ...prev, customSchema: "" }))}
+                    style={{
+                      padding: "6px 12px",
+                      background: "#fee2e2",
+                      border: "1px solid #fecaca",
+                      color: "#b91c1c",
+                      borderRadius: 6,
+                      fontSize: 12,
+                      fontWeight: 600,
+                      cursor: "pointer",
+                      marginLeft: "auto",
+                    }}
+                  >
+                    Clear Custom Schema
+                  </button>
+                )}
+              </div>
+
+              {/* Textarea code editor */}
+              <div className="adt-field">
+                <label style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                  <span>Custom Schema JSON / JSON-LD</span>
+                  <span style={{ fontSize: 11, color: "#64748b", fontWeight: 400 }}>
+                    Enter pure JSON (e.g. {`{"@context": "https://schema.org", ...}`})
+                  </span>
+                </label>
+                <textarea
+                  rows={14}
+                  value={form.customSchema}
+                  onChange={(e) => setForm((prev) => ({ ...prev, customSchema: e.target.value }))}
+                  placeholder={`{\n  "@context": "https://schema.org",\n  "@type": "MedicalWebPage",\n  "name": "${form.h1Title || "Page Title"}",\n  ...\n}`}
+                  style={{
+                    fontFamily: "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace",
+                    fontSize: 13,
+                    lineHeight: 1.5,
+                    background: "#0f172a",
+                    color: "#38bdf8",
+                    padding: "14px",
+                    borderRadius: 8,
+                    border: "1px solid #334155",
+                  }}
+                />
+              </div>
+
+              <div
+                style={{
+                  background: "#f0fdf4",
+                  border: "1px solid #bbf7d0",
+                  borderRadius: 8,
+                  padding: 12,
+                  fontSize: 12.5,
+                  color: "#166534",
+                  display: "flex",
+                  gap: 8,
+                  alignItems: "center",
+                }}
+              >
+                <CheckCircle2 size={16} />
+                <span>
+                  <strong>Tip:</strong> Default schemas (Breadcrumb, Hospital, Physician, FAQ Accordion) are already auto-generated.
+                  Any custom JSON you enter here will be rendered alongside them inside &lt;script type=&quot;application/ld+json&quot;&gt; in the page source.
+                </span>
+              </div>
+            </div>
+          )}
           <div
             className="adt-form-actions"
             style={{

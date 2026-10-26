@@ -89,7 +89,7 @@ export default async function sitemap() {
     });
     seoPages.forEach((sp) => {
       // Avoid duplicate if already in entries
-      const pageUrl = `${SITE_URL}/services/${sp.slug}`;
+      const pageUrl = `${SITE_URL}/${sp.slug}`;
       if (!entries.some((e) => e.url === pageUrl)) {
         entries.push({
           url: pageUrl,
