@@ -31,6 +31,11 @@ import {
   FileCode,
   ChevronDown,
   Trash2,
+  X,
+  Plus,
+  Columns,
+  Rows,
+  Grid,
 } from "lucide-react";
 
 // Custom Image extension supporting .content-img class and data-align attribute
@@ -219,38 +224,106 @@ export default function RichHtmlEditor({
     e.preventDefault();
   }
 
-  function addLink() {
+  // Modal states for Link & Image
+  const [linkModalOpen, setLinkModalOpen] = useState(false);
+  const [linkUrl, setLinkUrl] = useState("https://www.oracleeyehospital.com/");
+  const [linkOpenNewTab, setLinkOpenNewTab] = useState(true);
+
+  const [imageModalOpen, setImageModalOpen] = useState(false);
+  const [imageUrl, setImageUrl] = useState("");
+  const [imageAlt, setImageAlt] = useState("");
+
+  const activeHeadingLevel = [2, 3, 4, 5, 6].find((lvl) =>
+    editor?.isActive("heading", { level: lvl })
+  );
+
+  function openLinkModal() {
     if (!editor) return;
-    const currentHref = editor.getAttributes("link").href || "";
-    const href = window.prompt("Enter a URL (https://, http://, mailto:, or /internal-path):", currentHref);
-    if (href === null) return;
-    if (!href || /^(javascript|data|vbscript):/i.test(href.trim())) {
+    const currentHref = editor.getAttributes("link").href;
+    setLinkUrl(currentHref || "https://www.oracleeyehospital.com/");
+    setLinkOpenNewTab(editor.getAttributes("link").target !== "_self");
+    setLinkModalOpen(true);
+  }
+
+  function handleConfirmLink(e) {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+    if (!editor) return;
+    const trimmed = (linkUrl || "").trim();
+    if (!trimmed || /^(javascript|data|vbscript):/i.test(trimmed)) {
       editor.chain().focus().unsetLink().run();
+      setLinkModalOpen(false);
+      return;
+    }
+    const attrs = {
+      href: trimmed,
+      rel: "noopener noreferrer",
+      ...(linkOpenNewTab ? { target: "_blank" } : { target: "_self" }),
+    };
+    editor.chain().focus().extendMarkRange("link").setLink(attrs).run();
+    setLinkModalOpen(false);
+  }
+
+  function openImageModal() {
+    setImageUrl("");
+    setImageAlt("");
+    setImageModalOpen(true);
+  }
+
+  function handleConfirmImage(e) {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+    if (!editor) return;
+    const trimmed = (imageUrl || "").trim();
+    if (!trimmed || /^(javascript|data|vbscript):/i.test(trimmed)) {
+      setImageModalOpen(false);
       return;
     }
     editor
       .chain()
       .focus()
-      .extendMarkRange("link")
-      .setLink({ href: href.trim(), target: "_blank", rel: "noopener noreferrer" })
+      .setImage({
+        src: trimmed,
+        alt: (imageAlt || "").trim(),
+        align: "center",
+        class: "content-img",
+      })
       .run();
+    setImageModalOpen(false);
   }
 
-  function addImage() {
+  // Table Modal states for dynamic rows/cols
+  const [tableModalOpen, setTableModalOpen] = useState(false);
+  const [tableRows, setTableRows] = useState(3);
+  const [tableCols, setTableCols] = useState(3);
+  const [tableWithHeader, setTableWithHeader] = useState(true);
+
+  function openTableModal() {
+    setTableRows(3);
+    setTableCols(3);
+    setTableWithHeader(true);
+    setTableModalOpen(true);
+  }
+
+  function handleInsertTable(e) {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
     if (!editor) return;
-    const src = window.prompt("Enter a secure image URL (https:// or /path):");
-    if (!src || /^(javascript|data|vbscript):/i.test(src.trim())) return;
-    const alt = window.prompt("Enter meaningful image alt text:", "");
+    const r = Math.max(1, Math.min(20, parseInt(tableRows, 10) || 3));
+    const c = Math.max(1, Math.min(10, parseInt(tableCols, 10) || 3));
     editor
       .chain()
       .focus()
-      .setImage({ src: src.trim(), alt: alt || "", align: "center", class: "content-img" })
+      .insertTable({ rows: r, cols: c, withHeaderRow: Boolean(tableWithHeader) })
       .run();
+    setTableModalOpen(false);
   }
-
-  const activeHeadingLevel = [2, 3, 4, 5, 6].find((lvl) =>
-    editor?.isActive("heading", { level: lvl })
-  );
 
   if (!mounted) {
     return (
@@ -515,15 +588,67 @@ export default function RichHtmlEditor({
           </button>
           <button
             type="button"
-            title="Insert 2x2 Table"
+            title="Insert Dynamic Table"
             onMouseDown={preventBlur}
-            onClick={() =>
-              editor?.chain().focus().insertTable({ rows: 2, cols: 2, withHeaderRow: true }).run()
-            }
+            onClick={openTableModal}
             className={`tb-btn ${editor?.isActive("table") ? "active" : ""}`}
           >
             <TableIcon size={14} />
           </button>
+          {editor?.isActive("table") && (
+            <>
+              <button
+                type="button"
+                title="Add Column After"
+                onMouseDown={preventBlur}
+                onClick={() => editor?.chain().focus().addColumnAfter().run()}
+                className="tb-btn"
+                style={{ fontSize: 11, padding: "3px 6px" }}
+              >
+                +Col
+              </button>
+              <button
+                type="button"
+                title="Delete Column"
+                onMouseDown={preventBlur}
+                onClick={() => editor?.chain().focus().deleteColumn().run()}
+                className="tb-btn"
+                style={{ fontSize: 11, padding: "3px 6px", color: "#dc2626" }}
+              >
+                -Col
+              </button>
+              <button
+                type="button"
+                title="Add Row After"
+                onMouseDown={preventBlur}
+                onClick={() => editor?.chain().focus().addRowAfter().run()}
+                className="tb-btn"
+                style={{ fontSize: 11, padding: "3px 6px" }}
+              >
+                +Row
+              </button>
+              <button
+                type="button"
+                title="Delete Row"
+                onMouseDown={preventBlur}
+                onClick={() => editor?.chain().focus().deleteRow().run()}
+                className="tb-btn"
+                style={{ fontSize: 11, padding: "3px 6px", color: "#dc2626" }}
+              >
+                -Row
+              </button>
+              <button
+                type="button"
+                title="Delete Entire Table"
+                onMouseDown={preventBlur}
+                onClick={() => editor?.chain().focus().deleteTable().run()}
+                className="tb-btn"
+                style={{ color: "#dc2626" }}
+              >
+                <Trash2 size={13} />
+              </button>
+            </>
+          )}
         </div>
 
         <div className="tb-divider" />
@@ -597,9 +722,9 @@ export default function RichHtmlEditor({
         <div style={{ display: "flex", alignItems: "center", gap: 2 }}>
           <button
             type="button"
-            title="Add Link to Selection"
+            title="Add / Edit Link"
             onMouseDown={preventBlur}
-            onClick={addLink}
+            onClick={openLinkModal}
             className={`tb-btn ${editor?.isActive("link") ? "active" : ""}`}
           >
             <LinkIcon size={14} />
@@ -619,7 +744,7 @@ export default function RichHtmlEditor({
             type="button"
             title="Insert Image"
             onMouseDown={preventBlur}
-            onClick={addImage}
+            onClick={openImageModal}
             className="tb-btn"
           >
             <ImageIcon size={14} />
@@ -691,6 +816,699 @@ export default function RichHtmlEditor({
         />
       ) : (
         <EditorContent editor={editor} style={{ minHeight }} />
+      )}
+
+      {/* ── Custom Center Pop-Up Modal: Link ── */}
+      {linkModalOpen && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          onClick={() => setLinkModalOpen(false)}
+          style={{
+            position: "fixed",
+            inset: 0,
+            zIndex: 999999,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            padding: 16,
+            backgroundColor: "rgba(15, 23, 42, 0.65)",
+            backdropFilter: "blur(4px)",
+            WebkitBackdropFilter: "blur(4px)",
+          }}
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              width: "100%",
+              maxWidth: 440,
+              background: "#ffffff",
+              borderRadius: 14,
+              boxShadow: "0 25px 50px -12px rgba(15, 23, 42, 0.35)",
+              overflow: "hidden",
+              border: "1px solid #e2e8f0",
+              animation: "modalFadeIn 0.18s ease-out",
+            }}
+          >
+            {/* Header */}
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                padding: "14px 18px",
+                borderBottom: "1px solid #f1f5f9",
+                background: "#f8fafc",
+              }}
+            >
+              <div style={{ display: "flex", alignItems: "center", gap: 9 }}>
+                <span
+                  style={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    width: 32,
+                    height: 32,
+                    borderRadius: 8,
+                    background: "#ecfdf5",
+                    color: "#059669",
+                  }}
+                >
+                  <LinkIcon size={16} />
+                </span>
+                <div>
+                  <h3 style={{ margin: 0, fontSize: 15, fontWeight: 700, color: "#0f172a" }}>
+                    Insert / Edit Link
+                  </h3>
+                  <p style={{ margin: 0, fontSize: 11, color: "#64748b" }}>
+                    Set URL and target destination for selected text
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setLinkModalOpen(false)}
+                style={{
+                  background: "transparent",
+                  border: 0,
+                  color: "#94a3b8",
+                  cursor: "pointer",
+                  padding: 4,
+                  borderRadius: 6,
+                  display: "inline-flex",
+                }}
+              >
+                <X size={18} />
+              </button>
+            </div>
+
+            {/* Body Form */}
+            <div style={{ padding: "18px 20px" }}>
+              <div style={{ marginBottom: 16 }}>
+                <label
+                  style={{
+                    display: "block",
+                    fontSize: 12,
+                    fontWeight: 600,
+                    color: "#334155",
+                    marginBottom: 6,
+                  }}
+                >
+                  Link URL <span style={{ color: "#ef4444" }}>*</span>
+                </label>
+                <input
+                  type="text"
+                  autoFocus
+                  value={linkUrl}
+                  onChange={(e) => setLinkUrl(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      e.preventDefault();
+                      handleConfirmLink(e);
+                    }
+                  }}
+                  placeholder="https://www.oracleeyehospital.com/"
+                  style={{
+                    width: "100%",
+                    padding: "9px 12px",
+                    border: "1px solid #cbd5e1",
+                    borderRadius: 7,
+                    fontSize: 13,
+                    fontFamily: "inherit",
+                    outline: "none",
+                    boxSizing: "border-box",
+                  }}
+                />
+                <span style={{ fontSize: 11, color: "#64748b", display: "block", marginTop: 4 }}>
+                  Default is https://www.oracleeyehospital.com/. You can edit or change it anytime.
+                </span>
+              </div>
+
+              <div style={{ marginBottom: 18 }}>
+                <label
+                  style={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: 8,
+                    cursor: "pointer",
+                    fontSize: 12,
+                    fontWeight: 500,
+                    color: "#334155",
+                  }}
+                >
+                  <input
+                    type="checkbox"
+                    checked={linkOpenNewTab}
+                    onChange={(e) => setLinkOpenNewTab(e.target.checked)}
+                    style={{ width: 15, height: 15, accentColor: "#0d9488" }}
+                  />
+                  Open link in new tab (target=&quot;_blank&quot;)
+                </label>
+              </div>
+
+              {/* Actions */}
+              <div style={{ display: "flex", justifyContent: "flex-end", gap: 10, paddingTop: 4 }}>
+                <button
+                  type="button"
+                  onClick={() => setLinkModalOpen(false)}
+                  style={{
+                    padding: "7px 14px",
+                    borderRadius: 7,
+                    border: "1px solid #cbd5e1",
+                    background: "#ffffff",
+                    color: "#475569",
+                    fontSize: 13,
+                    fontWeight: 600,
+                    cursor: "pointer",
+                  }}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  onClick={handleConfirmLink}
+                  style={{
+                    padding: "7px 16px",
+                    borderRadius: 7,
+                    border: "1px solid #0d9488",
+                    background: "#0d9488",
+                    color: "#ffffff",
+                    fontSize: 13,
+                    fontWeight: 600,
+                    cursor: "pointer",
+                  }}
+                >
+                  Apply Link
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ── Custom Center Pop-Up Modal: Image ── */}
+      {imageModalOpen && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          onClick={() => setImageModalOpen(false)}
+          style={{
+            position: "fixed",
+            inset: 0,
+            zIndex: 999999,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            padding: 16,
+            backgroundColor: "rgba(15, 23, 42, 0.65)",
+            backdropFilter: "blur(4px)",
+            WebkitBackdropFilter: "blur(4px)",
+          }}
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              width: "100%",
+              maxWidth: 450,
+              background: "#ffffff",
+              borderRadius: 14,
+              boxShadow: "0 25px 50px -12px rgba(15, 23, 42, 0.35)",
+              overflow: "hidden",
+              border: "1px solid #e2e8f0",
+              animation: "modalFadeIn 0.18s ease-out",
+            }}
+          >
+            {/* Header */}
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                padding: "14px 18px",
+                borderBottom: "1px solid #f1f5f9",
+                background: "#f8fafc",
+              }}
+            >
+              <div style={{ display: "flex", alignItems: "center", gap: 9 }}>
+                <span
+                  style={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    width: 32,
+                    height: 32,
+                    borderRadius: 8,
+                    background: "#eff6ff",
+                    color: "#2563eb",
+                  }}
+                >
+                  <ImageIcon size={16} />
+                </span>
+                <div>
+                  <h3 style={{ margin: 0, fontSize: 15, fontWeight: 700, color: "#0f172a" }}>
+                    Insert Image
+                  </h3>
+                  <p style={{ margin: 0, fontSize: 11, color: "#64748b" }}>
+                    Enter the URL and optional alt text for SEO
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setImageModalOpen(false)}
+                style={{
+                  background: "transparent",
+                  border: 0,
+                  color: "#94a3b8",
+                  cursor: "pointer",
+                  padding: 4,
+                  borderRadius: 6,
+                  display: "inline-flex",
+                }}
+              >
+                <X size={18} />
+              </button>
+            </div>
+
+            {/* Body Form */}
+            <div style={{ padding: "18px 20px" }}>
+              <div style={{ marginBottom: 14 }}>
+                <label
+                  style={{
+                    display: "block",
+                    fontSize: 12,
+                    fontWeight: 600,
+                    color: "#334155",
+                    marginBottom: 6,
+                  }}
+                >
+                  Image URL <span style={{ color: "#ef4444" }}>*</span>
+                </label>
+                <input
+                  type="text"
+                  autoFocus
+                  value={imageUrl}
+                  onChange={(e) => setImageUrl(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      e.preventDefault();
+                      handleConfirmImage(e);
+                    }
+                  }}
+                  placeholder="https://... or /images/..."
+                  style={{
+                    width: "100%",
+                    padding: "9px 12px",
+                    border: "1px solid #cbd5e1",
+                    borderRadius: 7,
+                    fontSize: 13,
+                    fontFamily: "inherit",
+                    outline: "none",
+                    boxSizing: "border-box",
+                  }}
+                />
+              </div>
+
+              <div style={{ marginBottom: 18 }}>
+                <label
+                  style={{
+                    display: "block",
+                    fontSize: 12,
+                    fontWeight: 600,
+                    color: "#334155",
+                    marginBottom: 6,
+                  }}
+                >
+                  Alt Text (SEO & Accessibility)
+                </label>
+                <input
+                  type="text"
+                  value={imageAlt}
+                  onChange={(e) => setImageAlt(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      e.preventDefault();
+                      handleConfirmImage(e);
+                    }
+                  }}
+                  placeholder="e.g. Cataract surgery operation theater in Moradabad"
+                  style={{
+                    width: "100%",
+                    padding: "9px 12px",
+                    border: "1px solid #cbd5e1",
+                    borderRadius: 7,
+                    fontSize: 13,
+                    fontFamily: "inherit",
+                    outline: "none",
+                    boxSizing: "border-box",
+                  }}
+                />
+              </div>
+
+              {/* Actions */}
+              <div style={{ display: "flex", justifyContent: "flex-end", gap: 10, paddingTop: 4 }}>
+                <button
+                  type="button"
+                  onClick={() => setImageModalOpen(false)}
+                  style={{
+                    padding: "7px 14px",
+                    borderRadius: 7,
+                    border: "1px solid #cbd5e1",
+                    background: "#ffffff",
+                    color: "#475569",
+                    fontSize: 13,
+                    fontWeight: 600,
+                    cursor: "pointer",
+                  }}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  onClick={handleConfirmImage}
+                  disabled={!imageUrl.trim()}
+                  style={{
+                    padding: "7px 16px",
+                    borderRadius: 7,
+                    border: "1px solid #0d9488",
+                    background: imageUrl.trim() ? "#0d9488" : "#94a3b8",
+                    color: "#ffffff",
+                    fontSize: 13,
+                    fontWeight: 600,
+                    cursor: imageUrl.trim() ? "pointer" : "not-allowed",
+                  }}
+                >
+                  Insert Image
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ── Custom Center Pop-Up Modal: Dynamic Table Builder ── */}
+      {tableModalOpen && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          onClick={() => setTableModalOpen(false)}
+          style={{
+            position: "fixed",
+            inset: 0,
+            zIndex: 999999,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            padding: 16,
+            backgroundColor: "rgba(15, 23, 42, 0.65)",
+            backdropFilter: "blur(4px)",
+            WebkitBackdropFilter: "blur(4px)",
+          }}
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              width: "100%",
+              maxWidth: 560,
+              maxHeight: "90vh",
+              display: "flex",
+              flexDirection: "column",
+              background: "#ffffff",
+              borderRadius: 14,
+              boxShadow: "0 25px 50px -12px rgba(15, 23, 42, 0.35)",
+              overflow: "hidden",
+              border: "1px solid #e2e8f0",
+              animation: "modalFadeIn 0.18s ease-out",
+            }}
+          >
+            {/* Modal Header */}
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                padding: "14px 20px",
+                borderBottom: "1px solid #f1f5f9",
+                background: "#f8fafc",
+              }}
+            >
+              <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                <span
+                  style={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    width: 32,
+                    height: 32,
+                    borderRadius: 8,
+                    background: "#ecfdf5",
+                    color: "#0d9488",
+                  }}
+                >
+                  <Grid size={18} />
+                </span>
+                <div>
+                  <h3 style={{ margin: 0, fontSize: 15, fontWeight: 700, color: "#0f172a" }}>
+                    Insert Dynamic Table
+                  </h3>
+                  <p style={{ margin: 0, fontSize: 11, color: "#64748b" }}>
+                    Specify rows, columns, and view the live website UI preview
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setTableModalOpen(false)}
+                style={{
+                  background: "transparent",
+                  border: 0,
+                  color: "#94a3b8",
+                  cursor: "pointer",
+                  padding: 4,
+                  borderRadius: 6,
+                  display: "inline-flex",
+                }}
+              >
+                <X size={18} />
+              </button>
+            </div>
+
+            {/* Modal Body */}
+            <div style={{ padding: "18px 22px", overflowY: "auto" }}>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14, marginBottom: 14 }}>
+                {/* Columns Input */}
+                <div>
+                  <label
+                    style={{
+                      display: "block",
+                      fontSize: 12,
+                      fontWeight: 600,
+                      color: "#334155",
+                      marginBottom: 6,
+                    }}
+                  >
+                    Columns (Width)
+                  </label>
+                  <input
+                    type="number"
+                    min="1"
+                    max="10"
+                    value={tableCols}
+                    onChange={(e) => setTableCols(Math.max(1, Math.min(10, parseInt(e.target.value, 10) || 1)))}
+                    style={{
+                      width: "100%",
+                      padding: "8px 12px",
+                      borderRadius: 6,
+                      border: "1px solid #cbd5e1",
+                      fontSize: 13,
+                      boxSizing: "border-box",
+                    }}
+                  />
+                  <span style={{ fontSize: 10, color: "#64748b", marginTop: 2, display: "block" }}>
+                    1 to 10 columns
+                  </span>
+                </div>
+
+                {/* Rows Input */}
+                <div>
+                  <label
+                    style={{
+                      display: "block",
+                      fontSize: 12,
+                      fontWeight: 600,
+                      color: "#334155",
+                      marginBottom: 6,
+                    }}
+                  >
+                    Rows (Height)
+                  </label>
+                  <input
+                    type="number"
+                    min="1"
+                    max="20"
+                    value={tableRows}
+                    onChange={(e) => setTableRows(Math.max(1, Math.min(20, parseInt(e.target.value, 10) || 1)))}
+                    style={{
+                      width: "100%",
+                      padding: "8px 12px",
+                      borderRadius: 6,
+                      border: "1px solid #cbd5e1",
+                      fontSize: 13,
+                      boxSizing: "border-box",
+                    }}
+                  />
+                  <span style={{ fontSize: 10, color: "#64748b", marginTop: 2, display: "block" }}>
+                    1 to 20 rows
+                  </span>
+                </div>
+              </div>
+
+              {/* Header Row Checkbox */}
+              <div style={{ marginBottom: 16 }}>
+                <label
+                  style={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: 8,
+                    cursor: "pointer",
+                    fontSize: 12,
+                    fontWeight: 500,
+                    color: "#334155",
+                  }}
+                >
+                  <input
+                    type="checkbox"
+                    checked={tableWithHeader}
+                    onChange={(e) => setTableWithHeader(e.target.checked)}
+                    style={{ width: 15, height: 15, accentColor: "#0d9488" }}
+                  />
+                  Include Header Row (Teal Medical Style Header)
+                </label>
+              </div>
+
+              {/* Real UI Live Preview */}
+              <div style={{ marginBottom: 16 }}>
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    marginBottom: 6,
+                  }}
+                >
+                  <span style={{ fontSize: 12, fontWeight: 600, color: "#1e293b" }}>
+                    Real Live Page Preview:
+                  </span>
+                  <span style={{ fontSize: 11, color: "#0d9488", fontWeight: 600 }}>
+                    {tableRows} Rows × {tableCols} Columns
+                  </span>
+                </div>
+
+                <div
+                  style={{
+                    background: "#f8fafc",
+                    border: "1px solid #e2e8f0",
+                    borderRadius: 8,
+                    padding: 12,
+                    maxHeight: 240,
+                    overflow: "auto",
+                  }}
+                >
+                  <table
+                    style={{
+                      width: "100%",
+                      borderCollapse: "collapse",
+                      background: "#ffffff",
+                      borderRadius: 6,
+                      overflow: "hidden",
+                      border: "1px solid #cbd5e1",
+                      fontSize: 12,
+                    }}
+                  >
+                    <tbody>
+                      {Array.from({ length: Math.min(tableRows, 8) }).map((_, rIdx) => {
+                        const isHeader = tableWithHeader && rIdx === 0;
+                        return (
+                          <tr
+                            key={rIdx}
+                            style={{
+                              backgroundColor: isHeader
+                                ? "#0d9488"
+                                : rIdx % 2 === 1
+                                ? "#f8fafc"
+                                : "#ffffff",
+                            }}
+                          >
+                            {Array.from({ length: Math.min(tableCols, 8) }).map((__, cIdx) => (
+                              <td
+                                key={cIdx}
+                                style={{
+                                  padding: isHeader ? "8px 10px" : "7px 10px",
+                                  border: "1px solid #cbd5e1",
+                                  fontWeight: isHeader ? 700 : 400,
+                                  color: isHeader ? "#ffffff" : "#334155",
+                                  textAlign: "left",
+                                }}
+                              >
+                                {isHeader
+                                  ? `Header ${cIdx + 1}`
+                                  : `Cell (${rIdx + 1}, ${cIdx + 1})`}
+                              </td>
+                            ))}
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                  {tableRows > 8 && (
+                    <div style={{ textAlign: "center", fontSize: 10, color: "#64748b", marginTop: 6 }}>
+                      ... and {tableRows - 8} more rows
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Modal Actions */}
+              <div style={{ display: "flex", justifyContent: "flex-end", gap: 10 }}>
+                <button
+                  type="button"
+                  onClick={() => setTableModalOpen(false)}
+                  style={{
+                    padding: "7px 14px",
+                    borderRadius: 7,
+                    border: "1px solid #cbd5e1",
+                    background: "#ffffff",
+                    color: "#475569",
+                    fontSize: 13,
+                    fontWeight: 600,
+                    cursor: "pointer",
+                  }}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  onClick={handleInsertTable}
+                  style={{
+                    padding: "7px 18px",
+                    borderRadius: 7,
+                    border: "1px solid #0d9488",
+                    background: "#0d9488",
+                    color: "#ffffff",
+                    fontSize: 13,
+                    fontWeight: 600,
+                    cursor: "pointer",
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: 6,
+                  }}
+                >
+                  <Plus size={15} /> Create Table
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
       )}
 
       <style jsx global>{`
@@ -916,6 +1734,59 @@ export default function RichHtmlEditor({
             width: 100% !important;
             clear: both !important;
           }
+        }
+
+        /* Table Real Website UI Styling */
+        .rich-html-editor-content table {
+          border-collapse: collapse;
+          table-layout: auto;
+          width: 100%;
+          margin: 16px 0;
+          overflow: hidden;
+          border-radius: 8px;
+          border: 1px solid #cbd5e1;
+          background: #ffffff;
+          box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+        .rich-html-editor-content table th {
+          background-color: #0d9488 !important;
+          color: #ffffff !important;
+          font-weight: 700 !important;
+          text-align: left;
+          padding: 10px 14px;
+          border: 1px solid #0f766e;
+          font-size: 13px;
+          letter-spacing: 0.02em;
+        }
+        .rich-html-editor-content table th p {
+          margin: 0;
+          color: #ffffff !important;
+          font-weight: 700 !important;
+        }
+        .rich-html-editor-content table td {
+          padding: 9px 14px;
+          border: 1px solid #e2e8f0;
+          color: #334155;
+          font-size: 13px;
+          vertical-align: top;
+          line-height: 1.5;
+        }
+        .rich-html-editor-content table td p {
+          margin: 0;
+        }
+        .rich-html-editor-content table tr:nth-child(even) td {
+          background-color: #f8fafc;
+        }
+        .rich-html-editor-content table tr:hover td {
+          background-color: #f0fdfa;
+        }
+        .rich-html-editor-content .selectedCell:after {
+          z-index: 2;
+          position: absolute;
+          content: "";
+          left: 0; right: 0; top: 0; bottom: 0;
+          background: rgba(13, 148, 136, 0.15);
+          pointer-events: none;
         }
 
         .rich-html-editor-content ul,
