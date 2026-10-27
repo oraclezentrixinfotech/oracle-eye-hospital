@@ -4,6 +4,8 @@ import { isAdmin, unauthorized } from "@/lib/auth";
 import { clean, cleanMultiline, slugify } from "@/lib/validate";
 import { revalidatePath } from "next/cache";
 import { sanitizeSeoFaqs, sanitizeSeoSections } from "@/lib/sanitizeSeoPage";
+import { validateSchemaJson } from "@/lib/validateSchema";
+import { SITE_URL } from "@/lib/siteUrl";
 
 export const dynamic = "force-dynamic";
 
@@ -86,12 +88,29 @@ export async function PUT(req, { params }) {
   const faqs = Array.isArray(body.faqs)
     ? sanitizeSeoFaqs(body.faqs)
     : existing.faqs;
-  const customSchema = body.customSchema !== undefined
-    ? (body.customSchema ? String(body.customSchema).trim() : null)
-    : existing.customSchema;
   const relatedIds = Array.isArray(body.relatedIds)
     ? body.relatedIds.map(Number).filter((n) => !isNaN(n))
     : existing.relatedIds;
+
+  // Schema Validation & Handling
+  let schemaJson = existing.schemaJson;
+  let schemaUpdatedAt = existing.schemaUpdatedAt;
+  let customSchema = existing.customSchema;
+
+  const rawSchemaInput = body.schemaJson !== undefined ? body.schemaJson : body.customSchema;
+  if (rawSchemaInput !== undefined) {
+    const allowRatings = Boolean(body.allowRatings);
+    const schemaValidation = validateSchemaJson(rawSchemaInput, allowRatings);
+    if (!schemaValidation.valid) {
+      return NextResponse.json(
+        { error: schemaValidation.error, warning: schemaValidation.warning },
+        { status: 400 }
+      );
+    }
+    schemaJson = schemaValidation.schemaJson;
+    schemaUpdatedAt = new Date();
+    customSchema = schemaJson ? JSON.stringify(schemaJson, null, 2) : null;
+  }
 
   try {
     const updated = await prisma.seoPage.update({
@@ -102,7 +121,7 @@ export async function PUT(req, { params }) {
         metaTitle,
         metaDescription,
         keywords,
-        canonicalUrl: canonicalUrl || `https://www.oracleeyehospital.com/${slug}`,
+        canonicalUrl: canonicalUrl || `${SITE_URL}/${slug}`,
         ogImage: ogImage || heroImage,
         heroBadge,
         h1Title,
@@ -115,7 +134,10 @@ export async function PUT(req, { params }) {
         doctorIds,
         faqs,
         customSchema,
+        schemaJson,
+        schemaUpdatedAt,
         relatedIds,
+        updatedAt: new Date(),
       },
     });
 
@@ -158,10 +180,14 @@ export async function PATCH(req, { params }) {
   try {
     const updated = await prisma.seoPage.update({
       where: { id },
-      data: { status },
+      data: { 
+        status,
+        updatedAt: new Date(),
+      },
       select: { id: true, status: true, slug: true },
     });
 
+    revalidatePath("/" + existing.slug);
     revalidatePath("/services/" + existing.slug);
     revalidatePath("/admin/seo-pages");
     revalidatePath("/sitemap.xml");
@@ -189,6 +215,7 @@ export async function DELETE(req, { params }) {
 
     await prisma.seoPage.delete({ where: { id } });
 
+    revalidatePath("/" + existing.slug);
     revalidatePath("/services/" + existing.slug);
     revalidatePath("/admin/seo-pages");
     revalidatePath("/sitemap.xml");

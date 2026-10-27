@@ -5,8 +5,10 @@ import FloatingWidgets from "@/components/FloatingWidgets";
 import AosAnimationProvider from "@/components/AosAnimationProvider";
 import SiteChrome from "@/components/SiteChrome";
 import { getSettings } from "@/lib/settings";
+import { SITE_URL } from "@/lib/siteUrl";
+
 export const metadata = {
-  metadataBase: new URL("https://www.oracleeyehospital.com"),
+  metadataBase: new URL(SITE_URL),
   title: "Oracle Eye Hospital - Best Eye Hospital in Moradabad | Cataract, LASIK & Retina Care",
   description:
     "Oracle Eye Hospital in Moradabad offers advanced cataract surgery, LASIK laser vision correction, retinal surgery, pediatric eye care, and glaucoma treatment. Book your appointment today.",
@@ -16,7 +18,7 @@ export const metadata = {
   openGraph: {
     title: "Oracle Eye Hospital - Best Eye Hospital in Moradabad",
     description: "Clear vision awaits at Oracle Eye Hospital. Advanced technology & compassionate eye care.",
-    url: "https://www.oracleeyehospital.com",
+    url: SITE_URL,
     siteName: "Oracle Eye Hospital",
     images: [{ url: "/uploads/logos/232296ca-9c85-445b-b965-033a97fe7008.png" }],
     locale: "en_IN",

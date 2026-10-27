@@ -4,14 +4,7 @@ import { PageHeader } from "@/components/ui";
 import { SERVICES, SITE } from "@/lib/content";
 import { prisma } from "@/lib/prisma";
 import ServiceContentClient from "./ServiceContentClient";
-import {
-  generateHospitalSchema,
-  generatePhysicianSchema,
-  generateFAQSchema,
-  generateBreadcrumbSchema,
-  generateProcedureSchema,
-  HOSPITAL_INFO,
-} from "@/app/(seo_pages)/_lib/schema";
+import { SITE_URL } from "@/lib/siteUrl";
 
 export const dynamic = "force-dynamic";
 
@@ -37,11 +30,11 @@ export async function generateMetadata({ params }) {
       `Advanced ${seoPage.h1Title} at Oracle Eye Hospital in Moradabad.`;
     const canonical =
       seoPage.canonicalUrl ||
-      `https://www.oracleeyehospital.com/services/${seoPage.slug}`;
+      `${SITE_URL}/services/${seoPage.slug}`;
     const ogImg =
       seoPage.ogImage ||
       seoPage.heroImage ||
-      "https://www.oracleeyehospital.com/Assets/img/services/Cataract-Service.png";
+      `${SITE_URL}/Assets/img/services/Cataract-Service.png`;
 
     return {
       title: pageTitle,
@@ -93,7 +86,7 @@ export async function generateMetadata({ params }) {
       title: `${s.title} | Oracle Eye Hospital`,
       description: s.intro.slice(0, 155),
       alternates: {
-        canonical: `https://www.oracleeyehospital.com/services/${s.slug}`,
+        canonical: `${SITE_URL}/services/${s.slug}`,
       },
     };
   }
@@ -152,98 +145,39 @@ export default async function ServicePage({ params }) {
 
   // 1. If SEO Page found in DB -> Render Rich SEO Layout
   if (seoPage) {
-    const pageUrl =
-      seoPage.canonicalUrl ||
-      `https://www.oracleeyehospital.com/services/${seoPage.slug}`;
-
-    const breadcrumbs = [
-      { name: "Home", url: "/" },
-      { name: "Services", url: "/services" },
-      { name: seoPage.h1Title, url: `/services/${seoPage.slug}` },
-    ];
-
-    const breadcrumbSchema = generateBreadcrumbSchema(breadcrumbs);
-    const faqSchema =
-      Array.isArray(seoPage.faqs) && seoPage.faqs.length > 0
-        ? generateFAQSchema(seoPage.faqs)
-        : null;
-    const hospitalSchema = generateHospitalSchema();
-    const procedureSchema = generateProcedureSchema({
-      name: seoPage.h1Title,
-      description: seoPage.metaDescription || seoPage.heroSubtitle,
-      url: pageUrl,
-    });
-    const physicianSchema =
-      doctors.length > 0
-        ? generatePhysicianSchema({
-            name: doctors[0].name,
-            qualification: doctors[0].qualification,
-            specialty: doctors[0].role,
-            jobTitle: doctors[0].role,
-            url: doctors[0].profileHref,
-            image: doctors[0].image,
-          })
-        : null;
-
-    // MedicalWebPage Schema
-    const medicalWebPageSchema = {
-      "@context": "https://schema.org",
-      "@type": "MedicalWebPage",
-      "@id": `${pageUrl}/#medicalwebpage`,
-      name: seoPage.metaTitle || seoPage.h1Title,
-      description: seoPage.metaDescription || seoPage.heroSubtitle,
-      url: pageUrl,
-      headline: seoPage.h1Title,
-      inLanguage: "en-IN",
-      audience: {
-        "@type": "MedicalAudience",
-        audienceType: "Patients & Family",
-      },
-      lastReviewed: seoPage.updatedAt ? new Date(seoPage.updatedAt).toISOString() : new Date().toISOString(),
-      publisher: {
-        "@type": "Hospital",
-        name: HOSPITAL_INFO.name,
-        url: HOSPITAL_INFO.url,
-      },
-    };
+    // Prepare schema items from DB (schemaJson or legacy customSchema fallback if JSON)
+    let schemaList = [];
+    if (seoPage.schemaJson) {
+      schemaList = Array.isArray(seoPage.schemaJson)
+        ? seoPage.schemaJson
+        : [seoPage.schemaJson];
+    } else if (seoPage.customSchema && seoPage.customSchema.trim()) {
+      try {
+        let raw = seoPage.customSchema.trim();
+        if (raw.startsWith("<script") && raw.endsWith("</script>")) {
+          raw = raw.replace(/<script[^>]*>/i, "").replace(/<\/script>$/i, "").trim();
+        }
+        const parsed = JSON.parse(raw);
+        schemaList = Array.isArray(parsed) ? parsed : [parsed];
+      } catch {
+        schemaList = [];
+      }
+    }
 
     return (
       <>
-        {/* Structured JSON-LD Data for Search Engines */}
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
-        />
-        {faqSchema && (
-          <script
-            type="application/ld+json"
-            dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
-          />
-        )}
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(hospitalSchema) }}
-        />
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(procedureSchema) }}
-        />
-        {physicianSchema && (
-          <script
-            type="application/ld+json"
-            dangerouslySetInnerHTML={{ __html: JSON.stringify(physicianSchema) }}
-          />
-        )}
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(medicalWebPageSchema) }}
-        />
-        {seoPage.customSchema && (
-          <script
-            type="application/ld+json"
-            dangerouslySetInnerHTML={{ __html: seoPage.customSchema }}
-          />
-        )}
+        {/* Schema.org Structured Data: strictly from database written via Admin Panel */}
+        {schemaList.length > 0 &&
+          schemaList.map((item, index) => {
+            const jsonText = JSON.stringify(item).replace(/</g, "\\u003c");
+            return (
+              <script
+                key={index}
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{ __html: jsonText }}
+              />
+            );
+          })}
 
         {/* Dynamic SEO Content with Sticky TOC & Interactive Elements */}
         <ServiceContentClient

@@ -1,6 +1,8 @@
 // All static website content lives here. Edit this file to change text, doctors, services, nav.
 // DB-driven parts: appointments, contact messages, blogs, news (see prisma/schema.prisma).
 
+import { SITE_URL } from "@/lib/siteUrl";
+
 export const SITE = {
   name: "Oracle Eye Hospital",
   tagline: "We preserve, enhance and protect your vision",
@@ -14,7 +16,7 @@ export const SITE = {
   facebook: "https://www.facebook.com/oracleeyehospital/",
   mapUrl:
     "https://www.google.com/maps/search/?api=1&query=Oracle+Eye+Hospital+491+Hi+Street+Near+TDI+City+Parampara+MDA+Moradabad+Uttar+Pradesh+244001",
-  url: process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000",
+  url: SITE_URL,
 };
 
 export const STATS = [

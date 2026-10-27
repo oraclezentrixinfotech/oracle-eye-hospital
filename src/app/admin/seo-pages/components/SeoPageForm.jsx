@@ -27,6 +27,8 @@ import {
   Search,
   X,
   Stethoscope,
+  ExternalLink,
+  Clock,
 } from "lucide-react";
 import ImageUpload from "../../components/ImageUpload";
 import RichHtmlEditor from "./RichHtmlEditor";
@@ -97,9 +99,17 @@ export default function SeoPageForm({ initialData = null, doctorsList = [], allP
           answer: "Most patients can resume light routine activities within 24 to 48 hours.",
         },
       ],
-    customSchema: initialData?.customSchema || "",
+    customSchema: initialData?.schemaJson
+      ? JSON.stringify(initialData.schemaJson, null, 2)
+      : initialData?.customSchema || "",
     relatedIds: Array.isArray(initialData?.relatedIds) ? initialData.relatedIds : [],
   });
+
+  const [schemaUpdatedAt, setSchemaUpdatedAt] = useState(
+    initialData?.schemaUpdatedAt || initialData?.schema_updated_at || null
+  );
+  const [schemaRatingConfirmed, setSchemaRatingConfirmed] = useState(false);
+  const [schemaStatusMsg, setSchemaStatusMsg] = useState({ type: "", text: "" });
 
   // Local list of doctors (allows adding new doctor dynamically)
   const [localDoctors, setLocalDoctors] = useState(doctorsList || []);
@@ -121,6 +131,7 @@ export default function SeoPageForm({ initialData = null, doctorsList = [], allP
 
   const [slugLocked, setSlugLocked] = useState(isEditing);
   const [saving, setSaving] = useState(false);
+  const [savingSchemaOnly, setSavingSchemaOnly] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
   const [showPreview, setShowPreview] = useState(false);
 
@@ -173,7 +184,7 @@ export default function SeoPageForm({ initialData = null, doctorsList = [], allP
     if (window.confirm(confirmText)) {
       try {
         localStorage.removeItem(DRAFT_KEY);
-      } catch {}
+      } catch { }
       setHasRestoredDraft(false);
       window.location.reload();
     }
@@ -468,19 +479,57 @@ export default function SeoPageForm({ initialData = null, doctorsList = [], allP
       return;
     }
 
-    // Validate Custom Schema if provided
+    // Validate Schema JSON if provided
+    let parsedSchema = null;
     if (form.customSchema && form.customSchema.trim()) {
       let text = form.customSchema.trim();
       if (text.startsWith("<script") && text.endsWith("</script>")) {
-        text = text.replace(/<script[^>]*>/, "").replace(/<\/script>$/, "").trim();
+        text = text.replace(/<script[^>]*>/i, "").replace(/<\/script>$/i, "").trim();
       }
       try {
-        JSON.parse(text);
+        parsedSchema = JSON.parse(text);
       } catch (err) {
-        setErrorMsg(`Custom Schema JSON Syntax Error: ${err.message}. Please fix or click "Format & Validate JSON".`);
+        setErrorMsg(`Schema JSON Syntax Error: ${err.message}. Please fix before saving.`);
         setActiveTab("schema");
-        toast("Invalid Custom Schema JSON", "error");
+        toast("Invalid Schema JSON syntax", "error");
         return;
+      }
+
+      if (typeof parsedSchema !== "object" || parsedSchema === null) {
+        setErrorMsg("Schema must be a JSON object or array of objects.");
+        setActiveTab("schema");
+        toast("Schema must be a JSON object or array of objects.", "error");
+        return;
+      }
+
+      // Check structure: must have @type or @graph
+      const items = Array.isArray(parsedSchema) ? parsedSchema : [parsedSchema];
+      for (let i = 0; i < items.length; i++) {
+        const item = items[i];
+        if (!item || typeof item !== "object" || Array.isArray(item)) {
+          setErrorMsg(`Schema item at index ${i} is not a valid object.`);
+          setActiveTab("schema");
+          return;
+        }
+        if (!item["@type"] && (!Array.isArray(item["@graph"]) || item["@graph"].length === 0)) {
+          setErrorMsg(`Schema item at index ${i} must contain a "@type" property or an "@graph" array.`);
+          setActiveTab("schema");
+          toast(`Item #${i + 1} is missing "@type"`, "error");
+          return;
+        }
+      }
+
+      // Check for aggregateRating / review
+      const hasRating = /\b(aggregateRating|review)\b/i.test(text);
+      if (hasRating && !schemaRatingConfirmed) {
+        const confirmMsg =
+          'Your Schema contains "aggregateRating" or "review". Google requires real, verified user reviews. Are you sure you want to save this schema?';
+        if (!window.confirm(confirmMsg)) {
+          setErrorMsg('Save aborted: Schema contains "aggregateRating" or "review". Please remove or confirm.');
+          setActiveTab("schema");
+          return;
+        }
+        setSchemaRatingConfirmed(true);
       }
     }
 
@@ -488,11 +537,17 @@ export default function SeoPageForm({ initialData = null, doctorsList = [], allP
     const endpoint = isEditing ? `/api/admin/seo-pages/${initialData.id}` : "/api/admin/seo-pages";
     const method = isEditing ? "PUT" : "POST";
 
+    const payload = {
+      ...form,
+      schemaJson: parsedSchema,
+      allowRatings: true,
+    };
+
     try {
       const res = await fetch(endpoint, {
         method,
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
+        body: JSON.stringify(payload),
       });
 
       const data = await res.json().catch(() => ({}));
@@ -503,7 +558,7 @@ export default function SeoPageForm({ initialData = null, doctorsList = [], allP
       } else {
         try {
           localStorage.removeItem(DRAFT_KEY);
-        } catch {}
+        } catch { }
         toast(isEditing ? "SEO page updated!" : "SEO page created successfully!", "success");
         router.push("/admin/seo-pages");
         router.refresh();
@@ -513,6 +568,84 @@ export default function SeoPageForm({ initialData = null, doctorsList = [], allP
       toast("Network error. Could not connect to server.", "error");
     } finally {
       setSaving(false);
+    }
+  }
+
+  // Save Schema Only (useful when editing Schema in live admin)
+  async function handleSaveSchemaOnly() {
+    if (!isEditing || !initialData?.id) {
+      toast("Please save the entire page first before using quick schema save.", "error");
+      return;
+    }
+    setSchemaStatusMsg({ type: "", text: "" });
+
+    let parsedSchema = null;
+    if (form.customSchema && form.customSchema.trim()) {
+      let text = form.customSchema.trim();
+      if (text.startsWith("<script") && text.endsWith("</script>")) {
+        text = text.replace(/<script[^>]*>/i, "").replace(/<\/script>$/i, "").trim();
+      }
+      try {
+        parsedSchema = JSON.parse(text);
+      } catch (err) {
+        setSchemaStatusMsg({ type: "error", text: `JSON Syntax Error: ${err.message}` });
+        toast("Invalid Schema JSON syntax", "error");
+        return;
+      }
+
+      if (typeof parsedSchema !== "object" || parsedSchema === null) {
+        setSchemaStatusMsg({ type: "error", text: "Schema must be a JSON object or array of objects." });
+        return;
+      }
+
+      const items = Array.isArray(parsedSchema) ? parsedSchema : [parsedSchema];
+      for (let i = 0; i < items.length; i++) {
+        const item = items[i];
+        if (!item || typeof item !== "object" || Array.isArray(item)) {
+          setSchemaStatusMsg({ type: "error", text: `Item #${i + 1} is not a valid object.` });
+          return;
+        }
+        if (!item["@type"] && (!Array.isArray(item["@graph"]) || item["@graph"].length === 0)) {
+          setSchemaStatusMsg({ type: "error", text: `Item #${i + 1} must contain "@type" or "@graph".` });
+          return;
+        }
+      }
+
+      const hasRating = /\b(aggregateRating|review)\b/i.test(text);
+      if (hasRating && !schemaRatingConfirmed) {
+        if (!window.confirm('Schema contains "aggregateRating" or "review". Confirm to proceed?')) {
+          setSchemaStatusMsg({ type: "warning", text: 'Save cancelled: contains "aggregateRating" / "review".' });
+          return;
+        }
+        setSchemaRatingConfirmed(true);
+      }
+    }
+
+    setSavingSchemaOnly(true);
+    try {
+      const res = await fetch(`/api/admin/seo-pages/${initialData.id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          schemaJson: parsedSchema,
+          allowRatings: true,
+        }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        setSchemaStatusMsg({ type: "error", text: data.error || "Failed to save schema." });
+        toast(data.error || "Failed to save schema", "error");
+      } else {
+        const now = new Date();
+        setSchemaUpdatedAt(now);
+        setSchemaStatusMsg({ type: "success", text: "Schema saved and page revalidated successfully!" });
+        toast("Schema updated and page cache refreshed!", "success");
+      }
+    } catch {
+      setSchemaStatusMsg({ type: "error", text: "Network error saving schema." });
+      toast("Network error", "error");
+    } finally {
+      setSavingSchemaOnly(false);
     }
   }
 
@@ -748,22 +881,22 @@ export default function SeoPageForm({ initialData = null, doctorsList = [], allP
           { id: "hero", label: "2. Hero Banner", icon: Layers },
           {
             id: "content",
-            label: `3. Content & FAQs (${form.sections.length} Sec, ${form.faqs.length} FAQ)`,
+            label: `3. Content & FAQs`,
             icon: FileText,
           },
           {
             id: "doctors",
-            label: `4. Specialist Doctors (${form.doctorIds.length})`,
+            label: `4. Specialist Doctors`,
             icon: UserCheck,
           },
           {
             id: "related",
-            label: `5. Related Links (${form.relatedIds.length})`,
+            label: `5. Related Links`,
             icon: Link2,
           },
           {
             id: "schema",
-            label: `6. Custom Schema ${form.customSchema ? "✓" : ""}`,
+            label: `6. Schema (JSON-LD) ${form.customSchema?.trim() ? "✓" : ""}`,
             icon: Code,
           },
         ].map((tab) => {
@@ -2049,118 +2182,202 @@ export default function SeoPageForm({ initialData = null, doctorsList = [], allP
           )}
 
           {/* ======================================================== */}
-          {/* TAB 4: CUSTOM SCHEMA & JSON-LD */}
+          {/* TAB 6: SCHEMA & JSON-LD (Strictly Database-driven) */}
           {/* ======================================================== */}
           {activeTab === "schema" && (
-            <div style={{ display: "grid", gap: 20 }}>
-              <div>
-                <h3 style={{ margin: "0 0 6px 0", fontSize: 16, color: "#111827", fontWeight: 700 }}>
-                  Custom JSON-LD Schema
-                </h3>
-                <p style={{ margin: 0, fontSize: 13, color: "#6b7280", lineHeight: 1.5 }}>
-                  Add your own custom Schema.org markup (JSON or &lt;script type=&quot;application/ld+json&quot;&gt; tags).
-                  It will be embedded directly into the live page HTML source for search engines and Google Bot.
-                </p>
+            <div style={{ display: "grid", gap: 18 }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: 12 }}>
+                <div>
+                  <h3 style={{ margin: "0 0 6px 0", fontSize: 16, color: "#111827", fontWeight: 700 }}>
+                    JSON-LD Schema (Database Driven)
+                  </h3>
+                  <p style={{ margin: 0, fontSize: 13, color: "#6b7280", lineHeight: 1.5, maxWidth: 680 }}>
+                    Paste your custom Schema.org JSON-LD here. All hardcoded/auto-generated schemas have been removed; only the valid JSON saved here will be rendered in the page HTML source.
+                  </p>
+                </div>
+
+                {/* Google Rich Results Test Link */}
+                <a
+                  href="https://search.google.com/test/rich-results"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: 6,
+                    padding: "7px 12px",
+                    background: "#f8fafc",
+                    border: "1px solid #cbd5e1",
+                    borderRadius: 6,
+                    fontSize: 12,
+                    fontWeight: 600,
+                    color: "#0369a1",
+                    textDecoration: "none",
+                  }}
+                >
+                  <ExternalLink size={14} /> Test in Google Rich Results
+                </a>
               </div>
 
-              {/* Template Buttons */}
-              <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
-                <button
-                  type="button"
-                  onClick={() => {
-                    const sample = JSON.stringify(
-                      {
-                        "@context": "https://schema.org",
-                        "@type": "MedicalProcedure",
-                        name: form.h1Title || "Procedure Name",
-                        description: form.metaDescription || "Procedure Description",
-                        procedureType: "SurgicalProcedure",
-                        bodyLocation: "Eye",
-                        provider: {
-                          "@type": "Hospital",
-                          name: "Oracle Eye Hospital",
-                          url: "https://www.oracleeyehospital.com",
-                        },
-                      },
-                      null,
-                      2
-                    );
-                    setForm((prev) => ({ ...prev, customSchema: sample }));
-                  }}
-                  style={{
-                    padding: "6px 12px",
-                    background: "#f0fdfa",
-                    border: "1px solid #99f6e4",
-                    color: "#0f766e",
-                    borderRadius: 6,
-                    fontSize: 12,
-                    fontWeight: 600,
-                    cursor: "pointer",
-                  }}
-                >
-                  + Load MedicalProcedure Template
-                </button>
+              {/* Status or Last Updated Time Banner */}
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  padding: "10px 14px",
+                  background: "#f8fafc",
+                  border: "1px solid #e2e8f0",
+                  borderRadius: 8,
+                  fontSize: 12.5,
+                  color: "#475569",
+                  flexWrap: "wrap",
+                  gap: 10,
+                }}
+              >
+                <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                  <Clock size={15} color="#0d9488" />
+                  <span>
+                    <strong>Last Updated:</strong>{" "}
+                    {schemaUpdatedAt
+                      ? new Date(schemaUpdatedAt).toLocaleString("en-IN", {
+                        day: "numeric",
+                        month: "short",
+                        year: "numeric",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                        second: "2-digit",
+                      })
+                      : "Not set yet (new / no schema)"}
+                  </span>
+                </div>
 
-                <button
-                  type="button"
-                  onClick={() => {
-                    const sample = JSON.stringify(
-                      {
-                        "@context": "https://schema.org",
-                        "@type": "MedicalBusiness",
-                        name: "Oracle Eye Hospital",
-                        url: `https://www.oracleeyehospital.com/${form.slug || ""}`,
-                        telephone: form.ctaPhone || "+91 8006803111",
-                        address: {
-                          "@type": "PostalAddress",
-                          streetAddress: "Kanth Road",
-                          addressLocality: "Moradabad",
-                          addressRegion: "Uttar Pradesh",
-                          postalCode: "244001",
-                          addressCountry: "IN",
-                        },
-                      },
-                      null,
-                      2
-                    );
-                    setForm((prev) => ({ ...prev, customSchema: sample }));
-                  }}
-                  style={{
-                    padding: "6px 12px",
-                    background: "#f0fdfa",
-                    border: "1px solid #99f6e4",
-                    color: "#0f766e",
-                    borderRadius: 6,
-                    fontSize: 12,
-                    fontWeight: 600,
-                    cursor: "pointer",
-                  }}
-                >
-                  + Load MedicalBusiness Template
-                </button>
+                {isEditing && (
+                  <button
+                    type="button"
+                    onClick={handleSaveSchemaOnly}
+                    disabled={savingSchemaOnly}
+                    style={{
+                      display: "inline-flex",
+                      alignItems: "center",
+                      gap: 6,
+                      background: "#0d9488",
+                      color: "#ffffff",
+                      border: "none",
+                      padding: "6px 14px",
+                      borderRadius: 6,
+                      fontSize: 12,
+                      fontWeight: 600,
+                      cursor: savingSchemaOnly ? "wait" : "pointer",
+                    }}
+                  >
+                    {savingSchemaOnly ? (
+                      <>
+                        <Loader2 size={13} className="adt-spin" /> Saving Schema…
+                      </>
+                    ) : (
+                      <>
+                        <Save size={13} /> Save Schema Only
+                      </>
+                    )}
+                  </button>
+                )}
+              </div>
 
+              {/* Action Buttons Toolbar */}
+              <div style={{ display: "flex", flexWrap: "wrap", gap: 8, alignItems: "center" }}>
+                {/* Validate Button */}
                 <button
                   type="button"
                   onClick={() => {
-                    if (!form.customSchema.trim()) return;
+                    const text = (form.customSchema || "").trim();
+                    if (!text) {
+                      setSchemaStatusMsg({ type: "info", text: "Schema is currently empty (no schema will be rendered)." });
+                      toast("Schema is empty", "info");
+                      return;
+                    }
                     try {
-                      let text = form.customSchema.trim();
-                      if (text.startsWith("<script") && text.endsWith("</script>")) {
-                        const inner = text.replace(/<script[^>]*>/, "").replace(/<\/script>$/, "");
-                        const formatted = JSON.stringify(JSON.parse(inner), null, 2);
-                        setForm((prev) => ({ ...prev, customSchema: formatted }));
-                      } else {
-                        const formatted = JSON.stringify(JSON.parse(text), null, 2);
-                        setForm((prev) => ({ ...prev, customSchema: formatted }));
+                      let cleanText = text;
+                      if (cleanText.startsWith("<script") && cleanText.endsWith("</script>")) {
+                        cleanText = cleanText.replace(/<script[^>]*>/i, "").replace(/<\/script>$/i, "").trim();
                       }
-                      toast("JSON Schema is valid and formatted!", "success");
+                      const parsed = JSON.parse(cleanText);
+                      if (typeof parsed !== "object" || parsed === null) {
+                        setSchemaStatusMsg({ type: "error", text: "Invalid: Root must be a JSON object or array of objects." });
+                        return;
+                      }
+                      const items = Array.isArray(parsed) ? parsed : [parsed];
+                      for (let i = 0; i < items.length; i++) {
+                        const it = items[i];
+                        if (!it || typeof it !== "object" || Array.isArray(it)) {
+                          setSchemaStatusMsg({ type: "error", text: `Item #${i + 1} is not a valid JSON object.` });
+                          return;
+                        }
+                        if (!it["@type"] && (!Array.isArray(it["@graph"]) || it["@graph"].length === 0)) {
+                          setSchemaStatusMsg({ type: "error", text: `Item #${i + 1} is missing "@type" or "@graph".` });
+                          return;
+                        }
+                      }
+                      const hasRating = /\b(aggregateRating|review)\b/i.test(cleanText);
+                      if (hasRating) {
+                        setSchemaStatusMsg({
+                          type: "warning",
+                          text: 'Valid JSON, but contains "aggregateRating" or "review". Google strictly monitors fake review markup.',
+                        });
+                        toast('Warning: contains "aggregateRating" / "review"', "warning");
+                      } else {
+                        setSchemaStatusMsg({
+                          type: "success",
+                          text: `Valid JSON-LD schema with ${items.length} top-level object(s). Ready to save!`,
+                        });
+                        toast("Valid JSON Schema!", "success");
+                      }
                     } catch (err) {
+                      setSchemaStatusMsg({ type: "error", text: `Syntax Error: ${err.message}` });
                       toast("Invalid JSON syntax: " + err.message, "error");
                     }
                   }}
                   style={{
-                    padding: "6px 12px",
-                    background: "#f8fafc",
+                    padding: "7px 14px",
+                    background: "#0284c7",
+                    border: "none",
+                    color: "#ffffff",
+                    borderRadius: 6,
+                    fontSize: 12,
+                    fontWeight: 600,
+                    cursor: "pointer",
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: 6,
+                  }}
+                >
+                  <CheckCircle2 size={14} /> Validate JSON
+                </button>
+
+                {/* Format Button */}
+                <button
+                  type="button"
+                  onClick={() => {
+                    const text = (form.customSchema || "").trim();
+                    if (!text) return;
+                    try {
+                      let cleanText = text;
+                      if (cleanText.startsWith("<script") && cleanText.endsWith("</script>")) {
+                        cleanText = cleanText.replace(/<script[^>]*>/i, "").replace(/<\/script>$/i, "").trim();
+                      }
+                      const parsed = JSON.parse(cleanText);
+                      const formatted = JSON.stringify(parsed, null, 2);
+                      setForm((prev) => ({ ...prev, customSchema: formatted }));
+                      setSchemaStatusMsg({ type: "success", text: "JSON-LD formatted successfully!" });
+                      toast("JSON formatted!", "success");
+                    } catch (err) {
+                      setSchemaStatusMsg({ type: "error", text: `Cannot format invalid JSON: ${err.message}` });
+                      toast("Invalid JSON: " + err.message, "error");
+                    }
+                  }}
+                  style={{
+                    padding: "7px 14px",
+                    background: "#f1f5f9",
                     border: "1px solid #cbd5e1",
                     color: "#334155",
                     borderRadius: 6,
@@ -2169,74 +2386,136 @@ export default function SeoPageForm({ initialData = null, doctorsList = [], allP
                     cursor: "pointer",
                   }}
                 >
-                  Format &amp; Validate JSON
+                  Format JSON
                 </button>
 
-                {form.customSchema && (
-                  <button
-                    type="button"
-                    onClick={() => setForm((prev) => ({ ...prev, customSchema: "" }))}
-                    style={{
-                      padding: "6px 12px",
-                      background: "#fee2e2",
-                      border: "1px solid #fecaca",
-                      color: "#b91c1c",
-                      borderRadius: 6,
-                      fontSize: 12,
-                      fontWeight: 600,
-                      cursor: "pointer",
-                      marginLeft: "auto",
-                    }}
-                  >
-                    Clear Custom Schema
-                  </button>
-                )}
+                {/* Clear Schema Button */}
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (window.confirm("Are you sure you want to clear the Schema? This page will render NO structured data.")) {
+                      setForm((prev) => ({ ...prev, customSchema: "" }));
+                      setSchemaStatusMsg({ type: "info", text: "Schema cleared. Click Save to apply changes." });
+                      toast("Schema cleared", "info");
+                    }
+                  }}
+                  style={{
+                    padding: "7px 14px",
+                    background: "#fee2e2",
+                    border: "1px solid #fecaca",
+                    color: "#b91c1c",
+                    borderRadius: 6,
+                    fontSize: 12,
+                    fontWeight: 600,
+                    cursor: "pointer",
+                    marginLeft: "auto",
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: 6,
+                  }}
+                >
+                  <Trash2 size={14} /> Clear Schema
+                </button>
               </div>
 
-              {/* Textarea code editor */}
+              {/* Status Message Alert */}
+              {schemaStatusMsg.text && (
+                <div
+                  style={{
+                    padding: "10px 14px",
+                    borderRadius: 6,
+                    fontSize: 13,
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 8,
+                    background:
+                      schemaStatusMsg.type === "success"
+                        ? "#f0fdf4"
+                        : schemaStatusMsg.type === "warning"
+                          ? "#fffbeb"
+                          : schemaStatusMsg.type === "error"
+                            ? "#fef2f2"
+                            : "#f8fafc",
+                    border: `1px solid ${schemaStatusMsg.type === "success"
+                        ? "#bbf7d0"
+                        : schemaStatusMsg.type === "warning"
+                          ? "#fde68a"
+                          : schemaStatusMsg.type === "error"
+                            ? "#fecaca"
+                            : "#e2e8f0"
+                      }`,
+                    color:
+                      schemaStatusMsg.type === "success"
+                        ? "#15803d"
+                        : schemaStatusMsg.type === "warning"
+                          ? "#b45309"
+                          : schemaStatusMsg.type === "error"
+                            ? "#b91c1c"
+                            : "#475569",
+                  }}
+                >
+                  {schemaStatusMsg.type === "success" ? (
+                    <CheckCircle2 size={16} />
+                  ) : schemaStatusMsg.type === "warning" ? (
+                    <AlertCircle size={16} />
+                  ) : schemaStatusMsg.type === "error" ? (
+                    <AlertCircle size={16} />
+                  ) : (
+                    <Code size={16} />
+                  )}
+                  <span>{schemaStatusMsg.text}</span>
+                </div>
+              )}
+
+              {/* Monospace Textarea */}
               <div className="adt-field">
                 <label style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                  <span>Custom Schema JSON / JSON-LD</span>
-                  <span style={{ fontSize: 11, color: "#64748b", fontWeight: 400 }}>
-                    Enter pure JSON (e.g. {`{"@context": "https://schema.org", ...}`})
+                  <span style={{ fontWeight: 600, color: "#1e293b", fontSize: 13 }}>
+                    JSON-LD Code (Pure JSON object or array)
+                  </span>
+                  <span style={{ fontSize: 11, color: "#64748b" }}>
+                    e.g. <code>[{`{"@context": "https://schema.org", "@type": "..."}`}]</code>
                   </span>
                 </label>
                 <textarea
-                  rows={14}
+                  rows={18}
                   value={form.customSchema}
-                  onChange={(e) => setForm((prev) => ({ ...prev, customSchema: e.target.value }))}
-                  placeholder={`{\n  "@context": "https://schema.org",\n  "@type": "MedicalWebPage",\n  "name": "${form.h1Title || "Page Title"}",\n  ...\n}`}
+                  onChange={(e) => {
+                    setForm((prev) => ({ ...prev, customSchema: e.target.value }));
+                    if (schemaStatusMsg.text) setSchemaStatusMsg({ type: "", text: "" });
+                  }}
+                  placeholder={`[\n  {\n    "@context": "https://schema.org",\n    "@type": "MedicalProcedure",\n    "name": "${form.h1Title || "LASIK Eye Surgery"}",\n    "url": "https://oracleeyehospital.com/${form.slug || ""}"\n  }\n]`}
                   style={{
-                    fontFamily: "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace",
+                    fontFamily: "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Courier New', monospace",
                     fontSize: 13,
-                    lineHeight: 1.5,
+                    lineHeight: 1.55,
                     background: "#0f172a",
                     color: "#38bdf8",
-                    padding: "14px",
+                    padding: "16px",
                     borderRadius: 8,
                     border: "1px solid #334155",
+                    outline: "none",
+                    boxShadow: "inset 0 2px 4px rgba(0,0,0,0.3)",
+                    whiteSpace: "pre",
+                    overflowWrap: "normal",
+                    overflowX: "auto",
                   }}
                 />
               </div>
 
+              {/* Informational Guidance Note */}
               <div
                 style={{
-                  background: "#f0fdf4",
-                  border: "1px solid #bbf7d0",
+                  background: "#f8fafc",
+                  border: "1px solid #e2e8f0",
                   borderRadius: 8,
                   padding: 12,
-                  fontSize: 12.5,
-                  color: "#166534",
-                  display: "flex",
-                  gap: 8,
-                  alignItems: "center",
+                  fontSize: 12,
+                  color: "#475569",
+                  lineHeight: 1.5,
                 }}
               >
-                <CheckCircle2 size={16} />
-                <span>
-                  <strong>Tip:</strong> Default schemas (Breadcrumb, Hospital, Physician, FAQ Accordion) are already auto-generated.
-                  Any custom JSON you enter here will be rendered alongside them inside &lt;script type=&quot;application/ld+json&quot;&gt; in the page source.
-                </span>
+                <strong>Database-Exclusive Schema:</strong> In accordance with strict production guidelines, all hardcoded and code-level schema generators have been completely removed. The page source will only render <code>&lt;script type=&quot;application/ld+json&quot;&gt;</code> if schema is present in the database for this page.
               </div>
             </div>
           )}
