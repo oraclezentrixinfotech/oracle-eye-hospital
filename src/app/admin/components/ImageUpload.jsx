@@ -1,6 +1,7 @@
 "use client";
 import { useState, useRef } from "react";
-import { Upload, X, CheckCircle } from "lucide-react";
+import { Upload, X, CheckCircle, Loader2 } from "lucide-react";
+import { compressImageToMaxLimit } from "@/lib/imageCompressor";
 import "./datatable.css";
 
 // onUpload(url) called after successful Cloudinary upload
@@ -8,24 +9,35 @@ export default function ImageUpload({ currentUrl, onUpload, label = "Image", med
   const [preview, setPreview] = useState(currentUrl || "");
   const [progress, setProgress] = useState(0); // 0-100
   const [uploading, setUploading] = useState(false);
+  const [statusText, setStatusText] = useState("");
   const [error, setError] = useState("");
   const inputRef = useRef(null);
   const isVideo = mediaType === "video";
 
   async function handleFile(e) {
-    const file = e.target.files?.[0];
-    if (!file) return;
+    const rawFile = e.target.files?.[0];
+    if (!rawFile) return;
 
-    // Instant local preview
-    setPreview(URL.createObjectURL(file));
     setError("");
     setProgress(0);
     setUploading(true);
 
-    const fd = new FormData();
-    fd.append("file", file);
-
     try {
+      let fileToUpload = rawFile;
+
+      // Instant local preview
+      setPreview(URL.createObjectURL(rawFile));
+
+      // Client-side compress images to under 1 MB
+      if (!isVideo && rawFile.type.startsWith("image/")) {
+        setStatusText("Optimizing image under 1 MB...");
+        fileToUpload = await compressImageToMaxLimit(rawFile, 1024 * 1024);
+      }
+
+      setStatusText("Uploading to Cloudinary...");
+      const fd = new FormData();
+      fd.append("file", fileToUpload);
+
       // Use XMLHttpRequest so we can track upload progress
       const url = await new Promise((resolve, reject) => {
         const xhr = new XMLHttpRequest();
@@ -48,15 +60,17 @@ export default function ImageUpload({ currentUrl, onUpload, label = "Image", med
           }
         };
 
-        xhr.onerror = () => reject(new Error("Network error."));
+        xhr.onerror = () => reject(new Error("Network error during upload."));
         xhr.send(fd);
       });
 
       setProgress(100);
+      setStatusText("");
       onUpload(url);
     } catch (err) {
-      setError(err.message);
+      setError(err.message || "Failed to process and upload image.");
       setPreview(currentUrl || "");
+      setStatusText("");
     } finally {
       setUploading(false);
     }
@@ -101,11 +115,17 @@ export default function ImageUpload({ currentUrl, onUpload, label = "Image", med
         </div>
       )}
 
-      {/* Progress bar */}
+      {/* Uploading Loader & Status */}
       {uploading && (
-        <div className="iup-progress-wrap">
-          <div className="iup-progress-bar" style={{ width: `${progress}%` }}></div>
-          <span className="iup-progress-text">{progress}%</span>
+        <div style={{ marginTop: 8 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 12, color: "#0d9488", marginBottom: 4, fontWeight: 600 }}>
+            <Loader2 size={14} className="adt-spin" />
+            <span>{statusText || "Processing image..."}</span>
+          </div>
+          <div className="iup-progress-wrap">
+            <div className="iup-progress-bar" style={{ width: `${progress}%` }}></div>
+            <span className="iup-progress-text">{progress}%</span>
+          </div>
         </div>
       )}
 

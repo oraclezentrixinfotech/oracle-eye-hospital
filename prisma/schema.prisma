@@ -133,6 +133,7 @@ model SeoPage {
   heroImage       String?  @map("hero_image")
   heroChips       Json?    @default("[]") @map("hero_chips")
   ctaPrimaryText  String?  @default("Book Consultation") @map("cta_primary_text")
+  ctaPrimaryLink  String?  @default("https://www.oracleeyehospital.com/") @map("cta_primary_link")
   ctaPhone        String?  @default("+919458422606") @map("cta_phone")
   sections        Json?    @default("[]")
   doctorIds       Int[]    @default([]) @map("doctor_ids")
@@ -141,6 +142,7 @@ model SeoPage {
   schemaJson      Json?     @map("schema_json")
   schemaUpdatedAt DateTime? @map("schema_updated_at")
   relatedIds      Int[]     @default([]) @map("related_ids")
+  customLinks     Json?     @default("[]") @map("custom_links")
   createdAt       DateTime  @default(now()) @map("created_at")
   updatedAt       DateTime  @updatedAt @map("updated_at")
 

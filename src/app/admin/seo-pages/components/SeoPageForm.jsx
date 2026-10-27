@@ -74,6 +74,7 @@ export default function SeoPageForm({ initialData = null, doctorsList = [], allP
         { label: "Success Rate", value: "99.8% Safety" },
       ],
     ctaPrimaryText: initialData?.ctaPrimaryText || "Book Consultation",
+    ctaPrimaryLink: initialData?.ctaPrimaryLink || "https://www.oracleeyehospital.com/",
     ctaPhone: initialData?.ctaPhone || "+919458422606",
     sections: Array.isArray(initialData?.sections) && initialData.sections.length > 0
       ? initialData.sections
@@ -103,6 +104,7 @@ export default function SeoPageForm({ initialData = null, doctorsList = [], allP
       ? JSON.stringify(initialData.schemaJson, null, 2)
       : initialData?.customSchema || "",
     relatedIds: Array.isArray(initialData?.relatedIds) ? initialData.relatedIds : [],
+    customLinks: Array.isArray(initialData?.customLinks) ? initialData.customLinks : [],
   });
 
   const [schemaUpdatedAt, setSchemaUpdatedAt] = useState(
@@ -126,8 +128,9 @@ export default function SeoPageForm({ initialData = null, doctorsList = [], allP
     sortOrder: 0,
   });
 
-  // Search query for Related Services & Internal Linking
+  // Search & Pagination for Related Services & Internal Linking
   const [relatedSearch, setRelatedSearch] = useState("");
+  const [relatedPageNumber, setRelatedPageNumber] = useState(1);
 
   const [slugLocked, setSlugLocked] = useState(isEditing);
   const [saving, setSaving] = useState(false);
@@ -455,6 +458,36 @@ export default function SeoPageForm({ initialData = null, doctorsList = [], allP
     });
   }
 
+  // ── Custom Links Helpers (Tab 5) ─────────────────────────────────
+  function addCustomLink() {
+    setForm((prev) => ({
+      ...prev,
+      customLinks: [
+        ...(Array.isArray(prev.customLinks) ? prev.customLinks : []),
+        {
+          title: "",
+          url: "https://www.oracleeyehospital.com/",
+        },
+      ],
+    }));
+  }
+
+  function updateCustomLink(index, field, value) {
+    setForm((prev) => {
+      const current = Array.isArray(prev.customLinks) ? [...prev.customLinks] : [];
+      if (!current[index]) current[index] = { title: "", url: "https://www.oracleeyehospital.com/" };
+      current[index] = { ...current[index], [field]: value };
+      return { ...prev, customLinks: current };
+    });
+  }
+
+  function removeCustomLink(index) {
+    setForm((prev) => ({
+      ...prev,
+      customLinks: (Array.isArray(prev.customLinks) ? prev.customLinks : []).filter((_, i) => i !== index),
+    }));
+  }
+
   // ── Form Submit ─────────────────────────────────────────────────
   async function handleSubmit(e) {
     e.preventDefault();
@@ -683,6 +716,15 @@ export default function SeoPageForm({ initialData = null, doctorsList = [], allP
     );
   });
 
+  // Pagination for Related Pages: 20 items per page
+  const RELATED_PER_PAGE = 20;
+  const totalRelatedPages = Math.ceil(filteredRelatedPages.length / RELATED_PER_PAGE) || 1;
+  const currentRelatedPage = Math.min(Math.max(1, relatedPageNumber), totalRelatedPages);
+  const paginatedRelatedPages = filteredRelatedPages.slice(
+    (currentRelatedPage - 1) * RELATED_PER_PAGE,
+    currentRelatedPage * RELATED_PER_PAGE
+  );
+
   // Check if current slug is already taken by another page
   const isSlugDuplicate = Boolean(
     form.slug.trim() &&
@@ -763,6 +805,32 @@ export default function SeoPageForm({ initialData = null, doctorsList = [], allP
         </div>
 
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+          {/* Publication Status Toggle */}
+          <button
+            type="button"
+            onClick={() =>
+              setForm((prev) => ({
+                ...prev,
+                status: prev.status === "published" ? "draft" : "published",
+              }))
+            }
+            className={`adt-badge ${form.status === "published" ? "adt-badge-active" : "adt-badge-inactive"}`}
+            style={{
+              fontSize: 13,
+              fontWeight: 600,
+              padding: "8px 14px",
+              cursor: "pointer",
+              border: "none",
+              borderRadius: 6,
+              display: "inline-flex",
+              alignItems: "center",
+              gap: 6,
+            }}
+            title={form.status === "published" ? "Status: Live & Published (Click to change to Draft)" : "Status: Draft (Click to Publish)"}
+          >
+            {form.status === "published" ? "✓ Published" : "✕ Draft"}
+          </button>
+
           {isEditing && form.slug && (
             <a
               href={`/${form.slug}`}
@@ -949,44 +1017,6 @@ export default function SeoPageForm({ initialData = null, doctorsList = [], allP
                 Search Engine Optimization &amp; Indexing
               </h3>
 
-              {/* Status Toggle */}
-              <div
-                style={{
-                  padding: 16,
-                  background: "#f9fafb",
-                  borderRadius: 8,
-                  border: "1px solid #e5e7eb",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "space-between",
-                }}
-              >
-                <div>
-                  <div style={{ fontWeight: 600, fontSize: 14, color: "#111827" }}>
-                    Publication Status
-                  </div>
-                  <div style={{ fontSize: 12, color: "#6b7280" }}>
-                    Draft pages return 404 to public visitors; published pages are live and indexed.
-                  </div>
-                </div>
-                <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-                  <button
-                    type="button"
-                    onClick={() =>
-                      setForm((prev) => ({
-                        ...prev,
-                        status: prev.status === "published" ? "draft" : "published",
-                      }))
-                    }
-                    className={`adt-badge ${form.status === "published" ? "adt-badge-active" : "adt-badge-inactive"
-                      }`}
-                    style={{ fontSize: 13, padding: "6px 14px", cursor: "pointer", border: "none" }}
-                  >
-                    {form.status === "published" ? "✓ Published" : "✕ Draft"}
-                  </button>
-                </div>
-              </div>
-
               {/* URL Slug */}
               <div className="adt-field">
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
@@ -997,18 +1027,22 @@ export default function SeoPageForm({ initialData = null, doctorsList = [], allP
                     <button
                       type="button"
                       onClick={syncSlugWithH1}
+                      title="Reset slug to auto-generate from H1 Title"
                       style={{
-                        background: "none",
-                        border: "none",
-                        color: "#0d9488",
+                        background: "#f0fdfa",
+                        border: "1px solid #99f6e4",
+                        color: "#0f766e",
                         cursor: "pointer",
                         fontSize: 12,
+                        fontWeight: 600,
+                        padding: "3px 8px",
+                        borderRadius: 5,
                         display: "inline-flex",
                         alignItems: "center",
                         gap: 4,
                       }}
                     >
-                      <RefreshCw size={12} /> Auto-generate from H1
+                      <RefreshCw size={12} /> Reset to auto
                     </button>
                   )}
                 </div>
@@ -1207,6 +1241,7 @@ export default function SeoPageForm({ initialData = null, doctorsList = [], allP
                   <label>Primary Button Text</label>
                   <input
                     type="text"
+                    placeholder="Book Appointment"
                     value={form.ctaPrimaryText}
                     onChange={(e) =>
                       setForm((prev) => ({ ...prev, ctaPrimaryText: e.target.value }))
@@ -1214,13 +1249,29 @@ export default function SeoPageForm({ initialData = null, doctorsList = [], allP
                   />
                 </div>
                 <div className="adt-field">
-                  <label>Helpline / WhatsApp Phone</label>
+                  <label>Primary Button Link</label>
                   <input
                     type="text"
-                    value={form.ctaPhone}
-                    onChange={(e) => setForm((prev) => ({ ...prev, ctaPhone: e.target.value }))}
+                    placeholder="https://www.oracleeyehospital.com/"
+                    value={form.ctaPrimaryLink || ""}
+                    onChange={(e) =>
+                      setForm((prev) => ({ ...prev, ctaPrimaryLink: e.target.value }))
+                    }
                   />
+                  <span style={{ fontSize: 11, color: "#64748b", marginTop: 4, display: "block" }}>
+                    Default: <code>https://www.oracleeyehospital.com/</code>
+                  </span>
                 </div>
+              </div>
+
+              <div className="adt-field">
+                <label>Helpline / WhatsApp Phone</label>
+                <input
+                  type="text"
+                  placeholder="+919458422606"
+                  value={form.ctaPhone}
+                  onChange={(e) => setForm((prev) => ({ ...prev, ctaPhone: e.target.value }))}
+                />
               </div>
 
               {/* Stat Chips */}
@@ -2075,7 +2126,10 @@ export default function SeoPageForm({ initialData = null, doctorsList = [], allP
                   <input
                     type="text"
                     value={relatedSearch}
-                    onChange={(e) => setRelatedSearch(e.target.value)}
+                    onChange={(e) => {
+                      setRelatedSearch(e.target.value);
+                      setRelatedPageNumber(1);
+                    }}
                     placeholder="Search landing pages by title or slug..."
                     style={{
                       width: "100%",
@@ -2090,7 +2144,10 @@ export default function SeoPageForm({ initialData = null, doctorsList = [], allP
                   {relatedSearch && (
                     <button
                       type="button"
-                      onClick={() => setRelatedSearch("")}
+                      onClick={() => {
+                        setRelatedSearch("");
+                        setRelatedPageNumber(1);
+                      }}
                       style={{
                         position: "absolute",
                         right: 8,
@@ -2140,44 +2197,232 @@ export default function SeoPageForm({ initialData = null, doctorsList = [], allP
                   No SEO pages matched &quot;{relatedSearch}&quot;.
                 </div>
               ) : (
-                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
-                  {filteredRelatedPages.map((page) => {
-                    const isChecked = form.relatedIds.includes(page.id);
-                    return (
-                      <div
-                        key={page.id}
-                        onClick={() => toggleRelated(page.id)}
+                <>
+                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+                    {paginatedRelatedPages.map((page) => {
+                      const isChecked = form.relatedIds.includes(page.id);
+                      return (
+                        <div
+                          key={page.id}
+                          onClick={() => toggleRelated(page.id)}
+                          style={{
+                            padding: 12,
+                            borderRadius: 8,
+                            border: isChecked ? "2px solid #0d9488" : "1px solid #e5e7eb",
+                            background: isChecked ? "#f0fdfa" : "#ffffff",
+                            cursor: "pointer",
+                            display: "flex",
+                            alignItems: "center",
+                            gap: 12,
+                            transition: "all 0.15s ease",
+                          }}
+                        >
+                          <input
+                            type="checkbox"
+                            checked={isChecked}
+                            onChange={() => { }}
+                            style={{ width: 18, height: 18 }}
+                          />
+                          <div style={{ flex: 1, minWidth: 0 }}>
+                            <div style={{ fontWeight: 600, fontSize: 14, color: "#0f172a" }}>
+                              {page.h1Title}
+                            </div>
+                            <code style={{ fontSize: 11, color: "#0d9488" }}>
+                              /{page.slug}
+                            </code>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+
+                  {/* Pagination Controls (20 per page) */}
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "space-between",
+                      marginTop: 18,
+                      paddingTop: 12,
+                      borderTop: "1px solid #f1f5f9",
+                      fontSize: 13,
+                      color: "#64748b",
+                      flexWrap: "wrap",
+                      gap: 10,
+                    }}
+                  >
+                    <span>
+                      Page <strong>{currentRelatedPage}</strong> of <strong>{totalRelatedPages}</strong> ({filteredRelatedPages.length} total pages)
+                    </span>
+                    <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                      <button
+                        type="button"
+                        onClick={() => setRelatedPageNumber((p) => Math.max(1, p - 1))}
+                        disabled={currentRelatedPage <= 1}
                         style={{
-                          padding: 12,
-                          borderRadius: 8,
-                          border: isChecked ? "2px solid #0d9488" : "1px solid #e5e7eb",
-                          background: isChecked ? "#f0fdfa" : "#ffffff",
-                          cursor: "pointer",
-                          display: "flex",
-                          alignItems: "center",
-                          gap: 12,
-                          transition: "all 0.15s ease",
+                          padding: "6px 14px",
+                          borderRadius: 6,
+                          border: "1px solid #cbd5e1",
+                          background: currentRelatedPage <= 1 ? "#f8fafc" : "#ffffff",
+                          color: currentRelatedPage <= 1 ? "#94a3b8" : "#334155",
+                          cursor: currentRelatedPage <= 1 ? "not-allowed" : "pointer",
+                          fontWeight: 500,
+                          fontSize: 12,
                         }}
                       >
-                        <input
-                          type="checkbox"
-                          checked={isChecked}
-                          onChange={() => { }}
-                          style={{ width: 18, height: 18 }}
-                        />
-                        <div style={{ flex: 1, minWidth: 0 }}>
-                          <div style={{ fontWeight: 600, fontSize: 14, color: "#0f172a" }}>
-                            {page.h1Title}
-                          </div>
-                          <code style={{ fontSize: 11, color: "#0d9488" }}>
-                            /{page.slug}
-                          </code>
+                        Previous
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setRelatedPageNumber((p) => Math.min(totalRelatedPages, p + 1))}
+                        disabled={currentRelatedPage >= totalRelatedPages}
+                        style={{
+                          padding: "6px 14px",
+                          borderRadius: 6,
+                          border: "1px solid #cbd5e1",
+                          background: currentRelatedPage >= totalRelatedPages ? "#f8fafc" : "#ffffff",
+                          color: currentRelatedPage >= totalRelatedPages ? "#94a3b8" : "#334155",
+                          cursor: currentRelatedPage >= totalRelatedPages ? "not-allowed" : "pointer",
+                          fontWeight: 500,
+                          fontSize: 12,
+                        }}
+                      >
+                        Next
+                      </button>
+                    </div>
+                  </div>
+                </>
+              )}
+
+              {/* ── Custom Links Section ── */}
+              <div
+                style={{
+                  marginTop: 32,
+                  paddingTop: 24,
+                  borderTop: "2px dashed #e2e8f0",
+                }}
+              >
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    marginBottom: 14,
+                    flexWrap: "wrap",
+                    gap: 10,
+                  }}
+                >
+                  <div>
+                    <h4 style={{ margin: 0, fontSize: 15, color: "#111827", fontWeight: 700 }}>
+                      Custom Related Links
+                    </h4>
+                    <p style={{ margin: "3px 0 0 0", fontSize: 12.5, color: "#64748b" }}>
+                      Add external or custom internal links with a custom title and URL. These appear alongside related pages in the &quot;Related Specialities&quot; grid.
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={addCustomLink}
+                    className="adt-btn-save"
+                    style={{
+                      background: "#0d9488",
+                      fontSize: 12,
+                      padding: "6px 12px",
+                      display: "inline-flex",
+                      alignItems: "center",
+                      gap: 6,
+                    }}
+                  >
+                    <Plus size={14} /> Add Custom Link
+                  </button>
+                </div>
+
+                {(!Array.isArray(form.customLinks) || form.customLinks.length === 0) ? (
+                  <div
+                    style={{
+                      padding: 16,
+                      background: "#f8fafc",
+                      borderRadius: 6,
+                      border: "1px solid #e2e8f0",
+                      fontSize: 12.5,
+                      color: "#64748b",
+                      textAlign: "center",
+                    }}
+                  >
+                    No custom links added yet. Click &quot;Add Custom Link&quot; to add links.
+                  </div>
+                ) : (
+                  <div style={{ display: "grid", gap: 10 }}>
+                    {form.customLinks.map((link, idx) => (
+                      <div
+                        key={idx}
+                        style={{
+                          display: "grid",
+                          gridTemplateColumns: "1fr 1.5fr auto",
+                          gap: 10,
+                          alignItems: "center",
+                          padding: "10px 12px",
+                          background: "#f8fafc",
+                          borderRadius: 8,
+                          border: "1px solid #e2e8f0",
+                        }}
+                      >
+                        <div>
+                          <input
+                            type="text"
+                            placeholder="Title (e.g. Eye Checkup Packages)"
+                            value={link.title || ""}
+                            onChange={(e) => updateCustomLink(idx, "title", e.target.value)}
+                            style={{
+                              width: "100%",
+                              padding: "7px 10px",
+                              fontSize: 13,
+                              border: "1px solid #cbd5e1",
+                              borderRadius: 6,
+                              boxSizing: "border-box",
+                            }}
+                          />
+                        </div>
+                        <div>
+                          <input
+                            type="text"
+                            placeholder="https://www.oracleeyehospital.com/"
+                            value={link.url || ""}
+                            onChange={(e) => updateCustomLink(idx, "url", e.target.value)}
+                            style={{
+                              width: "100%",
+                              padding: "7px 10px",
+                              fontSize: 13,
+                              border: "1px solid #cbd5e1",
+                              borderRadius: 6,
+                              boxSizing: "border-box",
+                            }}
+                          />
+                        </div>
+                        <div>
+                          <button
+                            type="button"
+                            onClick={() => removeCustomLink(idx)}
+                            title="Remove custom link"
+                            style={{
+                              background: "#fee2e2",
+                              border: "1px solid #fecaca",
+                              color: "#dc2626",
+                              padding: "7px 10px",
+                              borderRadius: 6,
+                              cursor: "pointer",
+                              display: "inline-flex",
+                              alignItems: "center",
+                            }}
+                          >
+                            <Trash2 size={15} />
+                          </button>
                         </div>
                       </div>
-                    );
-                  })}
-                </div>
-              )}
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
           )}
 
@@ -2189,11 +2434,8 @@ export default function SeoPageForm({ initialData = null, doctorsList = [], allP
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: 12 }}>
                 <div>
                   <h3 style={{ margin: "0 0 6px 0", fontSize: 16, color: "#111827", fontWeight: 700 }}>
-                    JSON-LD Schema (Database Driven)
+                    Upload Schema
                   </h3>
-                  <p style={{ margin: 0, fontSize: 13, color: "#6b7280", lineHeight: 1.5, maxWidth: 680 }}>
-                    Paste your custom Schema.org JSON-LD here. All hardcoded/auto-generated schemas have been removed; only the valid JSON saved here will be rendered in the page HTML source.
-                  </p>
                 </div>
 
                 {/* Google Rich Results Test Link */}
@@ -2437,12 +2679,12 @@ export default function SeoPageForm({ initialData = null, doctorsList = [], allP
                             ? "#fef2f2"
                             : "#f8fafc",
                     border: `1px solid ${schemaStatusMsg.type === "success"
-                        ? "#bbf7d0"
-                        : schemaStatusMsg.type === "warning"
-                          ? "#fde68a"
-                          : schemaStatusMsg.type === "error"
-                            ? "#fecaca"
-                            : "#e2e8f0"
+                      ? "#bbf7d0"
+                      : schemaStatusMsg.type === "warning"
+                        ? "#fde68a"
+                        : schemaStatusMsg.type === "error"
+                          ? "#fecaca"
+                          : "#e2e8f0"
                       }`,
                     color:
                       schemaStatusMsg.type === "success"

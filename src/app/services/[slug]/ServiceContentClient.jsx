@@ -182,7 +182,11 @@ export default function ServiceContentClient({
 
               {/* Primary Action Buttons */}
               <div className="seo-hero-actions">
-                <a href="#sidebar-appointment" className="seo-btn-appointment">
+                <a
+                  href={page.ctaPrimaryLink || "https://www.oracleeyehospital.com/"}
+                  className="seo-btn-appointment"
+                  {...(page.ctaPrimaryLink && !page.ctaPrimaryLink.startsWith("#") && !page.ctaPrimaryLink.startsWith("/") ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+                >
                   <Calendar size={16} />
                   <span>{page.ctaPrimaryText || "Book Appointment"}</span>
                 </a>
@@ -605,23 +609,28 @@ export default function ServiceContentClient({
             </div>
 
             <div className="row g-4">
-              {relatedServices.map((item, index) => (
-                <div key={index} className="col-md-6 col-lg-3">
-                  <Link
-                    href={`/${item.slug}`}
-                    className="seo-related-card"
-                  >
-                    <div className="d-flex justify-content-between align-items-center text-primary">
-                      <Stethoscope size={22} color="#137c8b" />
-                      <ArrowRight size={16} color="#137c8b" />
-                    </div>
-                    <h4>{item.h1Title || item.name}</h4>
-                    <p>
-                      {item.heroBadge || "Specialized clinical diagnosis and advanced surgical care."}
-                    </p>
-                  </Link>
-                </div>
-              ))}
+              {relatedServices.map((item, index) => {
+                const targetUrl = item.url || (item.slug ? `/${item.slug}` : "#");
+                const isExternal = /^https?:\/\//i.test(targetUrl);
+                return (
+                  <div key={index} className="col-md-6 col-lg-3">
+                    <Link
+                      href={targetUrl}
+                      className="seo-related-card"
+                      {...(isExternal ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+                    >
+                      <div className="d-flex justify-content-between align-items-center text-primary">
+                        <Stethoscope size={22} color="#137c8b" />
+                        <ArrowRight size={16} color="#137c8b" />
+                      </div>
+                      <h4>{item.title || item.h1Title || item.name}</h4>
+                      <p>
+                        {item.heroBadge || item.badge || "Specialized clinical diagnosis and advanced surgical care."}
+                      </p>
+                    </Link>
+                  </div>
+                );
+              })}
             </div>
           </div>
         </section>

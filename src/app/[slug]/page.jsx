@@ -118,12 +118,26 @@ export default async function RootSeoPage({ params }) {
           select: { id: true, slug: true, h1Title: true, heroBadge: true },
         });
       }
-      if (relatedServices.length === 0) {
+      if (relatedServices.length === 0 && (!Array.isArray(seoPage.customLinks) || seoPage.customLinks.length === 0)) {
         relatedServices = await prisma.seoPage.findMany({
           where: { NOT: { id: seoPage.id }, status: "published" },
           select: { id: true, slug: true, h1Title: true, heroBadge: true },
           take: 4,
         });
+      }
+
+      // Append custom links if present
+      if (Array.isArray(seoPage.customLinks) && seoPage.customLinks.length > 0) {
+        const formattedCustom = seoPage.customLinks
+          .filter((cl) => cl && cl.title && cl.url)
+          .map((cl, idx) => ({
+            id: `custom-${idx}`,
+            title: cl.title,
+            h1Title: cl.title,
+            url: cl.url,
+            heroBadge: "Specialized Internal Care",
+          }));
+        relatedServices = [...relatedServices, ...formattedCustom];
       }
     }
   } catch (err) {

@@ -78,6 +78,7 @@ export async function PUT(req, { params }) {
   const heroImage = clean(body.heroImage || body.hero_image, 500);
   const heroChips = Array.isArray(body.heroChips) ? body.heroChips : existing.heroChips;
   const ctaPrimaryText = clean(body.ctaPrimaryText || body.cta_primary_text, 100) || "Book Consultation";
+  const ctaPrimaryLink = clean(body.ctaPrimaryLink || body.cta_primary_link, 500) || existing.ctaPrimaryLink || "https://www.oracleeyehospital.com/";
   const ctaPhone = clean(body.ctaPhone || body.cta_phone, 50) || "+919458422606";
   const sections = Array.isArray(body.sections)
     ? sanitizeSeoSections(body.sections)
@@ -91,6 +92,14 @@ export async function PUT(req, { params }) {
   const relatedIds = Array.isArray(body.relatedIds)
     ? body.relatedIds.map(Number).filter((n) => !isNaN(n))
     : existing.relatedIds;
+  const customLinks = Array.isArray(body.customLinks)
+    ? body.customLinks
+        .filter((l) => l && typeof l === "object" && (l.title || l.url))
+        .map((l) => ({
+          title: clean(l.title, 200) || "Related Service",
+          url: clean(l.url, 500) || "https://www.oracleeyehospital.com/",
+        }))
+    : existing.customLinks || [];
 
   // Schema Validation & Handling
   let schemaJson = existing.schemaJson;
@@ -129,6 +138,7 @@ export async function PUT(req, { params }) {
         heroImage,
         heroChips,
         ctaPrimaryText,
+        ctaPrimaryLink,
         ctaPhone,
         sections,
         doctorIds,
@@ -137,6 +147,7 @@ export async function PUT(req, { params }) {
         schemaJson,
         schemaUpdatedAt,
         relatedIds,
+        customLinks,
         updatedAt: new Date(),
       },
     });

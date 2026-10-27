@@ -419,8 +419,8 @@ export default function SeoPageListClient({ rows = [], doctorsList = [], allPage
           </button>
           <a
             href="/api/admin/seo-pages/download-template"
-            download="seo-page-templates.zip"
-            title="Download Banner.jsx, Content.jsx & page.jsx templates bundle (.zip)"
+            download="sample.docx"
+            title="Download Word Document Content Template (sample.docx)"
             className="adt-btn-save"
             style={{
               background: "#475569",
@@ -433,7 +433,7 @@ export default function SeoPageListClient({ rows = [], doctorsList = [], allPage
               textDecoration: "none",
             }}
           >
-            <Download size={15} /> Download Template
+            <Download size={15} /> Download Template (.docx)
           </a>
           <button
             type="button"

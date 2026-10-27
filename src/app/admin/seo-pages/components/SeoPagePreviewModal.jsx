@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { X, Monitor, Smartphone, Tablet, ExternalLink } from "lucide-react";
 import ServiceContentClient from "@/app/services/[slug]/ServiceContentClient";
 
@@ -12,6 +12,16 @@ export default function SeoPagePreviewModal({
   allPages = [],
 }) {
   const [deviceMode, setDeviceMode] = useState("desktop"); // "desktop" | "tablet" | "mobile"
+
+  // Prevent background body scroll when preview modal is open
+  useEffect(() => {
+    if (!isOpen) return;
+    const originalOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = originalOverflow;
+    };
+  }, [isOpen]);
 
   if (!isOpen || !pageData) return null;
 
@@ -25,13 +35,27 @@ export default function SeoPagePreviewModal({
     doctors.length > 0 ? doctors : doctorsList.slice(0, 2);
 
   // Resolve related services
-  const relatedServices = Array.isArray(pageData.relatedIds)
+  let relatedServices = Array.isArray(pageData.relatedIds)
     ? allPages.filter((p) => pageData.relatedIds.includes(p.id))
     : allPages.slice(0, 4);
 
+  // Also include customLinks in preview if present
+  if (Array.isArray(pageData.customLinks) && pageData.customLinks.length > 0) {
+    const formattedCustom = pageData.customLinks
+      .filter((cl) => cl && cl.title && cl.url)
+      .map((cl, idx) => ({
+        id: `custom-prev-${idx}`,
+        title: cl.title,
+        h1Title: cl.title,
+        url: cl.url,
+        heroBadge: "Specialized Internal Care",
+      }));
+    relatedServices = [...relatedServices, ...formattedCustom];
+  }
+
   const containerWidth =
     deviceMode === "mobile"
-      ? "420px"
+      ? "375px"
       : deviceMode === "tablet"
       ? "768px"
       : "100%";
@@ -47,6 +71,7 @@ export default function SeoPagePreviewModal({
         display: "flex",
         flexDirection: "column",
         height: "100dvh",
+        maxHeight: "100dvh",
         overflow: "hidden",
       }}
     >
@@ -61,6 +86,7 @@ export default function SeoPagePreviewModal({
           borderBottom: "1px solid #1e293b",
           color: "#ffffff",
           flexShrink: 0,
+          zIndex: 10,
         }}
       >
         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
@@ -124,7 +150,7 @@ export default function SeoPagePreviewModal({
             }}
           >
             <Tablet size={15} />
-            <span>Tablet</span>
+            <span>Tablet (768px)</span>
           </button>
 
           <button
@@ -144,7 +170,7 @@ export default function SeoPagePreviewModal({
             }}
           >
             <Smartphone size={15} />
-            <span>Mobile</span>
+            <span>Mobile (375px)</span>
           </button>
         </div>
 
@@ -176,25 +202,30 @@ export default function SeoPagePreviewModal({
         style={{
           flex: 1,
           minHeight: 0,
-          height: 0,
+          height: "calc(100dvh - 57px)",
           overflowY: "auto",
+          overflowX: "hidden",
           overscrollBehavior: "contain",
           WebkitOverflowScrolling: "touch",
           background: "#090d16",
           display: "flex",
           justifyContent: "center",
-          padding: deviceMode === "desktop" ? 0 : "24px 0",
+          alignItems: "flex-start",
+          padding: deviceMode === "desktop" ? 0 : "24px 16px 48px",
         }}
       >
         <div
           style={{
             width: containerWidth,
+            maxWidth: "100%",
             minHeight: "100%",
             background: "#ffffff",
             boxShadow: deviceMode === "desktop" ? "none" : "0 25px 50px -12px rgba(0, 0, 0, 0.7)",
             borderRadius: deviceMode === "desktop" ? 0 : 12,
-            overflow: "hidden",
+            overflowX: "hidden",
+            overflowY: "visible",
             transition: "width 0.3s ease",
+            boxSizing: "border-box",
           }}
         >
           {/* Render Actual Reusable Template */}
@@ -208,6 +239,7 @@ export default function SeoPagePreviewModal({
               heroImage: pageData.heroImage || "/Assets/img/services/Cataract-Service.png",
               heroChips: pageData.heroChips || [],
               ctaPrimaryText: pageData.ctaPrimaryText || "Book Appointment",
+              ctaPrimaryLink: pageData.ctaPrimaryLink || "https://www.oracleeyehospital.com/",
               ctaPhone: pageData.ctaPhone || "+91 8006803111",
               canonicalUrl: pageData.canonicalUrl || `https://www.oracleeyehospital.com/${pageData.slug}`,
             }}
