@@ -6,7 +6,6 @@ import { SITE_URL } from "@/lib/siteUrl";
 import { SEO_PAGES as CODE_SEO_PAGES } from "@/app/(seo_pages)/_lib/pages";
 
 export const dynamic = "force-dynamic";
-export const revalidate = 3600;
 
 // Fallback core pages
 const DEFAULT_STATIC_PAGES = [
@@ -185,7 +184,7 @@ ${urls.join("\n")}
       status: 200,
       headers: {
         "Content-Type": "application/xml; charset=utf-8",
-        "Cache-Control": "public, s-maxage=3600, stale-while-revalidate=86400",
+        "Cache-Control": "public, max-age=60, s-maxage=60, stale-while-revalidate=120",
       },
     });
   } catch (err) {
