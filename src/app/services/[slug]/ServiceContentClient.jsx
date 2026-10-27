@@ -571,9 +571,10 @@ export default function ServiceContentClient({
                         />
                       </button>
                       {isOpen && (
-                        <div className="seo-faq-body">
-                          {faq.answer || faq.a}
-                        </div>
+                        <div
+                          className="seo-faq-body"
+                          dangerouslySetInnerHTML={{ __html: faq.answer || faq.a || "" }}
+                        />
                       )}
                     </div>
                   );
@@ -607,7 +608,7 @@ export default function ServiceContentClient({
               {relatedServices.map((item, index) => (
                 <div key={index} className="col-md-6 col-lg-3">
                   <Link
-                    href={`/services/${item.slug}`}
+                    href={`/${item.slug}`}
                     className="seo-related-card"
                   >
                     <div className="d-flex justify-content-between align-items-center text-primary">

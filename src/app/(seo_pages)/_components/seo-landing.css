@@ -881,6 +881,64 @@
   clear: both;
 }
 
+/* Beautiful responsive table styling for SEO landing pages */
+.seo-article-block table,
+.seo-article-p table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 18px 0 24px;
+  background: #ffffff;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid #cbd5e1;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+  font-size: 14px;
+}
+
+.seo-article-block table th,
+.seo-article-p table th {
+  background-color: #0d9488 !important;
+  color: #ffffff !important;
+  font-weight: 700;
+  text-align: left;
+  padding: 12px 16px;
+  border: 1px solid #0f766e;
+  font-size: 14px;
+  letter-spacing: 0.02em;
+}
+
+.seo-article-block table th p,
+.seo-article-p table th p {
+  margin: 0;
+  color: #ffffff !important;
+  font-weight: 700 !important;
+}
+
+.seo-article-block table td,
+.seo-article-p table td {
+  padding: 11px 16px;
+  border: 1px solid #e2e8f0;
+  color: #334155;
+  font-size: 14px;
+  vertical-align: top;
+  line-height: 1.6;
+}
+
+.seo-article-block table td p,
+.seo-article-p table td p {
+  margin: 0;
+}
+
+.seo-article-block table tr:nth-child(even) td,
+.seo-article-p table tr:nth-child(even) td {
+  background-color: #f8fafc;
+}
+
+.seo-article-block table tr:hover td,
+.seo-article-p table tr:hover td {
+  background-color: #f0fdfa;
+}
+
 /* Clear both after paragraph wrapper */
 .seo-article-block::after,
 .seo-article-p::after {

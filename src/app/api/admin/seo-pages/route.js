@@ -4,6 +4,8 @@ import { isAdmin, unauthorized } from "@/lib/auth";
 import { clean, cleanMultiline, slugify } from "@/lib/validate";
 import { revalidatePath } from "next/cache";
 import { sanitizeSeoFaqs, sanitizeSeoSections } from "@/lib/sanitizeSeoPage";
+import { validateSchemaJson } from "@/lib/validateSchema";
+import { SITE_URL } from "@/lib/siteUrl";
 
 export const dynamic = "force-dynamic";
 
@@ -67,6 +69,20 @@ export async function POST(req) {
     ? body.relatedIds.map(Number).filter((n) => !isNaN(n))
     : [];
 
+  // Schema Validation & Handling
+  const rawSchemaInput = body.schemaJson !== undefined ? body.schemaJson : body.customSchema;
+  const allowRatings = Boolean(body.allowRatings);
+  const schemaValidation = validateSchemaJson(rawSchemaInput, allowRatings);
+  if (!schemaValidation.valid) {
+    return NextResponse.json(
+      { error: schemaValidation.error, warning: schemaValidation.warning },
+      { status: 400 }
+    );
+  }
+  const schemaJson = schemaValidation.schemaJson;
+  const schemaUpdatedAt = schemaJson ? new Date() : null;
+  const customSchemaText = schemaJson ? JSON.stringify(schemaJson, null, 2) : null;
+
   try {
     const page = await prisma.seoPage.create({
       data: {
@@ -75,7 +91,7 @@ export async function POST(req) {
         metaTitle,
         metaDescription,
         keywords,
-        canonicalUrl: canonicalUrl || `https://www.oracleeyehospital.com/services/${slug}`,
+        canonicalUrl: canonicalUrl || `${SITE_URL}/${slug}`,
         ogImage: ogImage || heroImage,
         heroBadge,
         h1Title,
@@ -87,10 +103,15 @@ export async function POST(req) {
         sections,
         doctorIds,
         faqs,
+        customSchema: customSchemaText,
+        schemaJson,
+        schemaUpdatedAt,
         relatedIds,
+        updatedAt: new Date(),
       },
     });
 
+    revalidatePath("/" + slug);
     revalidatePath("/services/" + slug);
     revalidatePath("/admin/seo-pages");
     revalidatePath("/sitemap.xml");

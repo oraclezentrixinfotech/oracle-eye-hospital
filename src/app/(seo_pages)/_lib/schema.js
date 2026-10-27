@@ -3,12 +3,14 @@
  * Schema types supported: Hospital / MedicalClinic, Physician, FAQPage, BreadcrumbList, MedicalProcedure
  */
 
+import { SITE_URL } from "@/lib/siteUrl";
+
 export const HOSPITAL_INFO = {
   name: "Oracle Eye Hospital",
   legalName: "Oracle Eye Hospital Moradabad",
-  url: "https://www.oracleeyehospital.com",
-  logo: "https://www.oracleeyehospital.com/uploads/logos/232296ca-9c85-445b-b965-033a97fe7008.png",
-  image: "https://www.oracleeyehospital.com/uploads/logos/232296ca-9c85-445b-b965-033a97fe7008.png",
+  url: SITE_URL,
+  logo: `${SITE_URL}/uploads/logos/232296ca-9c85-445b-b965-033a97fe7008.png`,
+  image: `${SITE_URL}/uploads/logos/232296ca-9c85-445b-b965-033a97fe7008.png`,
   telephone: "+91 8006803111",
   alternatePhone: "+91 7500503111",
   email: "oracleeyehospital@gmail.com",
@@ -48,16 +50,16 @@ export const PRIMARY_DOCTORS = [
     qualification: "MS (Ophthalmology), FICO",
     specialty: "Ophthalmologist & Cataract Surgeon",
     jobTitle: "Founder & Managing Director",
-    url: "https://www.oracleeyehospital.com/girjesh-kain",
-    image: "https://www.oracleeyehospital.com/Assets/img/team/3.png",
+    url: `${SITE_URL}/girjesh-kain`,
+    image: `${SITE_URL}/Assets/img/team/3.png`,
   },
   {
     name: "Dr. Rachana",
     qualification: "MBBS, MS (Ophthalmology)",
     specialty: "Ophthalmologist & Cataract Surgeon",
     jobTitle: "Senior Ophthalmologist",
-    url: "https://www.oracleeyehospital.com/rachana",
-    image: "https://www.oracleeyehospital.com/Assets/img/team/8.png",
+    url: `${SITE_URL}/rachana`,
+    image: `${SITE_URL}/Assets/img/team/8.png`,
   },
 ];
 

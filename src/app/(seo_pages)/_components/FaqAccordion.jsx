@@ -53,9 +53,10 @@ export default function FaqAccordion({
                 />
               </button>
               {isOpen && (
-                <div className="border-t border-gray-100 bg-[#FBFDFD] p-5 text-sm leading-relaxed text-[#0A2A33]/80">
-                  {faq.answer || faq.a}
-                </div>
+                <div
+                  className="border-t border-gray-100 bg-[#FBFDFD] p-5 text-sm leading-relaxed text-[#0A2A33]/80"
+                  dangerouslySetInnerHTML={{ __html: faq.answer || faq.a || "" }}
+                />
               )}
             </div>
           );

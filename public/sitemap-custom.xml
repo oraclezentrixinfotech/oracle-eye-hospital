@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <!-- 
+    ==========================================================================
+    CODE-BASED SEO PAGES & STATIC PAGES SITEMAP (public/sitemap-custom.xml)
+    ==========================================================================
+    Whenever you create an SEO page via code (e.g. in src/app/(seo_pages)/...),
+    simply add its <url> block below!
+
+    The live sitemap route (https://www.oracleeyehospital.com/sitemap.xml) automatically:
+      1. Reads all URLs defined in this public/sitemap-custom.xml file.
+      2. Reads all published SEO pages created in the Admin Database.
+      3. Merges them together and eliminates duplicates.
+    ==========================================================================
+  -->
+
+  <!-- Core Static Pages -->
+  <url>
+    <loc>https://www.oracleeyehospital.com</loc>
+    <lastmod>2026-10-26</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
+  </url>
+  <url>
+    <loc>https://www.oracleeyehospital.com/services</loc>
+    <lastmod>2026-10-26</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.oracleeyehospital.com/contact-us</loc>
+    <lastmod>2026-10-26</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+
+  <!-- Code-based SEO Pages -->
+  <url>
+    <loc>https://www.oracleeyehospital.com/cataract-surgery-in-moradabad</loc>
+    <lastmod>2026-10-19</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+</urlset>

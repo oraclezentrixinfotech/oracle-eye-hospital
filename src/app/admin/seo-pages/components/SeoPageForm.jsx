@@ -1,10 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import {
   ArrowLeft,
+  ArrowRight,
   Save,
   Loader2,
   RefreshCw,
@@ -20,6 +21,14 @@ import {
   CheckSquare,
   AlertCircle,
   Eye,
+  Code,
+  UserCheck,
+  Link2,
+  Search,
+  X,
+  Stethoscope,
+  ExternalLink,
+  Clock,
 } from "lucide-react";
 import ImageUpload from "../../components/ImageUpload";
 import RichHtmlEditor from "./RichHtmlEditor";
@@ -41,7 +50,7 @@ export default function SeoPageForm({ initialData = null, doctorsList = [], allP
   const router = useRouter();
   const isEditing = Boolean(initialData && initialData.id);
 
-  // Active Tab: "seo" | "hero" | "content"
+  // Active Tab: "seo" | "hero" | "content" | "doctors" | "related" | "schema"
   const [activeTab, setActiveTab] = useState("seo");
 
   // Form State
@@ -53,50 +62,179 @@ export default function SeoPageForm({ initialData = null, doctorsList = [], allP
     keywords: initialData?.keywords || "",
     canonicalUrl: initialData?.canonicalUrl || "",
     ogImage: initialData?.ogImage || "",
-    heroBadge: initialData?.heroBadge || "",
+    heroBadge: initialData?.heroBadge ?? (isEditing ? "" : "NABH-Accredited Eye Hospital in Moradabad"),
     h1Title: initialData?.h1Title || "",
     heroSubtitle: initialData?.heroSubtitle || "",
     heroImage: initialData?.heroImage || "",
     heroChips: Array.isArray(initialData?.heroChips) && initialData.heroChips.length > 0
       ? initialData.heroChips
       : [
-          { label: "Recovery Time", value: "24–48 Hours" },
-          { label: "Procedure Time", value: "10–15 Minutes" },
-          { label: "Success Rate", value: "99.8% Safety" },
-        ],
+        { label: "Recovery Time", value: "24–48 Hours" },
+        { label: "Procedure Time", value: "10–15 Minutes" },
+        { label: "Success Rate", value: "99.8% Safety" },
+      ],
     ctaPrimaryText: initialData?.ctaPrimaryText || "Book Consultation",
     ctaPhone: initialData?.ctaPhone || "+919458422606",
     sections: Array.isArray(initialData?.sections) && initialData.sections.length > 0
       ? initialData.sections
       : [
-          {
-            id: "overview",
-            heading: "Overview of Treatment",
-            type: "highlight",
-            content: "Describe the clinical advantages and hygiene standards at Oracle Eye Hospital.",
-            items: [
-              "NABH-Accredited modern super-specialty eye center",
-              "25,000+ surgeries successfully performed",
-              "Cashless insurance and TPA facility available",
-            ],
-          },
-        ],
+        {
+          id: "overview",
+          heading: "Overview of Treatment",
+          type: "highlight",
+          content: "Describe the clinical advantages and hygiene standards at Oracle Eye Hospital.",
+          items: [
+            "NABH-Accredited modern super-specialty eye center",
+            "25,000+ surgeries successfully performed",
+            "Cashless insurance and TPA facility available",
+          ],
+        },
+      ],
     doctorIds: Array.isArray(initialData?.doctorIds) ? initialData.doctorIds : [],
     faqs: Array.isArray(initialData?.faqs) && initialData.faqs.length > 0
       ? initialData.faqs
       : [
-          {
-            question: "How long does the recovery take?",
-            answer: "Most patients can resume light routine activities within 24 to 48 hours.",
-          },
-        ],
+        {
+          question: "How long does the recovery take?",
+          answer: "Most patients can resume light routine activities within 24 to 48 hours.",
+        },
+      ],
+    customSchema: initialData?.schemaJson
+      ? JSON.stringify(initialData.schemaJson, null, 2)
+      : initialData?.customSchema || "",
     relatedIds: Array.isArray(initialData?.relatedIds) ? initialData.relatedIds : [],
   });
 
+  const [schemaUpdatedAt, setSchemaUpdatedAt] = useState(
+    initialData?.schemaUpdatedAt || initialData?.schema_updated_at || null
+  );
+  const [schemaRatingConfirmed, setSchemaRatingConfirmed] = useState(false);
+  const [schemaStatusMsg, setSchemaStatusMsg] = useState({ type: "", text: "" });
+
+  // Local list of doctors (allows adding new doctor dynamically)
+  const [localDoctors, setLocalDoctors] = useState(doctorsList || []);
+  const [doctorModalOpen, setDoctorModalOpen] = useState(false);
+  const [savingDoctor, setSavingDoctor] = useState(false);
+  const [newDoctor, setNewDoctor] = useState({
+    name: "",
+    role: "Senior Eye Surgeon & Ophthalmologist",
+    qualification: "MBBS, MS (Ophthalmology)",
+    image: "",
+    badgeText: "Senior Consultant",
+    profileHref: "",
+    bio: "",
+    sortOrder: 0,
+  });
+
+  // Search query for Related Services & Internal Linking
+  const [relatedSearch, setRelatedSearch] = useState("");
+
   const [slugLocked, setSlugLocked] = useState(isEditing);
   const [saving, setSaving] = useState(false);
+  const [savingSchemaOnly, setSavingSchemaOnly] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
   const [showPreview, setShowPreview] = useState(false);
+
+  // Draft persistence for "Add New SEO Page" and "Edit SEO Page" to prevent data loss on refresh
+  const DRAFT_KEY = isEditing && initialData?.id
+    ? `seo_page_edit_draft_${initialData.id}`
+    : "seo_page_new_draft_v1";
+  const [hasRestoredDraft, setHasRestoredDraft] = useState(false);
+
+  // 1. Restore draft and active tab on initial mount
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem(DRAFT_KEY);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed && typeof parsed === "object") {
+          const { _activeTab, ...savedFormData } = parsed;
+          setForm((prev) => ({
+            ...prev,
+            ...savedFormData,
+            heroBadge: savedFormData.heroBadge || (isEditing ? prev.heroBadge : "NABH-Accredited Eye Hospital in Moradabad"),
+          }));
+          if (savedFormData.slug) setSlugLocked(true);
+          if (_activeTab) setActiveTab(_activeTab);
+          setHasRestoredDraft(true);
+        }
+      }
+    } catch {
+      // ignore JSON parse or storage errors
+    }
+  }, [DRAFT_KEY, isEditing]);
+
+  // 2. Auto-save form data + current active tab to localStorage whenever form or activeTab changes
+  useEffect(() => {
+    try {
+      const dataToSave = {
+        ...form,
+        _activeTab: activeTab,
+      };
+      localStorage.setItem(DRAFT_KEY, JSON.stringify(dataToSave));
+    } catch {
+      // ignore storage errors
+    }
+  }, [form, activeTab, DRAFT_KEY]);
+
+  function handleDiscardDraft() {
+    const confirmText = isEditing
+      ? "Are you sure you want to discard your unsaved changes and reload original data?"
+      : "Are you sure you want to discard this auto-saved draft and reset to default?";
+    if (window.confirm(confirmText)) {
+      try {
+        localStorage.removeItem(DRAFT_KEY);
+      } catch { }
+      setHasRestoredDraft(false);
+      window.location.reload();
+    }
+  }
+
+  // Add new doctor via API and automatically select them
+  async function handleCreateDoctor(e) {
+    if (e) e.preventDefault();
+    if (!newDoctor.name.trim()) {
+      toast("Doctor name is required.", "error");
+      return;
+    }
+
+    setSavingDoctor(true);
+    try {
+      const res = await fetch("/api/admin/doctors", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(newDoctor),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        toast(data.error || "Failed to add doctor.", "error");
+      } else {
+        toast(`Doctor "${data.name}" added successfully!`, "success");
+        setLocalDoctors((prev) => [...prev, data]);
+        // Auto-select this newly created doctor
+        setForm((prev) => ({
+          ...prev,
+          doctorIds: prev.doctorIds.includes(data.id) ? prev.doctorIds : [...prev.doctorIds, data.id],
+        }));
+        // Reset form & close modal
+        setNewDoctor({
+          name: "",
+          role: "Senior Eye Surgeon & Ophthalmologist",
+          qualification: "MBBS, MS (Ophthalmology)",
+          image: "",
+          badgeText: "Senior Consultant",
+          profileHref: "",
+          bio: "",
+          sortOrder: 0,
+        });
+        setDoctorModalOpen(false);
+      }
+    } catch {
+      toast("Error creating doctor. Please check your connection.", "error");
+    } finally {
+      setSavingDoctor(false);
+    }
+  }
 
   // Handle H1 title change (auto-update slug if not locked)
   function handleH1Change(e) {
@@ -111,8 +249,8 @@ export default function SeoPageForm({ initialData = null, doctorsList = [], allP
         metaTitle: !prev.metaTitle ? `${title} | Oracle Eye Hospital` : prev.metaTitle,
         canonicalUrl:
           !prev.canonicalUrl ||
-          prev.canonicalUrl.startsWith("https://www.oracleeyehospital.com/services/")
-            ? `https://www.oracleeyehospital.com/services/${nextSlug}`
+            prev.canonicalUrl.startsWith("https://www.oracleeyehospital.com/")
+            ? `https://www.oracleeyehospital.com/${nextSlug}`
             : prev.canonicalUrl,
       };
     });
@@ -127,8 +265,8 @@ export default function SeoPageForm({ initialData = null, doctorsList = [], allP
       slug: clean,
       canonicalUrl:
         !prev.canonicalUrl ||
-        prev.canonicalUrl.startsWith("https://www.oracleeyehospital.com/services/")
-          ? `https://www.oracleeyehospital.com/services/${clean}`
+          prev.canonicalUrl.startsWith("https://www.oracleeyehospital.com/")
+          ? `https://www.oracleeyehospital.com/${clean}`
           : prev.canonicalUrl,
     }));
   }
@@ -139,7 +277,7 @@ export default function SeoPageForm({ initialData = null, doctorsList = [], allP
     setForm((prev) => ({
       ...prev,
       slug: generated,
-      canonicalUrl: `https://www.oracleeyehospital.com/services/${generated}`,
+      canonicalUrl: `https://www.oracleeyehospital.com/${generated}`,
     }));
     setSlugLocked(false);
   }
@@ -184,6 +322,19 @@ export default function SeoPageForm({ initialData = null, doctorsList = [], allP
         },
       ],
     }));
+
+    // Auto-scroll to the newly created section
+    setTimeout(() => {
+      const el = document.getElementById(newId);
+      if (el) {
+        el.scrollIntoView({ behavior: "smooth", block: "center" });
+        const headingInput = el.querySelector("input");
+        if (headingInput) {
+          headingInput.focus();
+          headingInput.select();
+        }
+      }
+    }, 120);
   }
 
   function updateSection(index, field, val) {
@@ -324,19 +475,79 @@ export default function SeoPageForm({ initialData = null, doctorsList = [], allP
     if (isSlugDuplicate) {
       setErrorMsg(`The URL slug "${form.slug}" is already in use by another page. Please choose a unique slug.`);
       setActiveTab("seo");
-      toast(`Duplicate slug: "/services/${form.slug}" is already taken.`, "error");
+      toast(`Duplicate slug: "/${form.slug}" is already taken.`, "error");
       return;
+    }
+
+    // Validate Schema JSON if provided
+    let parsedSchema = null;
+    if (form.customSchema && form.customSchema.trim()) {
+      let text = form.customSchema.trim();
+      if (text.startsWith("<script") && text.endsWith("</script>")) {
+        text = text.replace(/<script[^>]*>/i, "").replace(/<\/script>$/i, "").trim();
+      }
+      try {
+        parsedSchema = JSON.parse(text);
+      } catch (err) {
+        setErrorMsg(`Schema JSON Syntax Error: ${err.message}. Please fix before saving.`);
+        setActiveTab("schema");
+        toast("Invalid Schema JSON syntax", "error");
+        return;
+      }
+
+      if (typeof parsedSchema !== "object" || parsedSchema === null) {
+        setErrorMsg("Schema must be a JSON object or array of objects.");
+        setActiveTab("schema");
+        toast("Schema must be a JSON object or array of objects.", "error");
+        return;
+      }
+
+      // Check structure: must have @type or @graph
+      const items = Array.isArray(parsedSchema) ? parsedSchema : [parsedSchema];
+      for (let i = 0; i < items.length; i++) {
+        const item = items[i];
+        if (!item || typeof item !== "object" || Array.isArray(item)) {
+          setErrorMsg(`Schema item at index ${i} is not a valid object.`);
+          setActiveTab("schema");
+          return;
+        }
+        if (!item["@type"] && (!Array.isArray(item["@graph"]) || item["@graph"].length === 0)) {
+          setErrorMsg(`Schema item at index ${i} must contain a "@type" property or an "@graph" array.`);
+          setActiveTab("schema");
+          toast(`Item #${i + 1} is missing "@type"`, "error");
+          return;
+        }
+      }
+
+      // Check for aggregateRating / review
+      const hasRating = /\b(aggregateRating|review)\b/i.test(text);
+      if (hasRating && !schemaRatingConfirmed) {
+        const confirmMsg =
+          'Your Schema contains "aggregateRating" or "review". Google requires real, verified user reviews. Are you sure you want to save this schema?';
+        if (!window.confirm(confirmMsg)) {
+          setErrorMsg('Save aborted: Schema contains "aggregateRating" or "review". Please remove or confirm.');
+          setActiveTab("schema");
+          return;
+        }
+        setSchemaRatingConfirmed(true);
+      }
     }
 
     setSaving(true);
     const endpoint = isEditing ? `/api/admin/seo-pages/${initialData.id}` : "/api/admin/seo-pages";
     const method = isEditing ? "PUT" : "POST";
 
+    const payload = {
+      ...form,
+      schemaJson: parsedSchema,
+      allowRatings: true,
+    };
+
     try {
       const res = await fetch(endpoint, {
         method,
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
+        body: JSON.stringify(payload),
       });
 
       const data = await res.json().catch(() => ({}));
@@ -345,6 +556,9 @@ export default function SeoPageForm({ initialData = null, doctorsList = [], allP
         setErrorMsg(data.error || "Failed to save SEO page.");
         toast(data.error || "Failed to save SEO page.", "error");
       } else {
+        try {
+          localStorage.removeItem(DRAFT_KEY);
+        } catch { }
         toast(isEditing ? "SEO page updated!" : "SEO page created successfully!", "success");
         router.push("/admin/seo-pages");
         router.refresh();
@@ -357,8 +571,117 @@ export default function SeoPageForm({ initialData = null, doctorsList = [], allP
     }
   }
 
+  // Save Schema Only (useful when editing Schema in live admin)
+  async function handleSaveSchemaOnly() {
+    if (!isEditing || !initialData?.id) {
+      toast("Please save the entire page first before using quick schema save.", "error");
+      return;
+    }
+    setSchemaStatusMsg({ type: "", text: "" });
+
+    let parsedSchema = null;
+    if (form.customSchema && form.customSchema.trim()) {
+      let text = form.customSchema.trim();
+      if (text.startsWith("<script") && text.endsWith("</script>")) {
+        text = text.replace(/<script[^>]*>/i, "").replace(/<\/script>$/i, "").trim();
+      }
+      try {
+        parsedSchema = JSON.parse(text);
+      } catch (err) {
+        setSchemaStatusMsg({ type: "error", text: `JSON Syntax Error: ${err.message}` });
+        toast("Invalid Schema JSON syntax", "error");
+        return;
+      }
+
+      if (typeof parsedSchema !== "object" || parsedSchema === null) {
+        setSchemaStatusMsg({ type: "error", text: "Schema must be a JSON object or array of objects." });
+        return;
+      }
+
+      const items = Array.isArray(parsedSchema) ? parsedSchema : [parsedSchema];
+      for (let i = 0; i < items.length; i++) {
+        const item = items[i];
+        if (!item || typeof item !== "object" || Array.isArray(item)) {
+          setSchemaStatusMsg({ type: "error", text: `Item #${i + 1} is not a valid object.` });
+          return;
+        }
+        if (!item["@type"] && (!Array.isArray(item["@graph"]) || item["@graph"].length === 0)) {
+          setSchemaStatusMsg({ type: "error", text: `Item #${i + 1} must contain "@type" or "@graph".` });
+          return;
+        }
+      }
+
+      const hasRating = /\b(aggregateRating|review)\b/i.test(text);
+      if (hasRating && !schemaRatingConfirmed) {
+        if (!window.confirm('Schema contains "aggregateRating" or "review". Confirm to proceed?')) {
+          setSchemaStatusMsg({ type: "warning", text: 'Save cancelled: contains "aggregateRating" / "review".' });
+          return;
+        }
+        setSchemaRatingConfirmed(true);
+      }
+    }
+
+    setSavingSchemaOnly(true);
+    try {
+      const res = await fetch(`/api/admin/seo-pages/${initialData.id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          schemaJson: parsedSchema,
+          allowRatings: true,
+        }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        setSchemaStatusMsg({ type: "error", text: data.error || "Failed to save schema." });
+        toast(data.error || "Failed to save schema", "error");
+      } else {
+        const now = new Date();
+        setSchemaUpdatedAt(now);
+        setSchemaStatusMsg({ type: "success", text: "Schema saved and page revalidated successfully!" });
+        toast("Schema updated and page cache refreshed!", "success");
+      }
+    } catch {
+      setSchemaStatusMsg({ type: "error", text: "Network error saving schema." });
+      toast("Network error", "error");
+    } finally {
+      setSavingSchemaOnly(false);
+    }
+  }
+
+  // Tab Order definitions
+  const TABS_ORDER = ["seo", "hero", "content", "doctors", "related", "schema"];
+  const currentTabIndex = TABS_ORDER.indexOf(activeTab);
+  const isFirstTab = currentTabIndex === 0;
+  const isLastTab = currentTabIndex === TABS_ORDER.length - 1;
+
+  function goToNextTab() {
+    if (currentTabIndex < TABS_ORDER.length - 1) {
+      setActiveTab(TABS_ORDER[currentTabIndex + 1]);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  }
+
+  function goToPrevTab() {
+    if (currentTabIndex > 0) {
+      setActiveTab(TABS_ORDER[currentTabIndex - 1]);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  }
+
   // Filter other pages for related selection (exclude self)
   const availableRelatedPages = allPages.filter((p) => p.id !== initialData?.id);
+
+  // Search filtered pages for internal linking
+  const filteredRelatedPages = availableRelatedPages.filter((page) => {
+    if (!relatedSearch.trim()) return true;
+    const q = relatedSearch.toLowerCase().trim();
+    return (
+      page.h1Title?.toLowerCase().includes(q) ||
+      page.slug?.toLowerCase().includes(q) ||
+      page.metaTitle?.toLowerCase().includes(q)
+    );
+  });
 
   // Check if current slug is already taken by another page
   const isSlugDuplicate = Boolean(
@@ -393,16 +716,76 @@ export default function SeoPageForm({ initialData = null, doctorsList = [], allP
             <ArrowLeft size={16} /> Back to List
           </Link>
           <div>
-            <h2 className="adt-header-title">
-              {isEditing ? `Edit: ${form.h1Title || "SEO Page"}` : "Add New SEO Page"}
-            </h2>
-            <div style={{ fontSize: 13, color: "#6b7280", marginTop: 2 }}>
-              Path: <code>/services/{form.slug || "[slug]"}</code>
+            <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+              <h2 className="adt-header-title" style={{ margin: 0 }}>
+                {isEditing ? `Edit: ${form.h1Title || "SEO Page"}` : "Add New SEO Page"}
+              </h2>
+              {hasRestoredDraft && (
+                <span
+                  style={{
+                    background: "#ecfdf5",
+                    color: "#059669",
+                    border: "1px solid #a7f3d0",
+                    fontSize: 11,
+                    fontWeight: 600,
+                    padding: "2px 8px",
+                    borderRadius: 12,
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: 4,
+                  }}
+                >
+                  ● Auto-saved Draft Restored
+                </span>
+              )}
+            </div>
+            <div style={{ fontSize: 13, color: "#6b7280", marginTop: 4, display: "flex", alignItems: "center", gap: 10 }}>
+              <span>Path: <code>/{form.slug || "[slug]"}</code></span>
+              {hasRestoredDraft && (
+                <button
+                  type="button"
+                  onClick={handleDiscardDraft}
+                  style={{
+                    background: "transparent",
+                    border: 0,
+                    color: "#dc2626",
+                    fontSize: 12,
+                    cursor: "pointer",
+                    textDecoration: "underline",
+                    padding: 0,
+                  }}
+                >
+                  {isEditing ? "Discard Changes & Reload" : "Discard Draft & Reset"}
+                </button>
+              )}
             </div>
           </div>
         </div>
 
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+          {isEditing && form.slug && (
+            <a
+              href={`/${form.slug}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                background: "#0d9488",
+                color: "#ffffff",
+                fontWeight: 600,
+                fontSize: 13,
+                padding: "9px 14px",
+                borderRadius: 6,
+                textDecoration: "none",
+                display: "inline-flex",
+                alignItems: "center",
+                gap: 6,
+              }}
+            >
+              <Eye size={16} />
+              <span>View Live Page</span>
+            </a>
+          )}
+
           <button
             type="button"
             onClick={() => setShowPreview(true)}
@@ -424,23 +807,39 @@ export default function SeoPageForm({ initialData = null, doctorsList = [], allP
             <span>Preview Page</span>
           </button>
 
-          <button
-            type="button"
-            onClick={handleSubmit}
-            disabled={saving}
-            className="adt-btn-save"
-            style={{ display: "inline-flex", alignItems: "center", gap: 6 }}
-          >
-            {saving ? (
-              <>
-                <Loader2 size={16} className="adt-spin" /> Saving…
-              </>
-            ) : (
-              <>
-                <Save size={16} /> Save Page
-              </>
-            )}
-          </button>
+          {(!isEditing && !isLastTab) ? (
+            <button
+              type="button"
+              onClick={goToNextTab}
+              className="adt-btn-save"
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: 6,
+                background: "#0d9488",
+              }}
+            >
+              <span>Next Step</span> <ArrowRight size={16} />
+            </button>
+          ) : (
+            <button
+              type="button"
+              onClick={handleSubmit}
+              disabled={saving}
+              className="adt-btn-save"
+              style={{ display: "inline-flex", alignItems: "center", gap: 6 }}
+            >
+              {saving ? (
+                <>
+                  <Loader2 size={16} className="adt-spin" /> Saving…
+                </>
+              ) : (
+                <>
+                  <Save size={16} /> {isEditing ? "Save Page" : "Publish SEO Page"}
+                </>
+              )}
+            </button>
+          )}
         </div>
       </div>
 
@@ -482,8 +881,23 @@ export default function SeoPageForm({ initialData = null, doctorsList = [], allP
           { id: "hero", label: "2. Hero Banner", icon: Layers },
           {
             id: "content",
-            label: `3. Page Content (${form.sections.length + form.doctorIds.length + form.faqs.length + form.relatedIds.length})`,
+            label: `3. Content & FAQs`,
             icon: FileText,
+          },
+          {
+            id: "doctors",
+            label: `4. Specialist Doctors`,
+            icon: UserCheck,
+          },
+          {
+            id: "related",
+            label: `5. Related Links`,
+            icon: Link2,
+          },
+          {
+            id: "schema",
+            label: `6. Schema (JSON-LD) ${form.customSchema?.trim() ? "✓" : ""}`,
+            icon: Code,
           },
         ].map((tab) => {
           const Icon = tab.icon;
@@ -564,9 +978,8 @@ export default function SeoPageForm({ initialData = null, doctorsList = [], allP
                         status: prev.status === "published" ? "draft" : "published",
                       }))
                     }
-                    className={`adt-badge ${
-                      form.status === "published" ? "adt-badge-active" : "adt-badge-inactive"
-                    }`}
+                    className={`adt-badge ${form.status === "published" ? "adt-badge-active" : "adt-badge-inactive"
+                      }`}
                     style={{ fontSize: 13, padding: "6px 14px", cursor: "pointer", border: "none" }}
                   >
                     {form.status === "published" ? "✓ Published" : "✕ Draft"}
@@ -600,7 +1013,7 @@ export default function SeoPageForm({ initialData = null, doctorsList = [], allP
                   )}
                 </div>
                 <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-                  <span style={{ fontSize: 13, color: "#6b7280" }}>/services/</span>
+                  <span style={{ fontSize: 13, color: "#6b7280" }}>/</span>
                   <input
                     type="text"
                     required
@@ -643,16 +1056,16 @@ export default function SeoPageForm({ initialData = null, doctorsList = [], allP
                         (form.metaTitle || "").length > 60
                           ? "#d97706"
                           : (form.metaTitle || "").length >= 50
-                          ? "#0d9488"
-                          : "#6b7280",
+                            ? "#0d9488"
+                            : "#6b7280",
                     }}
                   >
                     {(form.metaTitle || "").length}/60 characters
                     {(form.metaTitle || "").length === 0
                       ? " (empty)"
                       : (form.metaTitle || "").length > 60
-                      ? " (too long)"
-                      : " (50–60 recommended)"}
+                        ? " (too long)"
+                        : " (50–60 recommended)"}
                   </span>
                 </div>
                 <input
@@ -675,16 +1088,16 @@ export default function SeoPageForm({ initialData = null, doctorsList = [], allP
                         (form.metaDescription || "").length > 160
                           ? "#d97706"
                           : (form.metaDescription || "").length >= 140
-                          ? "#0d9488"
-                          : "#6b7280",
+                            ? "#0d9488"
+                            : "#6b7280",
                     }}
                   >
                     {(form.metaDescription || "").length}/160 characters
                     {(form.metaDescription || "").length === 0
                       ? " (empty)"
                       : (form.metaDescription || "").length > 160
-                      ? " (too long)"
-                      : " (140–160 recommended)"}
+                        ? " (too long)"
+                        : " (140–160 recommended)"}
                   </span>
                 </div>
                 <textarea
@@ -713,7 +1126,7 @@ export default function SeoPageForm({ initialData = null, doctorsList = [], allP
                 <label>Canonical URL</label>
                 <input
                   type="url"
-                  placeholder={`https://www.oracleeyehospital.com/services/${form.slug || ""}`}
+                  placeholder={`https://www.oracleeyehospital.com/${form.slug || ""}`}
                   value={form.canonicalUrl}
                   onChange={(e) => setForm((prev) => ({ ...prev, canonicalUrl: e.target.value }))}
                 />
@@ -749,6 +1162,9 @@ export default function SeoPageForm({ initialData = null, doctorsList = [], allP
                   value={form.heroBadge}
                   onChange={(e) => setForm((prev) => ({ ...prev, heroBadge: e.target.value }))}
                 />
+                <span style={{ fontSize: 11, color: "#64748b", display: "block", marginTop: 4 }}>
+                  Default: <strong>NABH-Accredited Eye Hospital in Moradabad</strong> (Common across pages, can be edited anytime)
+                </span>
               </div>
 
               {/* H1 Title */}
@@ -914,6 +1330,7 @@ export default function SeoPageForm({ initialData = null, doctorsList = [], allP
                 {form.sections.map((sec, idx) => (
                   <div
                     key={sec.id || idx}
+                    id={sec.id || `section-${idx}`}
                     style={{
                       border: "1px solid #e5e7eb",
                       borderRadius: 8,
@@ -1096,6 +1513,42 @@ export default function SeoPageForm({ initialData = null, doctorsList = [], allP
                           onChange={(html) => updateSection(idx, "content", html)}
                           placeholder="Section paragraph content..."
                           minHeight={130}
+                          onToggleBulletList={() => {
+                            if (sec.type === "highlight") {
+                              updateSection(idx, "type", "text");
+                            } else {
+                              const existingItems = Array.isArray(sec.items) && sec.items.length > 0
+                                ? sec.items
+                                : ["", ""];
+                              setForm((prev) => {
+                                const next = [...prev.sections];
+                                next[idx] = {
+                                  ...next[idx],
+                                  type: "highlight",
+                                  items: existingItems,
+                                };
+                                return { ...prev, sections: next };
+                              });
+                            }
+                          }}
+                          onToggleOrderedList={() => {
+                            if (sec.type === "numbered") {
+                              updateSection(idx, "type", "text");
+                            } else {
+                              const existingItems = Array.isArray(sec.items) && sec.items.length > 0
+                                ? sec.items
+                                : ["", ""];
+                              setForm((prev) => {
+                                const next = [...prev.sections];
+                                next[idx] = {
+                                  ...next[idx],
+                                  type: "numbered",
+                                  items: existingItems,
+                                };
+                                return { ...prev, sections: next };
+                              });
+                            }
+                          }}
                         />
                       </div>
 
@@ -1103,102 +1556,102 @@ export default function SeoPageForm({ initialData = null, doctorsList = [], allP
                       {(sec.type === "checklist" ||
                         sec.type === "numbered" ||
                         sec.type === "highlight") && (
-                        <div
-                          style={{
-                            background: "#f8fafc",
-                            padding: 12,
-                            borderRadius: 6,
-                            border: "1px dashed #cbd5e1",
-                          }}
-                        >
                           <div
                             style={{
-                              display: "flex",
-                              justifyContent: "space-between",
-                              alignItems: "center",
-                              marginBottom: 8,
+                              background: "#f8fafc",
+                              padding: 12,
+                              borderRadius: 6,
+                              border: "1px dashed #cbd5e1",
                             }}
                           >
-                            <label style={{ fontSize: 13, fontWeight: 600, color: "#334155" }}>
-                              {sec.type === "numbered"
-                                ? "Numbered Step Items"
-                                : sec.type === "checklist"
-                                ? "Checklist Items"
-                                : "Highlight Bullet Points"}
-                            </label>
-                            <button
-                              type="button"
-                              onClick={() => addSectionItem(idx)}
+                            <div
                               style={{
-                                background: "#0d9488",
-                                color: "#fff",
-                                border: "none",
-                                borderRadius: 4,
-                                padding: "3px 8px",
-                                fontSize: 11,
-                                cursor: "pointer",
-                                display: "inline-flex",
+                                display: "flex",
+                                justifyContent: "space-between",
                                 alignItems: "center",
-                                gap: 4,
+                                marginBottom: 8,
                               }}
                             >
-                              <Plus size={11} /> Add Item
-                            </button>
-                          </div>
-
-                          <div style={{ display: "grid", gap: 6 }}>
-                            {(sec.items || []).map((item, itemIdx) => (
-                              <div
-                                key={itemIdx}
-                                style={{ display: "flex", alignItems: "center", gap: 8 }}
+                              <label style={{ fontSize: 13, fontWeight: 600, color: "#334155" }}>
+                                {sec.type === "numbered"
+                                  ? "Numbered Step Items"
+                                  : sec.type === "checklist"
+                                    ? "Checklist Items"
+                                    : "Highlight Bullet Points"}
+                              </label>
+                              <button
+                                type="button"
+                                onClick={() => addSectionItem(idx)}
+                                style={{
+                                  background: "#0d9488",
+                                  color: "#fff",
+                                  border: "none",
+                                  borderRadius: 4,
+                                  padding: "3px 8px",
+                                  fontSize: 11,
+                                  cursor: "pointer",
+                                  display: "inline-flex",
+                                  alignItems: "center",
+                                  gap: 4,
+                                }}
                               >
-                                <span style={{ fontSize: 12, color: "#64748b", width: 20 }}>
-                                  {sec.type === "numbered" ? `${itemIdx + 1}.` : "•"}
-                                </span>
-                                <div style={{ flex: 1 }}>
-                                  <input
-                                    type="text"
-                                    value={item || ""}
-                                    onChange={(e) => updateSectionItem(idx, itemIdx, e.target.value)}
-                                    placeholder={`Item #${itemIdx + 1} (e.g. Carry all reports, scans, and medicines)`}
-                                    style={{
-                                      width: "100%",
-                                      padding: "8px 12px",
-                                      border: "1px solid #cbd5e1",
-                                      borderRadius: 6,
-                                      fontSize: 13,
-                                      background: "#fff",
-                                      outline: "none",
-                                      transition: "border-color 0.15s ease",
-                                    }}
-                                    onFocus={(e) => (e.target.style.borderColor = "#0d9488")}
-                                    onBlur={(e) => (e.target.style.borderColor = "#cbd5e1")}
-                                  />
-                                </div>
-                                <button
-                                  type="button"
-                                  onClick={() => removeSectionItem(idx, itemIdx)}
-                                  style={{
-                                    background: "#fee2e2",
-                                    border: "none",
-                                    color: "#dc2626",
-                                    padding: "6px",
-                                    borderRadius: 4,
-                                    cursor: "pointer",
-                                  }}
+                                <Plus size={11} /> Add Item
+                              </button>
+                            </div>
+
+                            <div style={{ display: "grid", gap: 6 }}>
+                              {(sec.items || []).map((item, itemIdx) => (
+                                <div
+                                  key={itemIdx}
+                                  style={{ display: "flex", alignItems: "center", gap: 8 }}
                                 >
-                                  <Trash2 size={13} />
-                                </button>
-                              </div>
-                            ))}
-                            {(!sec.items || sec.items.length === 0) && (
-                              <div style={{ fontSize: 12, color: "#94a3b8", fontStyle: "italic" }}>
-                                No items added yet. Click &quot;Add Item&quot; to add bullet points or steps.
-                              </div>
-                            )}
+                                  <span style={{ fontSize: 12, color: "#64748b", width: 20 }}>
+                                    {sec.type === "numbered" ? `${itemIdx + 1}.` : "•"}
+                                  </span>
+                                  <div style={{ flex: 1 }}>
+                                    <input
+                                      type="text"
+                                      value={item || ""}
+                                      onChange={(e) => updateSectionItem(idx, itemIdx, e.target.value)}
+                                      placeholder={`Item #${itemIdx + 1} (e.g. Carry all reports, scans, and medicines)`}
+                                      style={{
+                                        width: "100%",
+                                        padding: "8px 12px",
+                                        border: "1px solid #cbd5e1",
+                                        borderRadius: 6,
+                                        fontSize: 13,
+                                        background: "#fff",
+                                        outline: "none",
+                                        transition: "border-color 0.15s ease",
+                                      }}
+                                      onFocus={(e) => (e.target.style.borderColor = "#0d9488")}
+                                      onBlur={(e) => (e.target.style.borderColor = "#cbd5e1")}
+                                    />
+                                  </div>
+                                  <button
+                                    type="button"
+                                    onClick={() => removeSectionItem(idx, itemIdx)}
+                                    style={{
+                                      background: "#fee2e2",
+                                      border: "none",
+                                      color: "#dc2626",
+                                      padding: "6px",
+                                      borderRadius: 4,
+                                      cursor: "pointer",
+                                    }}
+                                  >
+                                    <Trash2 size={13} />
+                                  </button>
+                                </div>
+                              ))}
+                              {(!sec.items || sec.items.length === 0) && (
+                                <div style={{ fontSize: 12, color: "#94a3b8", fontStyle: "italic" }}>
+                                  No items added yet. Click &quot;Add Item&quot; to add bullet points or steps.
+                                </div>
+                              )}
+                            </div>
                           </div>
-                        </div>
-                      )}
+                        )}
                     </div>
                   </div>
                 ))}
@@ -1206,102 +1659,13 @@ export default function SeoPageForm({ initialData = null, doctorsList = [], allP
             </div>
           )}
 
-          {/* ======================================================== */}
-          {/* TAB 4: DOCTORS */}
-          {/* ======================================================== */}
-          {activeTab === "content" && (
-            <div>
-              <h3 style={{ margin: "0 0 6px 0", fontSize: 16, color: "#111827", fontWeight: 700 }}>
-                Specialist Eye Surgeons
-              </h3>
-              <p style={{ margin: "0 0 16px 0", fontSize: 13, color: "#6b7280" }}>
-                Select the senior doctors featured in the &quot;Meet Our Specialists&quot; section on this page.
-              </p>
 
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
-                {doctorsList.map((doc) => {
-                  const isChecked = form.doctorIds.includes(doc.id);
-                  return (
-                    <div
-                      key={doc.id}
-                      onClick={() => toggleDoctor(doc.id)}
-                      style={{
-                        padding: 12,
-                        borderRadius: 8,
-                        border: isChecked ? "2px solid #0d9488" : "1px solid #e5e7eb",
-                        background: isChecked ? "#f0fdfa" : "#ffffff",
-                        cursor: "pointer",
-                        display: "flex",
-                        alignItems: "center",
-                        gap: 12,
-                        transition: "all 0.15s ease",
-                      }}
-                    >
-                      <input
-                        type="checkbox"
-                        checked={isChecked}
-                        onChange={() => {}} // handled by parent div
-                        style={{ width: 18, height: 18, cursor: "pointer" }}
-                      />
-                      {doc.image ? (
-                        <img
-                          src={doc.image}
-                          alt={doc.name || "Doctor"}
-                          onError={(e) => {
-                            e.currentTarget.onerror = null;
-                            e.currentTarget.src = "/Assets/img/team/1.png";
-                          }}
-                          style={{
-                            width: 44,
-                            height: 44,
-                            borderRadius: "50%",
-                            objectFit: "cover",
-                            border: "1px solid #cbd5e1",
-                          }}
-                        />
-                      ) : (
-                        <div
-                          style={{
-                            width: 44,
-                            height: 44,
-                            borderRadius: "50%",
-                            background: "#e2e8f0",
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            fontSize: 12,
-                            fontWeight: 600,
-                            color: "#475569",
-                          }}
-                        >
-                          DR
-                        </div>
-                      )}
-                      <div>
-                        <div style={{ fontWeight: 600, color: "#0f172a", fontSize: 14 }}>
-                          {doc.name}
-                        </div>
-                        <div style={{ fontSize: 12, color: "#0d9488", fontWeight: 500 }}>
-                          {doc.role || "Ophthalmologist"}
-                        </div>
-                        {doc.qualification && (
-                          <div style={{ fontSize: 11, color: "#64748b" }}>
-                            {doc.qualification}
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          )}
 
           {/* ======================================================== */}
-          {/* TAB 5: FAQS */}
+          {/* TAB 3 (Part 2): FAQS (inside Content tab) */}
           {/* ======================================================== */}
           {activeTab === "content" && (
-            <div>
+            <div style={{ marginTop: 36, paddingTop: 24, borderTop: "1px solid #e5e7eb" }}>
               <div
                 style={{
                   display: "flex",
@@ -1315,7 +1679,7 @@ export default function SeoPageForm({ initialData = null, doctorsList = [], allP
                     Frequently Asked Questions (FAQs)
                   </h3>
                   <p style={{ margin: "4px 0 0 0", fontSize: 12, color: "#6b7280" }}>
-                    These questions are automatically rendered in the FAQ Accordion and encoded into FAQPage JSON-LD schema.
+                    Accordion FAQs displayed on the page and automatically formatted for Google FAQPage schema.
                   </p>
                 </div>
                 <button
@@ -1435,18 +1799,334 @@ export default function SeoPageForm({ initialData = null, doctorsList = [], allP
           )}
 
           {/* ======================================================== */}
-          {/* TAB 6: RELATED SERVICES */}
+          {/* TAB 4: SPECIALIST EYE SURGEONS (OPTIONAL) */}
           {/* ======================================================== */}
-          {activeTab === "content" && (
+          {activeTab === "doctors" && (
             <div>
-              <h3 style={{ margin: "0 0 6px 0", fontSize: 16, color: "#111827", fontWeight: 700 }}>
-                Related Services &amp; Internal Linking
-              </h3>
-              <p style={{ margin: "0 0 16px 0", fontSize: 13, color: "#6b7280" }}>
-                Select other published SEO landing pages to showcase in the &quot;Related Specialities&quot; grid at the bottom.
-              </p>
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  marginBottom: 16,
+                  paddingBottom: 14,
+                  borderBottom: "1px solid #e5e7eb",
+                  flexWrap: "wrap",
+                  gap: 12,
+                }}
+              >
+                <div>
+                  <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                    <h3 style={{ margin: 0, fontSize: 16, color: "#111827", fontWeight: 700 }}>
+                      Specialist Eye Surgeons
+                    </h3>
+                    <span
+                      style={{
+                        fontSize: 11,
+                        fontWeight: 600,
+                        padding: "2px 8px",
+                        background: "#f1f5f9",
+                        color: "#475569",
+                        borderRadius: 12,
+                        border: "1px solid #cbd5e1",
+                      }}
+                    >
+                      Optional
+                    </span>
+                  </div>
+                  <p style={{ margin: "4px 0 0 0", fontSize: 13, color: "#6b7280" }}>
+                    Select the doctors featured in the &quot;Meet Our Specialists&quot; section on this page. If none are selected, doctors will be omitted or defaults will show.
+                  </p>
+                </div>
+
+                <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                  <button
+                    type="button"
+                    onClick={() => setDoctorModalOpen(true)}
+                    className="adt-btn-save"
+                    style={{
+                      display: "inline-flex",
+                      alignItems: "center",
+                      gap: 6,
+                      background: "#0d9488",
+                      fontSize: 13,
+                      padding: "7px 14px",
+                    }}
+                  >
+                    <Plus size={15} /> Add New Doctor
+                  </button>
+
+                  {form.doctorIds.length > 0 && (
+                    <button
+                      type="button"
+                      onClick={() => setForm((prev) => ({ ...prev, doctorIds: [] }))}
+                      style={{
+                        background: "transparent",
+                        border: "1px solid #cbd5e1",
+                        borderRadius: 6,
+                        padding: "7px 12px",
+                        fontSize: 12,
+                        color: "#64748b",
+                        cursor: "pointer",
+                      }}
+                    >
+                      Clear Selection ({form.doctorIds.length})
+                    </button>
+                  )}
+                </div>
+              </div>
+
+              {localDoctors.length === 0 ? (
+                <div
+                  style={{
+                    padding: 30,
+                    background: "#f9fafb",
+                    borderRadius: 8,
+                    textAlign: "center",
+                    color: "#64748b",
+                    fontSize: 13,
+                  }}
+                >
+                  <p style={{ marginBottom: 14 }}>No doctors found in the database yet.</p>
+                  <button
+                    type="button"
+                    onClick={() => setDoctorModalOpen(true)}
+                    className="adt-btn-save"
+                    style={{ display: "inline-flex", alignItems: "center", gap: 6 }}
+                  >
+                    <Plus size={15} /> Add First Doctor
+                  </button>
+                </div>
+              ) : (
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
+                  {localDoctors.map((doc) => {
+                    const isChecked = form.doctorIds.includes(doc.id);
+                    return (
+                      <div
+                        key={doc.id}
+                        onClick={() => toggleDoctor(doc.id)}
+                        style={{
+                          padding: 12,
+                          borderRadius: 8,
+                          border: isChecked ? "2px solid #0d9488" : "1px solid #e5e7eb",
+                          background: isChecked ? "#f0fdfa" : "#ffffff",
+                          cursor: "pointer",
+                          display: "flex",
+                          alignItems: "center",
+                          gap: 12,
+                          transition: "all 0.15s ease",
+                        }}
+                      >
+                        <input
+                          type="checkbox"
+                          checked={isChecked}
+                          onChange={() => { }} // handled by parent div
+                          style={{ width: 18, height: 18, cursor: "pointer" }}
+                        />
+                        {doc.image ? (
+                          <img
+                            src={doc.image}
+                            alt={doc.name || "Doctor"}
+                            onError={(e) => {
+                              e.currentTarget.onerror = null;
+                              e.currentTarget.src = "/Assets/img/team/1.png";
+                            }}
+                            style={{
+                              width: 44,
+                              height: 44,
+                              borderRadius: "50%",
+                              objectFit: "cover",
+                              border: "1px solid #cbd5e1",
+                            }}
+                          />
+                        ) : (
+                          <div
+                            style={{
+                              width: 44,
+                              height: 44,
+                              borderRadius: "50%",
+                              background: "#e2e8f0",
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "center",
+                              fontSize: 12,
+                              fontWeight: 600,
+                              color: "#475569",
+                            }}
+                          >
+                            DR
+                          </div>
+                        )}
+                        <div style={{ flex: 1, minWidth: 0 }}>
+                          <div style={{ fontWeight: 600, color: "#0f172a", fontSize: 14 }}>
+                            {doc.name}
+                          </div>
+                          <div style={{ fontSize: 12, color: "#0d9488", fontWeight: 500 }}>
+                            {doc.role || "Ophthalmologist"}
+                          </div>
+                          {doc.qualification && (
+                            <div style={{ fontSize: 11, color: "#64748b" }}>
+                              {doc.qualification}
+                            </div>
+                          )}
+                          {doc.badgeText && (
+                            <span
+                              style={{
+                                display: "inline-block",
+                                marginTop: 3,
+                                fontSize: 10,
+                                background: "#ecfdf5",
+                                color: "#047857",
+                                padding: "1px 6px",
+                                borderRadius: 4,
+                                fontWeight: 600,
+                              }}
+                            >
+                              {doc.badgeText}
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* ======================================================== */}
+          {/* TAB 5: RELATED SERVICES & INTERNAL LINKING (OPTIONAL) */}
+          {/* ======================================================== */}
+          {activeTab === "related" && (
+            <div>
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  marginBottom: 16,
+                  paddingBottom: 14,
+                  borderBottom: "1px solid #e5e7eb",
+                  flexWrap: "wrap",
+                  gap: 12,
+                }}
+              >
+                <div>
+                  <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                    <h3 style={{ margin: 0, fontSize: 16, color: "#111827", fontWeight: 700 }}>
+                      Related Services &amp; Internal Linking
+                    </h3>
+                    <span
+                      style={{
+                        fontSize: 11,
+                        fontWeight: 600,
+                        padding: "2px 8px",
+                        background: "#f1f5f9",
+                        color: "#475569",
+                        borderRadius: 12,
+                        border: "1px solid #cbd5e1",
+                      }}
+                    >
+                      Optional
+                    </span>
+                  </div>
+                  <p style={{ margin: "4px 0 0 0", fontSize: 13, color: "#6b7280" }}>
+                    Select other published SEO landing pages to showcase in the &quot;Related Specialities&quot; grid at the bottom.
+                  </p>
+                </div>
+                {form.relatedIds.length > 0 && (
+                  <button
+                    type="button"
+                    onClick={() => setForm((prev) => ({ ...prev, relatedIds: [] }))}
+                    style={{
+                      background: "transparent",
+                      border: "1px solid #cbd5e1",
+                      borderRadius: 6,
+                      padding: "5px 10px",
+                      fontSize: 12,
+                      color: "#64748b",
+                      cursor: "pointer",
+                    }}
+                  >
+                    Clear Selection ({form.relatedIds.length})
+                  </button>
+                )}
+              </div>
+
+              {/* Search Bar for Related Pages */}
+              <div style={{ marginBottom: 16 }}>
+                <div
+                  style={{
+                    position: "relative",
+                    maxWidth: 420,
+                    display: "flex",
+                    alignItems: "center",
+                  }}
+                >
+                  <Search
+                    size={16}
+                    style={{
+                      position: "absolute",
+                      left: 12,
+                      color: "#94a3b8",
+                      pointerEvents: "none",
+                    }}
+                  />
+                  <input
+                    type="text"
+                    value={relatedSearch}
+                    onChange={(e) => setRelatedSearch(e.target.value)}
+                    placeholder="Search landing pages by title or slug..."
+                    style={{
+                      width: "100%",
+                      padding: "9px 36px 9px 36px",
+                      borderRadius: 7,
+                      border: "1px solid #cbd5e1",
+                      fontSize: 13,
+                      outline: "none",
+                      boxSizing: "border-box",
+                    }}
+                  />
+                  {relatedSearch && (
+                    <button
+                      type="button"
+                      onClick={() => setRelatedSearch("")}
+                      style={{
+                        position: "absolute",
+                        right: 8,
+                        background: "transparent",
+                        border: "none",
+                        color: "#94a3b8",
+                        cursor: "pointer",
+                        padding: 4,
+                        display: "inline-flex",
+                      }}
+                    >
+                      <X size={15} />
+                    </button>
+                  )}
+                </div>
+                {relatedSearch && (
+                  <div style={{ fontSize: 12, color: "#64748b", marginTop: 6 }}>
+                    Showing {filteredRelatedPages.length} matching result(s)
+                  </div>
+                )}
+              </div>
 
               {availableRelatedPages.length === 0 ? (
+                <div
+                  style={{
+                    padding: 30,
+                    background: "#f9fafb",
+                    borderRadius: 8,
+                    textAlign: "center",
+                    color: "#6b7280",
+                    fontSize: 13,
+                  }}
+                >
+                  No other SEO pages are published yet. As you add more pages (e.g. LASIK, Glaucoma), they will appear here for cross-linking.
+                </div>
+              ) : filteredRelatedPages.length === 0 ? (
                 <div
                   style={{
                     padding: 24,
@@ -1457,11 +2137,11 @@ export default function SeoPageForm({ initialData = null, doctorsList = [], allP
                     fontSize: 13,
                   }}
                 >
-                  No other SEO pages are published yet. As you add more pages (e.g. LASIK, Glaucoma), they will appear here for cross-linking.
+                  No SEO pages matched &quot;{relatedSearch}&quot;.
                 </div>
               ) : (
                 <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
-                  {availableRelatedPages.map((page) => {
+                  {filteredRelatedPages.map((page) => {
                     const isChecked = form.relatedIds.includes(page.id);
                     return (
                       <div
@@ -1476,20 +2156,21 @@ export default function SeoPageForm({ initialData = null, doctorsList = [], allP
                           display: "flex",
                           alignItems: "center",
                           gap: 12,
+                          transition: "all 0.15s ease",
                         }}
                       >
                         <input
                           type="checkbox"
                           checked={isChecked}
-                          onChange={() => {}}
+                          onChange={() => { }}
                           style={{ width: 18, height: 18 }}
                         />
-                        <div>
+                        <div style={{ flex: 1, minWidth: 0 }}>
                           <div style={{ fontWeight: 600, fontSize: 14, color: "#0f172a" }}>
                             {page.h1Title}
                           </div>
-                          <code style={{ fontSize: 11, color: "#64748b" }}>
-                            /services/{page.slug}
+                          <code style={{ fontSize: 11, color: "#0d9488" }}>
+                            /{page.slug}
                           </code>
                         </div>
                       </div>
@@ -1500,7 +2181,344 @@ export default function SeoPageForm({ initialData = null, doctorsList = [], allP
             </div>
           )}
 
-          {/* Form Actions Footer */}
+          {/* ======================================================== */}
+          {/* TAB 6: SCHEMA & JSON-LD (Strictly Database-driven) */}
+          {/* ======================================================== */}
+          {activeTab === "schema" && (
+            <div style={{ display: "grid", gap: 18 }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: 12 }}>
+                <div>
+                  <h3 style={{ margin: "0 0 6px 0", fontSize: 16, color: "#111827", fontWeight: 700 }}>
+                    JSON-LD Schema (Database Driven)
+                  </h3>
+                  <p style={{ margin: 0, fontSize: 13, color: "#6b7280", lineHeight: 1.5, maxWidth: 680 }}>
+                    Paste your custom Schema.org JSON-LD here. All hardcoded/auto-generated schemas have been removed; only the valid JSON saved here will be rendered in the page HTML source.
+                  </p>
+                </div>
+
+                {/* Google Rich Results Test Link */}
+                <a
+                  href="https://search.google.com/test/rich-results"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: 6,
+                    padding: "7px 12px",
+                    background: "#f8fafc",
+                    border: "1px solid #cbd5e1",
+                    borderRadius: 6,
+                    fontSize: 12,
+                    fontWeight: 600,
+                    color: "#0369a1",
+                    textDecoration: "none",
+                  }}
+                >
+                  <ExternalLink size={14} /> Test in Google Rich Results
+                </a>
+              </div>
+
+              {/* Status or Last Updated Time Banner */}
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  padding: "10px 14px",
+                  background: "#f8fafc",
+                  border: "1px solid #e2e8f0",
+                  borderRadius: 8,
+                  fontSize: 12.5,
+                  color: "#475569",
+                  flexWrap: "wrap",
+                  gap: 10,
+                }}
+              >
+                <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                  <Clock size={15} color="#0d9488" />
+                  <span>
+                    <strong>Last Updated:</strong>{" "}
+                    {schemaUpdatedAt
+                      ? new Date(schemaUpdatedAt).toLocaleString("en-IN", {
+                        day: "numeric",
+                        month: "short",
+                        year: "numeric",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                        second: "2-digit",
+                      })
+                      : "Not set yet (new / no schema)"}
+                  </span>
+                </div>
+
+                {isEditing && (
+                  <button
+                    type="button"
+                    onClick={handleSaveSchemaOnly}
+                    disabled={savingSchemaOnly}
+                    style={{
+                      display: "inline-flex",
+                      alignItems: "center",
+                      gap: 6,
+                      background: "#0d9488",
+                      color: "#ffffff",
+                      border: "none",
+                      padding: "6px 14px",
+                      borderRadius: 6,
+                      fontSize: 12,
+                      fontWeight: 600,
+                      cursor: savingSchemaOnly ? "wait" : "pointer",
+                    }}
+                  >
+                    {savingSchemaOnly ? (
+                      <>
+                        <Loader2 size={13} className="adt-spin" /> Saving Schema…
+                      </>
+                    ) : (
+                      <>
+                        <Save size={13} /> Save Schema Only
+                      </>
+                    )}
+                  </button>
+                )}
+              </div>
+
+              {/* Action Buttons Toolbar */}
+              <div style={{ display: "flex", flexWrap: "wrap", gap: 8, alignItems: "center" }}>
+                {/* Validate Button */}
+                <button
+                  type="button"
+                  onClick={() => {
+                    const text = (form.customSchema || "").trim();
+                    if (!text) {
+                      setSchemaStatusMsg({ type: "info", text: "Schema is currently empty (no schema will be rendered)." });
+                      toast("Schema is empty", "info");
+                      return;
+                    }
+                    try {
+                      let cleanText = text;
+                      if (cleanText.startsWith("<script") && cleanText.endsWith("</script>")) {
+                        cleanText = cleanText.replace(/<script[^>]*>/i, "").replace(/<\/script>$/i, "").trim();
+                      }
+                      const parsed = JSON.parse(cleanText);
+                      if (typeof parsed !== "object" || parsed === null) {
+                        setSchemaStatusMsg({ type: "error", text: "Invalid: Root must be a JSON object or array of objects." });
+                        return;
+                      }
+                      const items = Array.isArray(parsed) ? parsed : [parsed];
+                      for (let i = 0; i < items.length; i++) {
+                        const it = items[i];
+                        if (!it || typeof it !== "object" || Array.isArray(it)) {
+                          setSchemaStatusMsg({ type: "error", text: `Item #${i + 1} is not a valid JSON object.` });
+                          return;
+                        }
+                        if (!it["@type"] && (!Array.isArray(it["@graph"]) || it["@graph"].length === 0)) {
+                          setSchemaStatusMsg({ type: "error", text: `Item #${i + 1} is missing "@type" or "@graph".` });
+                          return;
+                        }
+                      }
+                      const hasRating = /\b(aggregateRating|review)\b/i.test(cleanText);
+                      if (hasRating) {
+                        setSchemaStatusMsg({
+                          type: "warning",
+                          text: 'Valid JSON, but contains "aggregateRating" or "review". Google strictly monitors fake review markup.',
+                        });
+                        toast('Warning: contains "aggregateRating" / "review"', "warning");
+                      } else {
+                        setSchemaStatusMsg({
+                          type: "success",
+                          text: `Valid JSON-LD schema with ${items.length} top-level object(s). Ready to save!`,
+                        });
+                        toast("Valid JSON Schema!", "success");
+                      }
+                    } catch (err) {
+                      setSchemaStatusMsg({ type: "error", text: `Syntax Error: ${err.message}` });
+                      toast("Invalid JSON syntax: " + err.message, "error");
+                    }
+                  }}
+                  style={{
+                    padding: "7px 14px",
+                    background: "#0284c7",
+                    border: "none",
+                    color: "#ffffff",
+                    borderRadius: 6,
+                    fontSize: 12,
+                    fontWeight: 600,
+                    cursor: "pointer",
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: 6,
+                  }}
+                >
+                  <CheckCircle2 size={14} /> Validate JSON
+                </button>
+
+                {/* Format Button */}
+                <button
+                  type="button"
+                  onClick={() => {
+                    const text = (form.customSchema || "").trim();
+                    if (!text) return;
+                    try {
+                      let cleanText = text;
+                      if (cleanText.startsWith("<script") && cleanText.endsWith("</script>")) {
+                        cleanText = cleanText.replace(/<script[^>]*>/i, "").replace(/<\/script>$/i, "").trim();
+                      }
+                      const parsed = JSON.parse(cleanText);
+                      const formatted = JSON.stringify(parsed, null, 2);
+                      setForm((prev) => ({ ...prev, customSchema: formatted }));
+                      setSchemaStatusMsg({ type: "success", text: "JSON-LD formatted successfully!" });
+                      toast("JSON formatted!", "success");
+                    } catch (err) {
+                      setSchemaStatusMsg({ type: "error", text: `Cannot format invalid JSON: ${err.message}` });
+                      toast("Invalid JSON: " + err.message, "error");
+                    }
+                  }}
+                  style={{
+                    padding: "7px 14px",
+                    background: "#f1f5f9",
+                    border: "1px solid #cbd5e1",
+                    color: "#334155",
+                    borderRadius: 6,
+                    fontSize: 12,
+                    fontWeight: 600,
+                    cursor: "pointer",
+                  }}
+                >
+                  Format JSON
+                </button>
+
+                {/* Clear Schema Button */}
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (window.confirm("Are you sure you want to clear the Schema? This page will render NO structured data.")) {
+                      setForm((prev) => ({ ...prev, customSchema: "" }));
+                      setSchemaStatusMsg({ type: "info", text: "Schema cleared. Click Save to apply changes." });
+                      toast("Schema cleared", "info");
+                    }
+                  }}
+                  style={{
+                    padding: "7px 14px",
+                    background: "#fee2e2",
+                    border: "1px solid #fecaca",
+                    color: "#b91c1c",
+                    borderRadius: 6,
+                    fontSize: 12,
+                    fontWeight: 600,
+                    cursor: "pointer",
+                    marginLeft: "auto",
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: 6,
+                  }}
+                >
+                  <Trash2 size={14} /> Clear Schema
+                </button>
+              </div>
+
+              {/* Status Message Alert */}
+              {schemaStatusMsg.text && (
+                <div
+                  style={{
+                    padding: "10px 14px",
+                    borderRadius: 6,
+                    fontSize: 13,
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 8,
+                    background:
+                      schemaStatusMsg.type === "success"
+                        ? "#f0fdf4"
+                        : schemaStatusMsg.type === "warning"
+                          ? "#fffbeb"
+                          : schemaStatusMsg.type === "error"
+                            ? "#fef2f2"
+                            : "#f8fafc",
+                    border: `1px solid ${schemaStatusMsg.type === "success"
+                        ? "#bbf7d0"
+                        : schemaStatusMsg.type === "warning"
+                          ? "#fde68a"
+                          : schemaStatusMsg.type === "error"
+                            ? "#fecaca"
+                            : "#e2e8f0"
+                      }`,
+                    color:
+                      schemaStatusMsg.type === "success"
+                        ? "#15803d"
+                        : schemaStatusMsg.type === "warning"
+                          ? "#b45309"
+                          : schemaStatusMsg.type === "error"
+                            ? "#b91c1c"
+                            : "#475569",
+                  }}
+                >
+                  {schemaStatusMsg.type === "success" ? (
+                    <CheckCircle2 size={16} />
+                  ) : schemaStatusMsg.type === "warning" ? (
+                    <AlertCircle size={16} />
+                  ) : schemaStatusMsg.type === "error" ? (
+                    <AlertCircle size={16} />
+                  ) : (
+                    <Code size={16} />
+                  )}
+                  <span>{schemaStatusMsg.text}</span>
+                </div>
+              )}
+
+              {/* Monospace Textarea */}
+              <div className="adt-field">
+                <label style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                  <span style={{ fontWeight: 600, color: "#1e293b", fontSize: 13 }}>
+                    JSON-LD Code (Pure JSON object or array)
+                  </span>
+                  <span style={{ fontSize: 11, color: "#64748b" }}>
+                    e.g. <code>[{`{"@context": "https://schema.org", "@type": "..."}`}]</code>
+                  </span>
+                </label>
+                <textarea
+                  rows={18}
+                  value={form.customSchema}
+                  onChange={(e) => {
+                    setForm((prev) => ({ ...prev, customSchema: e.target.value }));
+                    if (schemaStatusMsg.text) setSchemaStatusMsg({ type: "", text: "" });
+                  }}
+                  placeholder={`[\n  {\n    "@context": "https://schema.org",\n    "@type": "MedicalProcedure",\n    "name": "${form.h1Title || "LASIK Eye Surgery"}",\n    "url": "https://oracleeyehospital.com/${form.slug || ""}"\n  }\n]`}
+                  style={{
+                    fontFamily: "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Courier New', monospace",
+                    fontSize: 13,
+                    lineHeight: 1.55,
+                    background: "#0f172a",
+                    color: "#38bdf8",
+                    padding: "16px",
+                    borderRadius: 8,
+                    border: "1px solid #334155",
+                    outline: "none",
+                    boxShadow: "inset 0 2px 4px rgba(0,0,0,0.3)",
+                    whiteSpace: "pre",
+                    overflowWrap: "normal",
+                    overflowX: "auto",
+                  }}
+                />
+              </div>
+
+              {/* Informational Guidance Note */}
+              <div
+                style={{
+                  background: "#f8fafc",
+                  border: "1px solid #e2e8f0",
+                  borderRadius: 8,
+                  padding: 12,
+                  fontSize: 12,
+                  color: "#475569",
+                  lineHeight: 1.5,
+                }}
+              >
+                <strong>Database-Exclusive Schema:</strong> In accordance with strict production guidelines, all hardcoded and code-level schema generators have been completely removed. The page source will only render <code>&lt;script type=&quot;application/ld+json&quot;&gt;</code> if schema is present in the database for this page.
+              </div>
+            </div>
+          )}
           <div
             className="adt-form-actions"
             style={{
@@ -1508,33 +2526,81 @@ export default function SeoPageForm({ initialData = null, doctorsList = [], allP
               paddingTop: 20,
               borderTop: "1px solid #e5e7eb",
               display: "flex",
-              justifyContent: "flex-end",
+              alignItems: "center",
+              justifyContent: "space-between",
               gap: 12,
             }}
           >
-            <Link
-              href="/admin/seo-pages"
-              className="adt-btn-cancel-form"
-              style={{ textDecoration: "none", display: "inline-flex", alignItems: "center" }}
-            >
-              Cancel
-            </Link>
-            <button
-              type="submit"
-              disabled={saving}
-              className="adt-btn-save"
-              style={{ display: "inline-flex", alignItems: "center", gap: 6 }}
-            >
-              {saving ? (
-                <>
-                  <Loader2 size={16} className="adt-spin" /> Saving…
-                </>
-              ) : (
-                <>
-                  <Save size={16} /> {isEditing ? "Update SEO Page" : "Publish SEO Page"}
-                </>
+            <div>
+              <Link
+                href="/admin/seo-pages"
+                className="adt-btn-cancel-form"
+                style={{ textDecoration: "none", display: "inline-flex", alignItems: "center" }}
+              >
+                Cancel
+              </Link>
+            </div>
+
+            <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+              {/* Previous Tab button for multi-step navigation */}
+              {!isFirstTab && (
+                <button
+                  type="button"
+                  onClick={goToPrevTab}
+                  className="adt-btn-cancel-form"
+                  style={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: 6,
+                    padding: "9px 16px",
+                    fontWeight: 600,
+                  }}
+                >
+                  <ArrowLeft size={16} /> Previous
+                </button>
               )}
-            </button>
+
+              {/* When creating a new page and NOT on the last tab: Show "Next" button */}
+              {!isEditing && !isLastTab ? (
+                <button
+                  type="button"
+                  onClick={goToNextTab}
+                  className="adt-btn-save"
+                  style={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: 6,
+                    padding: "9px 20px",
+                    background: "#2563eb",
+                    border: "1px solid #2563eb",
+                    color: "#ffffff",
+                    fontWeight: 600,
+                    borderRadius: 6,
+                    cursor: "pointer",
+                  }}
+                >
+                  <span>Next</span> <ArrowRight size={16} />
+                </button>
+              ) : (
+                /* When on the last tab (or when editing an existing page): Show Publish/Update button */
+                <button
+                  type="submit"
+                  disabled={saving}
+                  className="adt-btn-save"
+                  style={{ display: "inline-flex", alignItems: "center", gap: 6 }}
+                >
+                  {saving ? (
+                    <>
+                      <Loader2 size={16} className="adt-spin" /> Saving…
+                    </>
+                  ) : (
+                    <>
+                      <Save size={16} /> {isEditing ? "Update SEO Page" : "Publish SEO Page"}
+                    </>
+                  )}
+                </button>
+              )}
+            </div>
           </div>
         </form>
       </div>
@@ -1545,9 +2611,313 @@ export default function SeoPageForm({ initialData = null, doctorsList = [], allP
           isOpen={showPreview}
           onClose={() => setShowPreview(false)}
           pageData={form}
-          doctorsList={doctorsList}
+          doctorsList={localDoctors}
           allPages={allPages}
         />
+      )}
+
+      {/* ── Add New Doctor Modal (Complete Fields) ── */}
+      {doctorModalOpen && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          onClick={() => setDoctorModalOpen(false)}
+          style={{
+            position: "fixed",
+            inset: 0,
+            zIndex: 999999,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            padding: 16,
+            backgroundColor: "rgba(15, 23, 42, 0.65)",
+            backdropFilter: "blur(4px)",
+            WebkitBackdropFilter: "blur(4px)",
+          }}
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              width: "100%",
+              maxWidth: 600,
+              maxHeight: "92vh",
+              display: "flex",
+              flexDirection: "column",
+              background: "#ffffff",
+              borderRadius: 14,
+              boxShadow: "0 25px 50px -12px rgba(15, 23, 42, 0.35)",
+              overflow: "hidden",
+              border: "1px solid #e2e8f0",
+              animation: "modalFadeIn 0.18s ease-out",
+            }}
+          >
+            {/* Modal Header */}
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                padding: "16px 22px",
+                borderBottom: "1px solid #f1f5f9",
+                background: "#f8fafc",
+              }}
+            >
+              <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                <span
+                  style={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    width: 34,
+                    height: 34,
+                    borderRadius: 8,
+                    background: "#ecfdf5",
+                    color: "#059669",
+                  }}
+                >
+                  <Stethoscope size={18} />
+                </span>
+                <div>
+                  <h3 style={{ margin: 0, fontSize: 16, fontWeight: 700, color: "#0f172a" }}>
+                    Add Specialist Doctor
+                  </h3>
+                  <p style={{ margin: 0, fontSize: 12, color: "#64748b" }}>
+                    Enter complete profile details. The doctor will be saved and selected automatically.
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setDoctorModalOpen(false)}
+                style={{
+                  background: "transparent",
+                  border: 0,
+                  color: "#94a3b8",
+                  cursor: "pointer",
+                  padding: 4,
+                  borderRadius: 6,
+                  display: "inline-flex",
+                }}
+              >
+                <X size={18} />
+              </button>
+            </div>
+
+            {/* Modal Form Body */}
+            <form
+              onSubmit={handleCreateDoctor}
+              style={{
+                padding: "20px 22px",
+                overflowY: "auto",
+                flex: 1,
+                display: "grid",
+                gap: 16,
+              }}
+            >
+              {/* Name (Required) */}
+              <div className="adt-field">
+                <label style={{ fontSize: 13, fontWeight: 600, color: "#334155" }}>
+                  Doctor Name <span style={{ color: "#ef4444" }}>*</span>
+                </label>
+                <input
+                  type="text"
+                  required
+                  autoFocus
+                  placeholder="e.g. Dr. A. K. Sharma"
+                  value={newDoctor.name}
+                  onChange={(e) => setNewDoctor((prev) => ({ ...prev, name: e.target.value }))}
+                  style={{
+                    width: "100%",
+                    padding: "9px 12px",
+                    borderRadius: 7,
+                    border: "1px solid #cbd5e1",
+                    fontSize: 13,
+                    boxSizing: "border-box",
+                  }}
+                />
+              </div>
+
+              {/* Role & Qualification (2 cols) */}
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
+                <div className="adt-field">
+                  <label style={{ fontSize: 13, fontWeight: 600, color: "#334155" }}>
+                    Specialty / Role
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="e.g. Senior Phaco Surgeon"
+                    value={newDoctor.role}
+                    onChange={(e) => setNewDoctor((prev) => ({ ...prev, role: e.target.value }))}
+                    style={{
+                      width: "100%",
+                      padding: "9px 12px",
+                      borderRadius: 7,
+                      border: "1px solid #cbd5e1",
+                      fontSize: 13,
+                      boxSizing: "border-box",
+                    }}
+                  />
+                </div>
+
+                <div className="adt-field">
+                  <label style={{ fontSize: 13, fontWeight: 600, color: "#334155" }}>
+                    Qualifications
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="e.g. MBBS, MS, FICO (UK)"
+                    value={newDoctor.qualification}
+                    onChange={(e) =>
+                      setNewDoctor((prev) => ({ ...prev, qualification: e.target.value }))
+                    }
+                    style={{
+                      width: "100%",
+                      padding: "9px 12px",
+                      borderRadius: 7,
+                      border: "1px solid #cbd5e1",
+                      fontSize: 13,
+                      boxSizing: "border-box",
+                    }}
+                  />
+                </div>
+              </div>
+
+              {/* Doctor Photo Upload */}
+              <div className="adt-field">
+                <label style={{ fontSize: 13, fontWeight: 600, color: "#334155" }}>
+                  Doctor Photo
+                </label>
+                <ImageUpload
+                  value={newDoctor.image}
+                  onChange={(url) => setNewDoctor((prev) => ({ ...prev, image: url }))}
+                />
+              </div>
+
+              {/* Badge Text & Profile URL (2 cols) */}
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
+                <div className="adt-field">
+                  <label style={{ fontSize: 13, fontWeight: 600, color: "#334155" }}>
+                    Badge Text (Optional)
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="e.g. 15+ Yrs Exp / Chief Surgeon"
+                    value={newDoctor.badgeText}
+                    onChange={(e) => setNewDoctor((prev) => ({ ...prev, badgeText: e.target.value }))}
+                    style={{
+                      width: "100%",
+                      padding: "9px 12px",
+                      borderRadius: 7,
+                      border: "1px solid #cbd5e1",
+                      fontSize: 13,
+                      boxSizing: "border-box",
+                    }}
+                  />
+                </div>
+
+                <div className="adt-field">
+                  <label style={{ fontSize: 13, fontWeight: 600, color: "#334155" }}>
+                    Profile Link / Page Href
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="e.g. /doctors or /about"
+                    value={newDoctor.profileHref}
+                    onChange={(e) =>
+                      setNewDoctor((prev) => ({ ...prev, profileHref: e.target.value }))
+                    }
+                    style={{
+                      width: "100%",
+                      padding: "9px 12px",
+                      borderRadius: 7,
+                      border: "1px solid #cbd5e1",
+                      fontSize: 13,
+                      boxSizing: "border-box",
+                    }}
+                  />
+                </div>
+              </div>
+
+              {/* Bio / Description */}
+              <div className="adt-field">
+                <label style={{ fontSize: 13, fontWeight: 600, color: "#334155" }}>
+                  Bio / Clinical Summary
+                </label>
+                <textarea
+                  rows={3}
+                  placeholder="Brief clinical background, surgical experience, awards..."
+                  value={newDoctor.bio}
+                  onChange={(e) => setNewDoctor((prev) => ({ ...prev, bio: e.target.value }))}
+                  style={{
+                    width: "100%",
+                    padding: "9px 12px",
+                    borderRadius: 7,
+                    border: "1px solid #cbd5e1",
+                    fontSize: 13,
+                    fontFamily: "inherit",
+                    resize: "vertical",
+                    boxSizing: "border-box",
+                  }}
+                />
+              </div>
+
+              {/* Modal Actions */}
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "flex-end",
+                  gap: 10,
+                  paddingTop: 12,
+                  borderTop: "1px solid #f1f5f9",
+                }}
+              >
+                <button
+                  type="button"
+                  onClick={() => setDoctorModalOpen(false)}
+                  style={{
+                    padding: "8px 16px",
+                    borderRadius: 7,
+                    border: "1px solid #cbd5e1",
+                    background: "#ffffff",
+                    color: "#475569",
+                    fontSize: 13,
+                    fontWeight: 600,
+                    cursor: "pointer",
+                  }}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={savingDoctor || !newDoctor.name.trim()}
+                  style={{
+                    padding: "8px 18px",
+                    borderRadius: 7,
+                    border: "1px solid #0d9488",
+                    background: "#0d9488",
+                    color: "#ffffff",
+                    fontSize: 13,
+                    fontWeight: 600,
+                    cursor: savingDoctor ? "wait" : "pointer",
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: 6,
+                  }}
+                >
+                  {savingDoctor ? (
+                    <>
+                      <Loader2 size={15} className="adt-spin" /> Saving…
+                    </>
+                  ) : (
+                    <>
+                      <Plus size={15} /> Save &amp; Select Doctor
+                    </>
+                  )}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
       )}
     </div>
   );

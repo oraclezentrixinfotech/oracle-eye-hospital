@@ -513,9 +513,10 @@ export default function Content({ faqs = DEFAULT_CATARACT_FAQS }) {
                       />
                     </button>
                     {isOpen && (
-                      <div className="seo-faq-body">
-                        {faq.answer || faq.a}
-                      </div>
+                      <div
+                        className="seo-faq-body"
+                        dangerouslySetInnerHTML={{ __html: faq.answer || faq.a || "" }}
+                      />
                     )}
                   </div>
                 );

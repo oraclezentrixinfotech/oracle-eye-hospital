@@ -1,16 +1,10 @@
 import Banner from "./Banner";
 import Content from "./Content";
-import {
-  generateHospitalSchema,
-  generatePhysicianSchema,
-  generateFAQSchema,
-  generateBreadcrumbSchema,
-  generateProcedureSchema,
-  PRIMARY_DOCTORS,
-} from "../_lib/schema";
+import { prisma } from "@/lib/prisma";
+import { SITE_URL } from "@/lib/siteUrl";
 
 const PAGE_SLUG = "cataract-surgery-in-moradabad";
-const PAGE_URL = `https://www.oracleeyehospital.com/${PAGE_SLUG}`;
+const PAGE_URL = `${SITE_URL}/${PAGE_SLUG}`;
 
 // 51 characters (50–60 chars, keyword first, ends with "| Oracle Eye Hospital")
 const PAGE_TITLE = "Cataract Surgery in Moradabad | Oracle Eye Hospital";
@@ -34,7 +28,7 @@ export const metadata = {
     type: "website",
     images: [
       {
-        url: "https://www.oracleeyehospital.com/Assets/img/services/Cataract-Service.png",
+        url: `${SITE_URL}/Assets/img/services/Cataract-Service.png`,
         width: 1200,
         height: 630,
         alt: "Advanced Cataract Surgery in Moradabad - Oracle Eye Hospital",
@@ -45,7 +39,7 @@ export const metadata = {
     card: "summary_large_image",
     title: PAGE_TITLE,
     description: PAGE_DESCRIPTION,
-    images: ["https://www.oracleeyehospital.com/Assets/img/services/Cataract-Service.png"],
+    images: [`${SITE_URL}/Assets/img/services/Cataract-Service.png`],
   },
   robots: {
     index: true,
@@ -60,7 +54,7 @@ export const metadata = {
   },
 };
 
-// FAQ Array shared with Content component to guarantee 100% schema consistency
+// FAQ Array shared with Content component
 export const FAQS = [
   {
     question: "What is the recovery time after cataract surgery in Moradabad?",
@@ -99,55 +93,45 @@ export const FAQS = [
   },
 ];
 
-export default function CataractSurgeryPage() {
-  const hospitalSchema = generateHospitalSchema();
-  const physicianSchema = generatePhysicianSchema(PRIMARY_DOCTORS[0]);
-  const faqSchema = generateFAQSchema(FAQS);
-  const breadcrumbSchema = generateBreadcrumbSchema([
-    { name: "Home", url: "/" },
-    { name: "Services", url: "/services" },
-    { name: "Cataract Surgery in Moradabad", url: `/${PAGE_SLUG}` },
-  ]);
-  const procedureSchema = generateProcedureSchema({
-    name: "Micro-Incision Cataract Surgery (Phacoemulsification)",
-    description:
-      "Stitchless, injection-free outpatient cataract removal with premium intraocular lens (IOL) implantation.",
-    procedureType: "SurgicalProcedure",
-    bodyLocation: "Eye",
-    url: `/${PAGE_SLUG}`,
-  });
+export default async function CataractSurgeryPage() {
+  let schemaList = [];
+  try {
+    const seoPage = await prisma.seoPage.findFirst({
+      where: { slug: PAGE_SLUG, status: "published" },
+      select: { schemaJson: true, customSchema: true },
+    });
+    if (seoPage) {
+      if (seoPage.schemaJson) {
+        schemaList = Array.isArray(seoPage.schemaJson) ? seoPage.schemaJson : [seoPage.schemaJson];
+      } else if (seoPage.customSchema && seoPage.customSchema.trim()) {
+        try {
+          let raw = seoPage.customSchema.trim();
+          if (raw.startsWith("<script") && raw.endsWith("</script>")) {
+            raw = raw.replace(/<script[^>]*>/i, "").replace(/<\/script>$/i, "").trim();
+          }
+          const parsed = JSON.parse(raw);
+          schemaList = Array.isArray(parsed) ? parsed : [parsed];
+        } catch {}
+      }
+    }
+  } catch (err) {
+    console.error("Cataract page schema fetch error:", err?.message || err);
+  }
 
   return (
     <>
-      {/* Structured Data: Hospital / MedicalClinic */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(hospitalSchema) }}
-      />
-
-      {/* Structured Data: Operating Physician */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(physicianSchema) }}
-      />
-
-      {/* Structured Data: FAQPage (mirrors Content.jsx exactly) */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
-      />
-
-      {/* Structured Data: BreadcrumbList */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
-      />
-
-      {/* Structured Data: MedicalProcedure */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(procedureSchema) }}
-      />
+      {/* Schema.org Structured Data: strictly from database written via Admin Panel */}
+      {schemaList.length > 0 &&
+        schemaList.map((item, index) => {
+          const jsonText = JSON.stringify(item).replace(/</g, "\\u003c");
+          return (
+            <script
+              key={index}
+              type="application/ld+json"
+              dangerouslySetInnerHTML={{ __html: jsonText }}
+            />
+          );
+        })}
 
       {/* Main Visual Components */}
       <Banner />

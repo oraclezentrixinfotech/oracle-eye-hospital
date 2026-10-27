@@ -80,7 +80,7 @@ export default function SeoPagePreviewModal({
           <span style={{ fontSize: 14, color: "#94a3b8" }}>
             Target URL:{" "}
             <code style={{ color: "#38bdf8", background: "#1e293b", padding: "2px 6px", borderRadius: 4 }}>
-              /services/{pageData.slug || "page-slug"}
+              /{pageData.slug || "page-slug"}
             </code>
           </span>
         </div>
@@ -209,7 +209,7 @@ export default function SeoPagePreviewModal({
               heroChips: pageData.heroChips || [],
               ctaPrimaryText: pageData.ctaPrimaryText || "Book Appointment",
               ctaPhone: pageData.ctaPhone || "+91 8006803111",
-              canonicalUrl: pageData.canonicalUrl || `https://www.oracleeyehospital.com/services/${pageData.slug}`,
+              canonicalUrl: pageData.canonicalUrl || `https://www.oracleeyehospital.com/${pageData.slug}`,
             }}
             sections={pageData.sections || []}
             doctors={displayDoctors}
