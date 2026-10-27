@@ -32,6 +32,7 @@ export default function AdminLayoutClient({ children }) {
     { href: "/admin/news", label: "Manage News", exact: true },
     { href: "/admin/blog", label: "Manage Blog", exact: true },
     { href: "/admin/seo-pages", label: "Manage SEO Pages", exact: false },
+    { href: "/admin/sitemap", label: "Manage Sitemap", exact: true },
     { href: "/admin/photo-gallery", label: "Photo Gallery", exact: true },
     { href: "/admin/video-gallery", label: "Video Gallery", exact: true },
     { href: "/admin/appointments", label: "Appointments", exact: true },

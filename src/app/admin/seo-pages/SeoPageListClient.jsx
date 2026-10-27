@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { Plus, ExternalLink, Edit2, Trash2, Eye, UploadCloud, Download, ChevronDown } from "lucide-react";
+import { Plus, ExternalLink, Edit2, Trash2, Eye, UploadCloud, Download, ChevronDown, FileSpreadsheet, Calendar, X } from "lucide-react";
 import DataTable from "../components/DataTable";
 import ConfirmModal from "../components/ConfirmModal";
 import DocumentImportModal from "./components/DocumentImportModal";
@@ -245,6 +245,10 @@ export default function SeoPageListClient({ rows = [], doctorsList = [], allPage
   const [deleteTarget, setDeleteTarget] = useState(null);
   const [deleting, setDeleting] = useState(false);
   const [importModalOpen, setImportModalOpen] = useState(false);
+  const [exportModalOpen, setExportModalOpen] = useState(false);
+  const [exportStartDate, setExportStartDate] = useState("");
+  const [exportEndDate, setExportEndDate] = useState("");
+  const [downloadingExport, setDownloadingExport] = useState(false);
 
   // Sync if parent rows change
   useEffect(() => {
@@ -396,6 +400,23 @@ export default function SeoPageListClient({ rows = [], doctorsList = [], allPage
           </p>
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+          <button
+            type="button"
+            onClick={() => setExportModalOpen(true)}
+            title="Export CSV spreadsheet containing SEO page titles and URLs (with date range filter)"
+            className="adt-btn-save"
+            style={{
+              background: "#059669",
+              borderColor: "#059669",
+              color: "#ffffff",
+              cursor: "pointer",
+              display: "inline-flex",
+              alignItems: "center",
+              gap: 6,
+            }}
+          >
+            <FileSpreadsheet size={15} /> Export Sheet
+          </button>
           <a
             href="/api/admin/seo-pages/download-template"
             download="seo-page-templates.zip"
@@ -443,6 +464,234 @@ export default function SeoPageListClient({ rows = [], doctorsList = [], allPage
           searchKeys={["h1Title", "slug", "metaTitle", "keywords", "heroBadge"]}
         />
       </div>
+
+      {/* Export Sheet Modal with Date Filter */}
+      {exportModalOpen && (
+        <div className="adt-modal-overlay" onClick={() => !downloadingExport && setExportModalOpen(false)}>
+          <div
+            className="adt-modal"
+            style={{ maxWidth: 480, width: "95%" }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                padding: "16px 20px",
+                borderBottom: "1px solid #e2e8f0",
+              }}
+            >
+              <h3 style={{ margin: 0, fontSize: 16, fontWeight: 700, color: "#0f172a", display: "flex", alignItems: "center", gap: 8 }}>
+                <FileSpreadsheet size={18} color="#059669" />
+                <span>Export SEO Pages Sheet</span>
+              </h3>
+              <button
+                type="button"
+                onClick={() => setExportModalOpen(false)}
+                style={{
+                  background: "none",
+                  border: "none",
+                  fontSize: 20,
+                  cursor: "pointer",
+                  color: "#94a3b8",
+                }}
+              >
+                &times;
+              </button>
+            </div>
+
+            <div style={{ padding: "20px" }}>
+              <p style={{ margin: "0 0 16px 0", fontSize: 13, color: "#475569", lineHeight: 1.5 }}>
+                Download an Excel/CSV spreadsheet containing exclusively <strong>Title</strong> and <strong>URL</strong>. You can filter by creation date or leave blank to export all pages.
+              </p>
+
+              {/* Date Filters */}
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14, marginBottom: 16 }}>
+                <div>
+                  <label style={{ display: "block", fontSize: 12.5, fontWeight: 600, color: "#334155", marginBottom: 6 }}>
+                    From Date (Start):
+                  </label>
+                  <input
+                    type="date"
+                    value={exportStartDate}
+                    onChange={(e) => setExportStartDate(e.target.value)}
+                    style={{
+                      width: "100%",
+                      padding: "8px 10px",
+                      borderRadius: 6,
+                      border: "1px solid #cbd5e1",
+                      fontSize: 13,
+                      boxSizing: "border-box",
+                    }}
+                  />
+                </div>
+
+                <div>
+                  <label style={{ display: "block", fontSize: 12.5, fontWeight: 600, color: "#334155", marginBottom: 6 }}>
+                    To Date (End):
+                  </label>
+                  <input
+                    type="date"
+                    value={exportEndDate}
+                    onChange={(e) => setExportEndDate(e.target.value)}
+                    style={{
+                      width: "100%",
+                      padding: "8px 10px",
+                      borderRadius: 6,
+                      border: "1px solid #cbd5e1",
+                      fontSize: 13,
+                      boxSizing: "border-box",
+                    }}
+                  />
+                </div>
+              </div>
+
+              {/* Quick Preset Buttons */}
+              <div style={{ display: "flex", gap: 8, marginBottom: 20, flexWrap: "wrap" }}>
+                <button
+                  type="button"
+                  onClick={() => {
+                    const today = new Date().toISOString().split("T")[0];
+                    setExportStartDate(today);
+                    setExportEndDate(today);
+                  }}
+                  style={{
+                    padding: "4px 10px",
+                    borderRadius: 4,
+                    background: "#f1f5f9",
+                    border: "1px solid #e2e8f0",
+                    fontSize: 11.5,
+                    color: "#334155",
+                    cursor: "pointer",
+                  }}
+                >
+                  Today
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    const d = new Date();
+                    d.setDate(d.getDate() - 7);
+                    setExportStartDate(d.toISOString().split("T")[0]);
+                    setExportEndDate(new Date().toISOString().split("T")[0]);
+                  }}
+                  style={{
+                    padding: "4px 10px",
+                    borderRadius: 4,
+                    background: "#f1f5f9",
+                    border: "1px solid #e2e8f0",
+                    fontSize: 11.5,
+                    color: "#334155",
+                    cursor: "pointer",
+                  }}
+                >
+                  Last 7 Days
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    const d = new Date();
+                    d.setDate(d.getDate() - 30);
+                    setExportStartDate(d.toISOString().split("T")[0]);
+                    setExportEndDate(new Date().toISOString().split("T")[0]);
+                  }}
+                  style={{
+                    padding: "4px 10px",
+                    borderRadius: 4,
+                    background: "#f1f5f9",
+                    border: "1px solid #e2e8f0",
+                    fontSize: 11.5,
+                    color: "#334155",
+                    cursor: "pointer",
+                  }}
+                >
+                  Last 30 Days
+                </button>
+                {(exportStartDate || exportEndDate) && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setExportStartDate("");
+                      setExportEndDate("");
+                    }}
+                    style={{
+                      padding: "4px 10px",
+                      borderRadius: 4,
+                      background: "#fee2e2",
+                      border: "1px solid #fecaca",
+                      fontSize: 11.5,
+                      color: "#dc2626",
+                      cursor: "pointer",
+                      display: "inline-flex",
+                      alignItems: "center",
+                      gap: 4,
+                    }}
+                  >
+                    <X size={12} /> Clear Dates (All Pages)
+                  </button>
+                )}
+              </div>
+
+              {/* Modal Actions */}
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "flex-end",
+                  gap: 10,
+                  paddingTop: 14,
+                  borderTop: "1px solid #f1f5f9",
+                }}
+              >
+                <button
+                  type="button"
+                  onClick={() => setExportModalOpen(false)}
+                  style={{
+                    padding: "8px 16px",
+                    borderRadius: 6,
+                    border: "1px solid #cbd5e1",
+                    background: "#ffffff",
+                    color: "#475569",
+                    fontSize: 13,
+                    fontWeight: 600,
+                    cursor: "pointer",
+                  }}
+                >
+                  Cancel
+                </button>
+
+                <a
+                  href={`/api/admin/seo-pages/export?${new URLSearchParams({
+                    ...(exportStartDate ? { startDate: exportStartDate } : {}),
+                    ...(exportEndDate ? { endDate: exportEndDate } : {}),
+                  }).toString()}`}
+                  download
+                  onClick={() => {
+                    toast("Generating and downloading sheet...", "success");
+                    setTimeout(() => setExportModalOpen(false), 500);
+                  }}
+                  style={{
+                    padding: "8px 18px",
+                    borderRadius: 6,
+                    border: "none",
+                    background: "#059669",
+                    color: "#ffffff",
+                    fontSize: 13,
+                    fontWeight: 600,
+                    cursor: "pointer",
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: 6,
+                    textDecoration: "none",
+                  }}
+                >
+                  <Download size={15} /> Download CSV Sheet
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Document Import Modal */}
       {importModalOpen && (
