@@ -7,12 +7,16 @@ export async function POST(req) {
     return NextResponse.json({ error: "Invalid email or password." }, { status: 401 });
   }
 
+  const host = req.headers.get("host") || "";
+  const isProductionDomain = host.includes("oracleeyehospital.com");
+
   const res = NextResponse.json({ ok: true });
   res.cookies.set(COOKIE_NAME, createToken(), {
     httpOnly: true,
     sameSite: "lax",
     secure: process.env.NODE_ENV === "production",
     path: "/",
+    ...(isProductionDomain ? { domain: ".oracleeyehospital.com" } : {}),
     maxAge: 7 * 24 * 60 * 60,
   });
   return res;

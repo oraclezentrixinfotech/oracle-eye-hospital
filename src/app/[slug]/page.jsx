@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 import ServiceContentClient from "@/app/services/[slug]/ServiceContentClient";
 
 import { SITE_URL } from "@/lib/siteUrl";
+import { ensureDbSchema } from "@/lib/ensureDbSchema";
 
 export const dynamic = "force-dynamic";
 
@@ -13,6 +14,7 @@ export async function generateMetadata({ params }) {
 
   let seoPage = null;
   try {
+    await ensureDbSchema();
     seoPage = await prisma.seoPage.findFirst({
       where: { slug, status: "published" },
     });
@@ -90,6 +92,7 @@ export default async function RootSeoPage({ params }) {
   let relatedServices = [];
 
   try {
+    await ensureDbSchema();
     seoPage = await prisma.seoPage.findFirst({
       where: { slug, status: "published" },
     });

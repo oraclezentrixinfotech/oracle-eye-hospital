@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { isAdmin, unauthorized } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { parseBasicText, validateSeoPageData } from "@/app/admin/seo-pages/components/parseEngine";
+import { ensureDbSchema } from "@/lib/ensureDbSchema";
 import mammoth from "mammoth";
 
 export const dynamic = "force-dynamic";
@@ -140,6 +141,7 @@ export async function POST(req) {
     let existingPages = [];
 
     try {
+      await ensureDbSchema();
       doctorsList = await prisma.doctor.findMany({
         where: { active: true },
         select: { id: true, name: true, role: true, qualification: true },

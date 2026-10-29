@@ -177,7 +177,7 @@ export default function DocumentImportModal({
       setUnmappedContent(parsed.unmappedContent || []);
 
       const conflict = allPages.find((p) => p.slug === parsed.slug);
-      setSlugConflict(conflict ? { exists: true, existingTitle: conflict.h1Title, existingSlug: conflict.slug } : null);
+      setSlugConflict(conflict ? { exists: true, existingTitle: conflict.h1Title, existingSlug: conflict.slug, existingId: conflict.id } : null);
 
       setProcessingState("reviewed");
     } catch (err) {
@@ -251,10 +251,15 @@ export default function DocumentImportModal({
         });
       }
 
-      const json = await res.json().catch(() => ({}));
+      const text = await res.text();
+      let json = {};
+      try {
+        json = JSON.parse(text);
+      } catch {}
 
       if (!res.ok) {
-        setErrorMessage(json.error || `Failed to ${targetStatus === "published" ? "publish" : "save"} page.`);
+        const errorDetail = json.error || (text && text.length < 300 && !text.includes("<html") ? text : null) || `Failed to ${targetStatus === "published" ? "publish" : "save"} page. (Status ${res.status})`;
+        setErrorMessage(errorDetail);
         setIsSaving(false);
         return;
       }

@@ -2,6 +2,7 @@ import { redirect, notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { isAdmin } from "@/lib/auth";
 import SeoPageForm from "../../components/SeoPageForm";
+import { ensureDbSchema } from "@/lib/ensureDbSchema";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Edit SEO Page — Admin | Oracle Eye Hospital" };
@@ -17,6 +18,8 @@ export default async function EditSeoPage({ params }) {
   let allPages = [];
 
   try {
+    await ensureDbSchema();
+
     page = await prisma.seoPage.findUnique({
       where: { id },
     });
@@ -37,8 +40,10 @@ export default async function EditSeoPage({ params }) {
     });
   } catch (err) {
     console.error("EditSeoPage DB load error:", err?.message || err);
-    throw err;
+    if (!page) notFound();
   }
+
+  if (!page) notFound();
 
   // Serialize page dates
   const serialized = {

@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { isAdmin } from "@/lib/auth";
 import SeoPageForm from "../components/SeoPageForm";
+import { ensureDbSchema } from "@/lib/ensureDbSchema";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Add New SEO Page — Admin | Oracle Eye Hospital" };
@@ -13,6 +14,7 @@ export default async function NewSeoPage() {
   let allPages = [];
 
   try {
+    await ensureDbSchema();
     doctors = await prisma.doctor.findMany({
       where: { active: true },
       orderBy: [{ sortOrder: "asc" }, { id: "asc" }],

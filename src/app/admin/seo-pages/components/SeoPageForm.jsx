@@ -583,11 +583,16 @@ export default function SeoPageForm({ initialData = null, doctorsList = [], allP
         body: JSON.stringify(payload),
       });
 
-      const data = await res.json().catch(() => ({}));
+      const text = await res.text();
+      let data = {};
+      try {
+        data = JSON.parse(text);
+      } catch {}
 
       if (!res.ok) {
-        setErrorMsg(data.error || "Failed to save SEO page.");
-        toast(data.error || "Failed to save SEO page.", "error");
+        const errMsg = data.error || (text && text.length < 300 && !text.includes("<html") ? text : null) || `Failed to save SEO page. (Status ${res.status})`;
+        setErrorMsg(errMsg);
+        toast(errMsg, "error");
       } else {
         try {
           localStorage.removeItem(DRAFT_KEY);
