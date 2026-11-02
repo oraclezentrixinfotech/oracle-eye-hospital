@@ -1,4 +1,5 @@
 import "./globals.css";
+import Script from "next/script";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import FloatingWidgets from "@/components/FloatingWidgets";
@@ -34,6 +35,20 @@ export default async function RootLayout({ children }) {
         <link rel="stylesheet" type="text/css" href="/Assets/css/style.css?v=20261021" />
       </head>
       <body id="bg" data-typography="typography_1">
+        {/* Google tag (gtag.js) */}
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-197TGTETJV"
+          strategy="afterInteractive"
+        />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-197TGTETJV');
+          `}
+        </Script>
+
         <AosAnimationProvider />
         <div className="page-wraper">
           <SiteChrome>
