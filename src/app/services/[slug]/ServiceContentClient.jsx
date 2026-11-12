@@ -261,15 +261,24 @@ export default function ServiceContentClient({
                     .split(/\n\s*\n/)
                     .filter((p) => p.trim());
 
+                  const isLevel3 = Number(sec.headingLevel) === 3;
                   const HeadingTag = `h${Math.min(Math.max(Number(sec.headingLevel) || 2, 1), 6)}`;
+                  const headingClass = isLevel3 ? "seo-article-h3" : "seo-article-h2";
+
+                  const hasBodyContent =
+                    paragraphs.length > 0 ||
+                    (sec.table && Array.isArray(sec.table.headers) && sec.table.headers.length > 0) ||
+                    (Array.isArray(sec.checklist) && sec.checklist.length > 0) ||
+                    (Array.isArray(sec.items) && sec.items.length > 0) ||
+                    Boolean(sec.customHtml && sec.customHtml.trim());
 
                   return (
                     <div
                       key={sectionId}
-                      className="seo-article-block"
+                      className={`seo-article-block ${!hasBodyContent ? "seo-block-header-only" : ""}`}
                       id={sectionId}
                     >
-                      <HeadingTag className="seo-article-h2">{sec.heading}</HeadingTag>
+                      <HeadingTag className={headingClass}>{sec.heading}</HeadingTag>
 
                       {/* Paragraph text / Rich HTML */}
                       {paragraphs.map((pText, pIdx) => (
