@@ -8,7 +8,14 @@ import { revalidatePath } from "next/cache";
 
 export const dynamic = "force-dynamic";
 
-const SITEMAP_PATH = path.join(process.cwd(), "public", "sitemap-custom.xml");
+const SITEMAP_PATH = path.join(process.cwd(), "public", "sitemap.xml");
+const LEGACY_SITEMAP_PATH = path.join(process.cwd(), "public", "sitemap-custom.xml");
+
+function getSitemapReadPath() {
+  if (fs.existsSync(SITEMAP_PATH)) return SITEMAP_PATH;
+  if (fs.existsSync(LEGACY_SITEMAP_PATH)) return LEGACY_SITEMAP_PATH;
+  return SITEMAP_PATH;
+}
 
 function formatDate(date) {
   if (!date) return new Date().toISOString().split("T")[0];
@@ -23,11 +30,12 @@ function formatDate(date) {
 
 function parseSitemapEntries() {
   const entries = [];
-  if (!fs.existsSync(SITEMAP_PATH)) {
+  const targetPath = getSitemapReadPath();
+  if (!fs.existsSync(targetPath)) {
     return entries;
   }
 
-  const content = fs.readFileSync(SITEMAP_PATH, "utf8");
+  const content = fs.readFileSync(targetPath, "utf8");
   const urlRegex = /<url>([\s\S]*?)<\/url>/gi;
   let match;
 

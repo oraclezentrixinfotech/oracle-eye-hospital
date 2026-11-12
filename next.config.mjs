@@ -12,6 +12,16 @@ const nextConfig = {
       },
     ];
   },
+  async rewrites() {
+    return {
+      beforeFiles: [
+        {
+          source: "/sitemap.xml",
+          destination: "/api/sitemap",
+        },
+      ],
+    };
+  },
   images: {
     remotePatterns: [
       {

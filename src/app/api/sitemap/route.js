@@ -4,6 +4,7 @@ import path from "path";
 import { prisma } from "@/lib/prisma";
 import { SITE_URL } from "@/lib/siteUrl";
 import { SEO_PAGES as CODE_SEO_PAGES } from "@/app/(seo_pages)/_lib/pages";
+import { ensureDbSchema } from "@/lib/ensureDbSchema";
 
 export const dynamic = "force-dynamic";
 
@@ -36,17 +37,20 @@ function formatDate(date) {
 }
 
 /**
- * Extracts <url>...</url> entries from public/sitemap-custom.xml (or public/sitemap.xml if any)
+ * Extracts <url>...</url> entries from public/sitemap.xml (or fallback to public/sitemap-custom.xml)
  */
 function parseCustomSitemapXml() {
   const entries = [];
   try {
-    const customPath = path.join(process.cwd(), "public", "sitemap-custom.xml");
-    const filePath = fs.existsSync(customPath)
-      ? customPath
-      : path.join(process.cwd(), "public", "sitemap.xml");
+    const primaryPath = path.join(process.cwd(), "public", "sitemap.xml");
+    const fallbackPath = path.join(process.cwd(), "public", "sitemap-custom.xml");
+    const filePath = fs.existsSync(primaryPath)
+      ? primaryPath
+      : fs.existsSync(fallbackPath)
+      ? fallbackPath
+      : null;
 
-    if (!fs.existsSync(filePath)) return entries;
+    if (!filePath) return entries;
 
     const content = fs.readFileSync(filePath, "utf8");
     const urlRegex = /<url>([\s\S]*?)<\/url>/gi;
@@ -79,17 +83,19 @@ function parseCustomSitemapXml() {
       }
     }
   } catch (err) {
-    console.warn("Could not parse sitemap-custom.xml:", err?.message || err);
+    console.warn("Could not parse sitemap.xml:", err?.message || err);
   }
   return entries;
 }
 
 export async function GET() {
   try {
+    await ensureDbSchema();
+
     const urls = [];
     const seenLocs = new Set();
 
-    // 1. Read entries from public/sitemap-custom.xml (Code-based SEO pages and core static URLs)
+    // 1. Read entries from public/sitemap.xml (Custom & static URLs managed via Admin/code)
     const customEntries = parseCustomSitemapXml();
 
     if (customEntries.length > 0) {
@@ -188,7 +194,7 @@ ${urls.join("\n")}
       },
     });
   } catch (err) {
-    console.error("GET /sitemap.xml error:", err?.message || err);
+    console.error("GET /api/sitemap error:", err?.message || err);
     return new NextResponse("Failed to generate sitemap. Please try again later.", {
       status: 500,
       headers: {
@@ -197,3 +203,4 @@ ${urls.join("\n")}
     });
   }
 }
+
