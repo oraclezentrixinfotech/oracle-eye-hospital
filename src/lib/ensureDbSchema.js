@@ -116,17 +116,19 @@ const DEFAULT_DOCTORS = [
 ];
 
 export async function ensureDbSchema() {
+  if (globalThis.__dbSchemaInitialized) return true;
   if (setupPromise) return setupPromise;
 
   setupPromise = (async () => {
     try {
-      for (const statement of SCHEMA_STATEMENTS) {
-        try {
-          await prisma.$executeRawUnsafe(statement);
-        } catch (stmtErr) {
-          console.warn("[ensureDbSchema] Warning running statement:", stmtErr?.message || stmtErr);
-        }
-      }
+      // Run DDL statements concurrently to eliminate 16 sequential network round-trips
+      await Promise.allSettled(
+        SCHEMA_STATEMENTS.map((statement) =>
+          prisma.$executeRawUnsafe(statement).catch((stmtErr) => {
+            console.warn("[ensureDbSchema] Warning running statement:", stmtErr?.message || stmtErr);
+          })
+        )
+      );
 
       // Check if doctors exist, seed default if empty
       const doctorCount = await prisma.doctor.count().catch(() => 0);
@@ -140,6 +142,7 @@ export async function ensureDbSchema() {
         }
       }
 
+      globalThis.__dbSchemaInitialized = true;
       return true;
     } catch (err) {
       console.error("[ensureDbSchema] Error ensuring database schema:", err?.message || err);

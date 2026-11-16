@@ -52,12 +52,48 @@
   display: block !important;
 }
 
-.ad-root table, .ad-root th, .ad-root td, .ad-root select,
-.ad-root input, .ad-root textarea, .ad-root h1, .ad-root h2, .ad-root h3,
+.ad-root table, .ad-root th, .ad-root td,
+.ad-root h1, .ad-root h2, .ad-root h3,
 .ad-root p {
   all: revert;
   box-sizing: border-box;
   font-family: inherit;
+}
+
+/* Ensure all admin form inputs, textareas & selects render with full-width clean modern styling */
+.ad-root .adt-field input[type="text"],
+.ad-root .adt-field input[type="url"],
+.ad-root .adt-field input[type="email"],
+.ad-root .adt-field input[type="number"],
+.ad-root .adt-field input:not([type]),
+.ad-root .adt-field select,
+.ad-root .adt-field textarea {
+  width: 100% !important;
+  padding: 8px 12px !important;
+  border: 1px solid #d1d5db !important;
+  border-radius: 6px !important;
+  font-size: 13.5px !important;
+  background: #ffffff !important;
+  outline: none !important;
+  font-family: inherit !important;
+  color: #111827 !important;
+  box-sizing: border-box !important;
+  display: block !important;
+  min-height: 38px !important;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease !important;
+}
+
+.ad-root .adt-field textarea {
+  min-height: 80px !important;
+  resize: vertical !important;
+  line-height: 1.5 !important;
+}
+
+.ad-root .adt-field input:focus,
+.ad-root .adt-field select:focus,
+.ad-root .adt-field textarea:focus {
+  border-color: #0d9488 !important;
+  box-shadow: 0 0 0 2px rgba(13, 148, 136, 0.15) !important;
 }
 
 .ad-root table::before, .ad-root table::after,

@@ -15,15 +15,19 @@ export default async function NewSeoPage() {
 
   try {
     await ensureDbSchema();
-    doctors = await prisma.doctor.findMany({
-      where: { active: true },
-      orderBy: [{ sortOrder: "asc" }, { id: "asc" }],
-    });
-    allPages = await prisma.seoPage.findMany({
-      where: { status: "published" },
-      select: { id: true, slug: true, h1Title: true },
-      orderBy: { h1Title: "asc" },
-    });
+    const [fetchedDoctors, fetchedAllPages] = await Promise.all([
+      prisma.doctor.findMany({
+        where: { active: true },
+        orderBy: [{ sortOrder: "asc" }, { id: "asc" }],
+      }),
+      prisma.seoPage.findMany({
+        where: { status: "published" },
+        select: { id: true, slug: true, h1Title: true },
+        orderBy: { h1Title: "asc" },
+      }),
+    ]);
+    doctors = fetchedDoctors || [];
+    allPages = fetchedAllPages || [];
   } catch (err) {
     console.error("NewSeoPage DB load error:", err?.message || err);
   }

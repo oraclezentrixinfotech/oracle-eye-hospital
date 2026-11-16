@@ -15,14 +15,18 @@ export default async function AdminSeoPagesPage() {
 
   try {
     await ensureDbSchema();
-    pages = await prisma.seoPage.findMany({
-      orderBy: { createdAt: "desc" },
-    });
-    doctors = await prisma.doctor.findMany({
-      where: { active: true },
-      select: { id: true, name: true, role: true, qualification: true },
-      orderBy: { sortOrder: "asc" },
-    });
+    const [fetchedPages, fetchedDoctors] = await Promise.all([
+      prisma.seoPage.findMany({
+        orderBy: { createdAt: "desc" },
+      }),
+      prisma.doctor.findMany({
+        where: { active: true },
+        select: { id: true, name: true, role: true, qualification: true },
+        orderBy: { sortOrder: "asc" },
+      }),
+    ]);
+    pages = fetchedPages || [];
+    doctors = fetchedDoctors || [];
   } catch (err) {
     console.error("AdminSeoPagesPage DB error:", err?.message || err);
   }

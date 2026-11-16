@@ -20,24 +20,27 @@ export default async function EditSeoPage({ params }) {
   try {
     await ensureDbSchema();
 
-    page = await prisma.seoPage.findUnique({
-      where: { id },
-    });
+    const [fetchedPage, fetchedDoctors, fetchedAllPages] = await Promise.all([
+      prisma.seoPage.findUnique({ where: { id } }),
+      prisma.doctor.findMany({
+        where: { active: true },
+        orderBy: [{ sortOrder: "asc" }, { id: "asc" }],
+      }),
+      prisma.seoPage.findMany({
+        where: { status: "published" },
+        select: { id: true, slug: true, h1Title: true },
+        orderBy: { h1Title: "asc" },
+      }),
+    ]);
+
+    page = fetchedPage;
+    doctors = fetchedDoctors || [];
+    allPages = fetchedAllPages || [];
+
     if (!page) {
       console.log(`[EditSeoPage] Page not found for id ${id}`);
       notFound();
     }
-
-    doctors = await prisma.doctor.findMany({
-      where: { active: true },
-      orderBy: [{ sortOrder: "asc" }, { id: "asc" }],
-    });
-
-    allPages = await prisma.seoPage.findMany({
-      where: { status: "published" },
-      select: { id: true, slug: true, h1Title: true },
-      orderBy: { h1Title: "asc" },
-    });
   } catch (err) {
     console.error("EditSeoPage DB load error:", err?.message || err);
     if (!page) notFound();

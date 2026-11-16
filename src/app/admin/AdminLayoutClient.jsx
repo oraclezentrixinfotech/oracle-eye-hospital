@@ -50,7 +50,7 @@ export default function AdminLayoutClient({ children }) {
           Main Menu
         </div>
         <nav className="ad-sidebar-light-nav">
-          <Link href="/admin" className={`ad-nav-light-item ${pathname === "/admin" ? "active" : ""}`} onClick={() => setSidebarOpen(false)}>
+          <Link href="/admin" prefetch={true} className={`ad-nav-light-item ${pathname === "/admin" ? "active" : ""}`} onClick={() => setSidebarOpen(false)}>
             <div className={`ad-nav-light-icon ${pathname === "/admin" ? "bg-blue" : "bg-gray"}`}>
               <Home size={18} color="#fff" />
             </div>
@@ -73,7 +73,7 @@ export default function AdminLayoutClient({ children }) {
                 {navItems.map((item) => {
                   const isActive = item.exact ? pathname === item.href : pathname.startsWith(item.href);
                   return (
-                    <Link key={item.href} href={item.href} className={`ad-nav-light-subitem ${isActive ? "active" : ""}`} onClick={() => setSidebarOpen(false)}>
+                    <Link key={item.href} href={item.href} prefetch={true} className={`ad-nav-light-subitem ${isActive ? "active" : ""}`} onClick={() => setSidebarOpen(false)}>
                       <ChevronRight size={14} className="ad-sub-icon" />
                       <span>{item.label}</span>
                     </Link>

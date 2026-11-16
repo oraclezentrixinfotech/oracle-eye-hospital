@@ -30,95 +30,6 @@ export default function ServiceContentClient({
   const [openFaqIndex, setOpenFaqIndex] = useState(0);
   const [tocOpen, setTocOpen] = useState(true);
 
-  // ── Smooth Scroll & Sticky Tracking Matching Content.jsx ──────────
-  const rowRef = useRef(null);
-  const sidebarColRef = useRef(null);
-  const [sidebarStyle, setSidebarStyle] = useState({});
-
-  useEffect(() => {
-    let ticking = false;
-
-    const updateSidebarPosition = () => {
-      if (typeof window === "undefined") return;
-
-      // Only fix position on desktop (>= 992px)
-      if (window.innerWidth < 992) {
-        setSidebarStyle({});
-        return;
-      }
-
-      if (!rowRef.current || !sidebarColRef.current) return;
-
-      const rowRect = rowRef.current.getBoundingClientRect();
-      const colEl = sidebarColRef.current;
-      const colRect = colEl.getBoundingClientRect();
-      const colStyle = window.getComputedStyle(colEl);
-      const padLeft = parseFloat(colStyle.paddingLeft) || 0;
-      const padRight = parseFloat(colStyle.paddingRight) || 0;
-      const actualWidth = colRect.width - padLeft - padRight;
-      const actualLeft = colRect.left + padLeft;
-
-      const topOffset = 90; // distance from top of viewport below header
-      const formCard = colEl.querySelector(".seo-sticky-appointment-card");
-      const cardHeight = formCard ? formCard.offsetHeight : 380;
-
-      // 1. Above content row: natural static position
-      if (rowRect.top > topOffset) {
-        setSidebarStyle({
-          position: "relative",
-          top: 0,
-          left: "auto",
-          width: "100%",
-          zIndex: 30,
-        });
-      }
-      // 2. Reached bottom of content row (expert doctors section): stop and park at bottom
-      else if (rowRect.bottom <= topOffset + cardHeight) {
-        setSidebarStyle({
-          position: "absolute",
-          bottom: 0,
-          top: "auto",
-          left: `${padLeft}px`,
-          width: `${actualWidth}px`,
-          zIndex: 30,
-        });
-      }
-      // 3. Actively scrolling left-side content: strictly FIXED on screen
-      else {
-        setSidebarStyle({
-          position: "fixed",
-          top: `${topOffset}px`,
-          left: `${actualLeft}px`,
-          width: `${actualWidth}px`,
-          zIndex: 90,
-          maxHeight: `calc(100vh - ${topOffset + 15}px)`,
-          overflowY: "auto",
-        });
-      }
-    };
-
-    const handleScrollOrResize = () => {
-      if (!ticking) {
-        window.requestAnimationFrame(() => {
-          updateSidebarPosition();
-          ticking = false;
-        });
-        ticking = true;
-      }
-    };
-
-    // Run on mount
-    updateSidebarPosition();
-
-    window.addEventListener("scroll", handleScrollOrResize, { passive: true });
-    window.addEventListener("resize", handleScrollOrResize);
-
-    return () => {
-      window.removeEventListener("scroll", handleScrollOrResize);
-      window.removeEventListener("resize", handleScrollOrResize);
-    };
-  }, [sections]);
-
   const toggleFaq = (idx) => {
     setOpenFaqIndex(openFaqIndex === idx ? -1 : idx);
   };
@@ -126,11 +37,13 @@ export default function ServiceContentClient({
   const helpline = page.ctaPhone || "+91 8006803111";
   const cleanPhone = helpline.replace(/\s+/g, "");
 
-  // Auto-generate TOC items from sections
-  const tocItems = sections.map((sec, idx) => ({
-    id: sec.id || `section-${idx}`,
-    heading: sec.heading,
-  }));
+  // Auto-generate TOC items from sections with non-empty headings
+  const tocItems = (sections || [])
+    .filter((sec) => sec && sec.heading && String(sec.heading).trim())
+    .map((sec, idx) => ({
+      id: sec.id || `section-${idx}`,
+      heading: String(sec.heading).trim(),
+    }));
 
   return (
     <div className="seo-content-wrapper" style={{ backgroundColor: "#f8fafc" }}>
@@ -260,7 +173,7 @@ export default function ServiceContentClient({
       {/* ============================================================ */}
       <section className="seo-section py-5">
         <div className="container">
-          <div className="row g-4 g-lg-5 seo-content-row" ref={rowRef}>
+          <div className="row g-4 g-lg-5 seo-content-row">
             {/* Left Column: Comprehensive Article in Paragraph & Heading Form */}
             <div className="col-lg-8">
               <article className="seo-article-container">
@@ -408,11 +321,10 @@ export default function ServiceContentClient({
             </div>
 
             {/* Right Column: Sticky Sidebar with Table of Contents & Appointment Form */}
-            <div className="col-lg-4 seo-sidebar-col" ref={sidebarColRef}>
+            <div className="col-lg-4 seo-sidebar-col">
               <aside
                 className="seo-sticky-appointment-card"
                 id="sidebar-appointment"
-                style={sidebarStyle}
               >
                 {/* Book an Appointment Form Box (Placed First) */}
                 <div className="seo-sidebar-box seo-sidebar-form-box" style={{ marginBottom: "14px" }}>

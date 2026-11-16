@@ -167,17 +167,21 @@ export default function SeoPageForm({ initialData = null, doctorsList = [], allP
     }
   }, [DRAFT_KEY, isEditing]);
 
-  // 2. Auto-save form data + current active tab to localStorage whenever form or activeTab changes
+  // 2. Auto-save form data + current active tab to localStorage (debounced by 500ms so UI remains super responsive)
   useEffect(() => {
-    try {
-      const dataToSave = {
-        ...form,
-        _activeTab: activeTab,
-      };
-      localStorage.setItem(DRAFT_KEY, JSON.stringify(dataToSave));
-    } catch {
-      // ignore storage errors
-    }
+    const timer = setTimeout(() => {
+      try {
+        const dataToSave = {
+          ...form,
+          _activeTab: activeTab,
+        };
+        localStorage.setItem(DRAFT_KEY, JSON.stringify(dataToSave));
+      } catch {
+        // ignore storage errors
+      }
+    }, 500);
+
+    return () => clearTimeout(timer);
   }, [form, activeTab, DRAFT_KEY]);
 
   function handleDiscardDraft() {
@@ -587,7 +591,7 @@ export default function SeoPageForm({ initialData = null, doctorsList = [], allP
       let data = {};
       try {
         data = JSON.parse(text);
-      } catch {}
+      } catch { }
 
       if (!res.ok) {
         const errMsg = data.error || (text && text.length < 300 && !text.includes("<html") ? text : null) || `Failed to save SEO page. (Status ${res.status})`;
@@ -742,75 +746,145 @@ export default function SeoPageForm({ initialData = null, doctorsList = [], allP
 
   return (
     <div style={{ maxWidth: 1100, margin: "0 auto", paddingBottom: 60 }}>
-      {/* Top Header Card */}
-      <div className="adt-header-card" style={{ marginBottom: 20 }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+      {/* Top Header Card - Slim, Sleek & Single-line */}
+      <div
+        className="adt-header-card"
+        style={{
+          marginBottom: 16,
+          padding: "10px 18px",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          flexWrap: "nowrap",
+          gap: 12,
+          background: "#ffffff",
+          border: "1px solid #e2e8f0",
+          borderRadius: 8,
+          boxShadow: "0 1px 3px rgba(0,0,0,0.04)",
+          minHeight: 52,
+        }}
+      >
+        <div style={{ display: "flex", alignItems: "center", gap: 12, minWidth: 0, flex: 1 }}>
           <Link
             href="/admin/seo-pages"
-            className="adt-btn-action"
+            prefetch={true}
+            title="Back to SEO Pages List"
             style={{
-              padding: "6px 12px",
-              background: "#f3f4f6",
-              color: "#374151",
+              height: 32,
+              padding: "0 11px",
+              background: "#f8fafc",
+              border: "1px solid #e2e8f0",
+              color: "#475569",
               textDecoration: "none",
               borderRadius: 6,
               display: "inline-flex",
               alignItems: "center",
-              gap: 6,
-              fontSize: 13,
+              gap: 5,
+              fontSize: 12,
+              fontWeight: 600,
+              whiteSpace: "nowrap",
+              flexShrink: 0,
+              transition: "all 0.15s ease",
             }}
           >
-            <ArrowLeft size={16} /> Back to List
+            <ArrowLeft size={14} />
+            <span>Back</span>
           </Link>
-          <div>
-            <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-              <h2 className="adt-header-title" style={{ margin: 0 }}>
+
+          <div style={{ minWidth: 0, overflow: "hidden" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "nowrap" }}>
+              <h2
+                style={{
+                  margin: 0,
+                  fontSize: 15,
+                  fontWeight: 700,
+                  color: "#0f172a",
+                  whiteSpace: "nowrap",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  maxWidth: 420,
+                  lineHeight: 1.3,
+                }}
+                title={form.h1Title || "SEO Page"}
+              >
                 {isEditing ? `Edit: ${form.h1Title || "SEO Page"}` : "Add New SEO Page"}
               </h2>
+
               {hasRestoredDraft && (
                 <span
                   style={{
                     background: "#ecfdf5",
                     color: "#059669",
-                    border: "1px solid #a7f3d0",
-                    fontSize: 11,
+                    border: "1px solid #bbf7d0",
+                    fontSize: 10.5,
                     fontWeight: 600,
-                    padding: "2px 8px",
+                    padding: "2px 7px",
                     borderRadius: 12,
-                    display: "inline-flex",
-                    alignItems: "center",
-                    gap: 4,
+                    whiteSpace: "nowrap",
+                    flexShrink: 0,
                   }}
                 >
-                  ● Auto-saved Draft Restored
+                  ● Draft Restored
                 </span>
               )}
             </div>
-            <div style={{ fontSize: 13, color: "#6b7280", marginTop: 4, display: "flex", alignItems: "center", gap: 10 }}>
-              <span>Path: <code>/{form.slug || "[slug]"}</code></span>
-              {hasRestoredDraft && (
-                <button
-                  type="button"
-                  onClick={handleDiscardDraft}
+
+            <div
+              style={{
+                fontSize: 11,
+                color: "#64748b",
+                marginTop: 2,
+                display: "flex",
+                alignItems: "center",
+                gap: 8,
+                whiteSpace: "nowrap",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+              }}
+            >
+              <span style={{ overflow: "hidden", textOverflow: "ellipsis" }}>
+                Path:{" "}
+                <code
                   style={{
-                    background: "transparent",
-                    border: 0,
-                    color: "#dc2626",
-                    fontSize: 12,
-                    cursor: "pointer",
-                    textDecoration: "underline",
-                    padding: 0,
+                    background: "#f1f5f9",
+                    padding: "1px 5px",
+                    borderRadius: 4,
+                    color: "#0f766e",
+                    fontSize: 11,
                   }}
                 >
-                  {isEditing ? "Discard Changes & Reload" : "Discard Draft & Reset"}
-                </button>
+                  /{form.slug || "[slug]"}
+                </code>
+              </span>
+              {hasRestoredDraft && (
+                <>
+                  <span style={{ color: "#cbd5e1" }}>•</span>
+                  <button
+                    type="button"
+                    onClick={handleDiscardDraft}
+                    style={{
+                      background: "transparent",
+                      border: 0,
+                      color: "#ef4444",
+                      fontSize: 11,
+                      cursor: "pointer",
+                      textDecoration: "underline",
+                      padding: 0,
+                      whiteSpace: "nowrap",
+                      flexShrink: 0,
+                    }}
+                  >
+                    {isEditing ? "Discard Changes" : "Discard Draft"}
+                  </button>
+                </>
               )}
             </div>
           </div>
         </div>
 
-        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-          {/* Publication Status Toggle */}
+        {/* Right Action Controls */}
+        <div style={{ display: "flex", alignItems: "center", gap: 8, flexShrink: 0 }}>
+          {/* Status Toggle Pill */}
           <button
             type="button"
             onClick={() =>
@@ -819,21 +893,32 @@ export default function SeoPageForm({ initialData = null, doctorsList = [], allP
                 status: prev.status === "published" ? "draft" : "published",
               }))
             }
-            className={`adt-badge ${form.status === "published" ? "adt-badge-active" : "adt-badge-inactive"}`}
             style={{
-              fontSize: 13,
+              height: 32,
+              padding: "0 10px",
+              fontSize: 11.5,
               fontWeight: 600,
-              padding: "8px 14px",
               cursor: "pointer",
-              border: "none",
               borderRadius: 6,
+              border: form.status === "published" ? "1px solid #a7f3d0" : "1px solid #fecaca",
+              background: form.status === "published" ? "#ecfdf5" : "#fef2f2",
+              color: form.status === "published" ? "#059669" : "#dc2626",
               display: "inline-flex",
               alignItems: "center",
-              gap: 6,
+              gap: 5,
+              whiteSpace: "nowrap",
             }}
-            title={form.status === "published" ? "Status: Live & Published (Click to change to Draft)" : "Status: Draft (Click to Publish)"}
+            title={form.status === "published" ? "Status: Published (Click to switch to Draft)" : "Status: Draft (Click to Publish)"}
           >
-            {form.status === "published" ? "✓ Published" : "✕ Draft"}
+            <span
+              style={{
+                width: 6,
+                height: 6,
+                borderRadius: "50%",
+                background: form.status === "published" ? "#10b981" : "#ef4444",
+              }}
+            />
+            {form.status === "published" ? "Published" : "Draft"}
           </button>
 
           {isEditing && form.slug && (
@@ -841,74 +926,107 @@ export default function SeoPageForm({ initialData = null, doctorsList = [], allP
               href={`/${form.slug}`}
               target="_blank"
               rel="noopener noreferrer"
+              title="View live published page"
               style={{
-                background: "#0d9488",
-                color: "#ffffff",
-                fontWeight: 600,
-                fontSize: 13,
-                padding: "9px 14px",
+                height: 32,
+                padding: "0 11px",
+                background: "#ffffff",
+                color: "#0f766e",
+                border: "1px solid #ccfbf1",
                 borderRadius: 6,
                 textDecoration: "none",
                 display: "inline-flex",
                 alignItems: "center",
-                gap: 6,
+                gap: 5,
+                fontSize: 12,
+                fontWeight: 600,
+                whiteSpace: "nowrap",
+                boxShadow: "0 1px 2px rgba(0,0,0,0.03)",
               }}
             >
-              <Eye size={16} />
-              <span>View Live Page</span>
+              <ExternalLink size={13} />
+              <span>View Live</span>
             </a>
           )}
 
           <button
             type="button"
             onClick={() => setShowPreview(true)}
+            title="Preview Page"
             style={{
-              background: "#0284c7",
-              color: "#ffffff",
-              fontWeight: 600,
-              fontSize: 13,
-              padding: "9px 14px",
+              height: 32,
+              padding: "0 11px",
+              background: "#ffffff",
+              color: "#0284c7",
+              border: "1px solid #e0f2fe",
               borderRadius: 6,
-              border: "none",
               cursor: "pointer",
               display: "inline-flex",
               alignItems: "center",
-              gap: 6,
+              gap: 5,
+              fontSize: 12,
+              fontWeight: 600,
+              whiteSpace: "nowrap",
+              boxShadow: "0 1px 2px rgba(0,0,0,0.03)",
             }}
           >
-            <Eye size={16} />
-            <span>Preview Page</span>
+            <Eye size={13} />
+            <span>Preview</span>
           </button>
 
           {(!isEditing && !isLastTab) ? (
             <button
               type="button"
               onClick={goToNextTab}
-              className="adt-btn-save"
               style={{
+                height: 32,
+                padding: "0 13px",
+                background: "#0d9488",
+                color: "#ffffff",
+                border: "1px solid #0f766e",
+                borderRadius: 6,
+                cursor: "pointer",
                 display: "inline-flex",
                 alignItems: "center",
-                gap: 6,
-                background: "#0d9488",
+                gap: 5,
+                fontSize: 12,
+                fontWeight: 600,
+                whiteSpace: "nowrap",
+                boxShadow: "0 1px 2px rgba(13, 148, 136, 0.2)",
               }}
             >
-              <span>Next Step</span> <ArrowRight size={16} />
+              <span>Next</span> <ArrowRight size={13} />
             </button>
           ) : (
             <button
               type="button"
               onClick={handleSubmit}
               disabled={saving}
-              className="adt-btn-save"
-              style={{ display: "inline-flex", alignItems: "center", gap: 6 }}
+              style={{
+                height: 32,
+                padding: "0 13px",
+                background: "#0d9488",
+                color: "#ffffff",
+                border: "1px solid #0f766e",
+                borderRadius: 6,
+                cursor: saving ? "not-allowed" : "pointer",
+                display: "inline-flex",
+                alignItems: "center",
+                gap: 5,
+                fontSize: 12,
+                fontWeight: 600,
+                whiteSpace: "nowrap",
+                opacity: saving ? 0.7 : 1,
+                boxShadow: "0 1px 2px rgba(13, 148, 136, 0.2)",
+              }}
             >
               {saving ? (
                 <>
-                  <Loader2 size={16} className="adt-spin" /> Saving…
+                  <Loader2 size={13} className="adt-spin" /> <span>Saving…</span>
                 </>
               ) : (
                 <>
-                  <Save size={16} /> {isEditing ? "Save Page" : "Publish SEO Page"}
+                  <Save size={13} /> <span>{isEditing ? "Save Page" : "Publish"}</span>
                 </>
               )}
             </button>
@@ -1740,44 +1858,8 @@ export default function SeoPageForm({ initialData = null, doctorsList = [], allP
                 </button>
               </div>
 
-              {/* Floating Sticky "Add Content Section" Button on Right Side */}
-              <button
-                type="button"
-                onClick={addSection}
-                title="Add New Content Section"
-                style={{
-                  position: "fixed",
-                  right: 28,
-                  bottom: 32,
-                  zIndex: 1000,
-                  display: "inline-flex",
-                  alignItems: "center",
-                  gap: 8,
-                  padding: "12px 20px",
-                  background: "linear-gradient(135deg, #0d9488 0%, #0f766e 100%)",
-                  color: "#ffffff",
-                  fontSize: 14,
-                  fontWeight: 700,
-                  borderRadius: 50,
-                  border: "2px solid #ffffff",
-                  boxShadow: "0 10px 25px rgba(13, 148, 136, 0.45), 0 4px 10px rgba(0, 0, 0, 0.12)",
-                  cursor: "pointer",
-                  transition: "all 0.2s ease",
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.transform = "translateY(-2px) scale(1.03)";
-                  e.currentTarget.style.boxShadow =
-                    "0 14px 30px rgba(13, 148, 136, 0.55), 0 6px 14px rgba(0, 0, 0, 0.15)";
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.transform = "none";
-                  e.currentTarget.style.boxShadow =
-                    "0 10px 25px rgba(13, 148, 136, 0.45), 0 4px 10px rgba(0, 0, 0, 0.12)";
-                }}
-              >
-                <Plus size={18} strokeWidth={2.5} />
-                <span>+ Add Content Section</span>
-              </button>
+
+
             </div>
           )}
 

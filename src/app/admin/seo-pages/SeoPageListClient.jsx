@@ -42,6 +42,7 @@ function TitleCell({ r }) {
       >
         <Link
           href={`/admin/seo-pages/${r.id}/edit`}
+          prefetch={true}
           title={`Click to edit: ${r.h1Title}`}
           style={{ fontWeight: 600, color: "#0f766e", fontSize: 13.5, textDecoration: "none" }}
         >
@@ -169,6 +170,7 @@ function ActionButtons({ r, onOpenDelete }) {
 
       <Link
         href={`/admin/seo-pages/${r.id}/edit`}
+        prefetch={true}
         title="Edit page"
         className="adt-action-btn adt-action-edit"
       >
@@ -391,67 +393,167 @@ export default function SeoPageListClient({ rows = [], doctorsList = [], allPage
 
   return (
     <>
-      {/* Header Card */}
-      <div className="adt-header-card">
-        <div>
-          <h2 className="adt-header-title">Manage SEO Pages</h2>
-          <p style={{ margin: "4px 0 0 0", fontSize: 13, color: "#6b7280" }}>
-            Create and manage keyword-targeted landing pages under <code>/[slug]</code>.
+      {/* Header Card - Slim, Sleek & Single-line */}
+      <div
+        className="adt-header-card"
+        style={{
+          marginBottom: 16,
+          padding: "10px 18px",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          flexWrap: "nowrap",
+          gap: 12,
+          background: "#ffffff",
+          border: "1px solid #e2e8f0",
+          borderRadius: 8,
+          boxShadow: "0 1px 3px rgba(0,0,0,0.04)",
+          minHeight: 52,
+        }}
+      >
+        <div style={{ minWidth: 0, overflow: "hidden" }}>
+          <h2
+            style={{
+              margin: 0,
+              fontSize: 16,
+              fontWeight: 700,
+              color: "#0f172a",
+              lineHeight: 1.3,
+              whiteSpace: "nowrap",
+            }}
+          >
+            Manage SEO Pages
+          </h2>
+          <p
+            style={{
+              margin: "2px 0 0 0",
+              fontSize: 11.5,
+              color: "#64748b",
+              whiteSpace: "nowrap",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+            }}
+          >
+            Create and manage keyword-targeted landing pages under{" "}
+            <code
+              style={{
+                background: "#f1f5f9",
+                padding: "1px 5px",
+                borderRadius: 4,
+                color: "#0f766e",
+                fontSize: 11,
+              }}
+            >
+              /[slug]
+            </code>
+            .
           </p>
         </div>
-        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+
+        <div style={{ display: "flex", alignItems: "center", gap: 8, flexShrink: 0 }}>
           <button
             type="button"
             onClick={() => setExportModalOpen(true)}
             title="Export CSV spreadsheet containing SEO page titles and URLs (with date range filter)"
-            className="adt-btn-save"
             style={{
-              background: "#059669",
-              borderColor: "#059669",
-              color: "#ffffff",
+              height: 32,
+              padding: "0 11px",
+              background: "#ffffff",
+              borderColor: "#a7f3d0",
+              border: "1px solid #a7f3d0",
+              color: "#059669",
               cursor: "pointer",
               display: "inline-flex",
               alignItems: "center",
-              gap: 6,
+              gap: 5,
+              fontSize: 12,
+              fontWeight: 600,
+              borderRadius: 6,
+              whiteSpace: "nowrap",
+              boxShadow: "0 1px 2px rgba(0,0,0,0.03)",
             }}
           >
-            <FileSpreadsheet size={15} /> Export Sheet
+            <FileSpreadsheet size={13} />
+            <span>Export Sheet</span>
           </button>
+
           <a
             href="/api/admin/seo-pages/download-template"
             download="sample.docx"
             title="Download Word Document Content Template (sample.docx)"
-            className="adt-btn-save"
             style={{
-              background: "#475569",
-              borderColor: "#475569",
-              color: "#ffffff",
+              height: 32,
+              padding: "0 11px",
+              background: "#ffffff",
+              borderColor: "#e2e8f0",
+              border: "1px solid #cbd5e1",
+              color: "#475569",
               cursor: "pointer",
               display: "inline-flex",
               alignItems: "center",
-              gap: 6,
+              gap: 5,
               textDecoration: "none",
+              fontSize: 12,
+              fontWeight: 600,
+              borderRadius: 6,
+              whiteSpace: "nowrap",
+              boxShadow: "0 1px 2px rgba(0,0,0,0.03)",
             }}
           >
-            <Download size={15} /> Download Template (.docx)
+            <Download size={13} />
+            <span>Template (.docx)</span>
           </a>
+
           <button
             type="button"
             onClick={() => setImportModalOpen(true)}
-            className="adt-btn-save"
+            title="Import content from Word (.docx) or Text document"
             style={{
-              background: "#0284c7",
-              borderColor: "#0284c7",
+              height: 32,
+              padding: "0 11px",
+              background: "#ffffff",
+              borderColor: "#bae6fd",
+              border: "1px solid #bae6fd",
+              color: "#0284c7",
               cursor: "pointer",
               display: "inline-flex",
               alignItems: "center",
-              gap: 6,
+              gap: 5,
+              fontSize: 12,
+              fontWeight: 600,
+              borderRadius: 6,
+              whiteSpace: "nowrap",
+              boxShadow: "0 1px 2px rgba(0,0,0,0.03)",
             }}
           >
-            <UploadCloud size={16} /> Import SEO Page
+            <UploadCloud size={13} />
+            <span>Import Page</span>
           </button>
-          <Link href="/admin/seo-pages/new" className="adt-btn-save" style={{ textDecoration: "none" }}>
-            <Plus size={15} /> Add SEO Page
+
+          <Link
+            href="/admin/seo-pages/new"
+            prefetch={true}
+            title="Create a new keyword-targeted SEO Page"
+            style={{
+              height: 32,
+              padding: "0 13px",
+              background: "#0d9488",
+              borderColor: "#0f766e",
+              border: "1px solid #0f766e",
+              color: "#ffffff",
+              display: "inline-flex",
+              alignItems: "center",
+              gap: 5,
+              textDecoration: "none",
+              fontSize: 12,
+              fontWeight: 600,
+              borderRadius: 6,
+              whiteSpace: "nowrap",
+              boxShadow: "0 1px 2px rgba(13, 148, 136, 0.2)",
+            }}
+          >
+            <Plus size={14} />
+            <span>Add SEO Page</span>
           </Link>
         </div>
       </div>

@@ -1211,25 +1211,23 @@
 .seo-sticky-appointment-card {
   position: -webkit-sticky;
   position: sticky;
-  top: 90px;
+  top: 85px;
   z-index: 25;
-  display: block;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
   box-sizing: border-box;
-  max-height: calc(100vh - 105px);
-  overflow-y: auto;
-  overflow-x: hidden;
-  scrollbar-width: thin;
-  scrollbar-color: #cbd5e1 transparent;
+  width: 100%;
 }
 
 /* Sidebar Table of Contents Card */
 .seo-sidebar-toc-box {
   background: #ffffff;
   border: 1.5px solid #e2e8f0;
-  border-radius: 14px;
-  padding: 12px 14px;
+  border-radius: 12px;
+  padding: 10px 12px;
   box-shadow: 0 4px 15px rgba(10, 42, 51, 0.05);
-  margin-top: 14px;
+  margin-top: 0;
   margin-bottom: 0;
   box-sizing: border-box;
   overflow: hidden;
@@ -1244,37 +1242,37 @@
 }
 
 .seo-sidebar-toc-header h4 {
-  font-size: 13.5px;
+  font-size: 13px;
   font-weight: 700;
   color: #0a2a33;
   margin: 0;
   display: flex;
   align-items: center;
-  gap: 7px;
+  gap: 6px;
 }
 
 .seo-sidebar-toc-toggle {
-  font-size: 11px;
+  font-size: 10.5px;
   font-weight: 600;
   color: #137c8b;
   display: inline-flex;
   align-items: center;
   gap: 3px;
   background: rgba(19, 124, 139, 0.08);
-  padding: 2px 7px;
-  border-radius: 12px;
+  padding: 1px 6px;
+  border-radius: 10px;
 }
 
 .seo-sidebar-toc-content {
-  margin-top: 8px;
-  padding-top: 8px;
+  margin-top: 6px;
+  padding-top: 6px;
   border-top: 1px solid #f1f5f9;
-  max-height: 240px;
+  max-height: 180px;
   overflow-y: auto;
   overflow-x: hidden;
   scrollbar-width: thin;
   scrollbar-color: #cbd5e1 transparent;
-  padding-right: 4px;
+  padding-right: 3px;
 }
 
 .seo-sidebar-toc-content::-webkit-scrollbar {
@@ -1338,21 +1336,22 @@
 .seo-sidebar-form-box {
   background: #ffffff;
   border: 1.5px solid #e2e8f0;
-  border-radius: 16px;
-  padding: 20px 18px;
-  box-shadow: 0 10px 30px rgba(10, 42, 51, 0.08);
+  border-radius: 12px;
+  padding: 14px 14px;
+  box-shadow: 0 4px 15px rgba(10, 42, 51, 0.05);
+  box-sizing: border-box;
 }
 
 .seo-sidebar-form-box h4 {
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 700;
   color: #0a2a33;
-  margin-bottom: 14px;
-  padding-bottom: 10px;
+  margin-bottom: 8px;
+  padding-bottom: 6px;
   border-bottom: 1px solid #f1f5f9;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 7px;
 }
 
 .seo-sidebar-form-box .appointment-request-form {
@@ -1360,67 +1359,77 @@
 }
 
 .seo-sidebar-form-box .appointment-request-form .row {
-  row-gap: 8px;
-  margin-left: -4px;
-  margin-right: -4px;
+  row-gap: 6px !important;
+  margin-left: -4px !important;
+  margin-right: -4px !important;
 }
 
 .seo-sidebar-form-box .appointment-request-form .col-md-6 {
-  flex: 0 0 50%;
-  max-width: 50%;
-  padding-left: 4px;
-  padding-right: 4px;
+  flex: 0 0 50% !important;
+  max-width: 50% !important;
+  padding-left: 4px !important;
+  padding-right: 4px !important;
 }
 
 .seo-sidebar-form-box .appointment-request-form .col-12 {
-  padding-left: 4px;
-  padding-right: 4px;
+  padding-left: 4px !important;
+  padding-right: 4px !important;
 }
 
 .seo-sidebar-form-box .appointment-request-form label {
-  font-size: 11.5px;
-  font-weight: 600;
-  color: #334155;
-  margin-bottom: 2px;
-  display: block;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  font-size: 11px !important;
+  font-weight: 600 !important;
+  color: #334155 !important;
+  margin-bottom: 2px !important;
+  display: block !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
 }
 
 .seo-sidebar-form-box .appointment-request-form .form-control {
-  min-height: 36px;
-  height: 36px;
-  font-size: 12.5px;
-  padding: 4px 8px;
-  border-radius: 6px;
-  border: 1px solid #cbd5e1;
+  min-height: 32px !important;
+  height: 32px !important;
+  font-size: 12px !important;
+  padding: 3px 8px !important;
+  border-radius: 6px !important;
+  border: 1px solid #cbd5e1 !important;
+  background-color: #ffffff !important;
+  color: #1e293b !important;
+  display: block !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
 }
 
 .seo-sidebar-form-box .appointment-request-form .form-control:focus {
-  border-color: #137c8b;
-  box-shadow: 0 0 0 0.12rem rgba(19, 124, 139, 0.18);
+  border-color: #137c8b !important;
+  box-shadow: 0 0 0 0.12rem rgba(19, 124, 139, 0.18) !important;
 }
 
 .seo-sidebar-form-box .appointment-request-form textarea.form-control {
-  min-height: 48px;
-  height: 48px;
-  resize: none;
-  font-size: 12.5px;
-  padding: 4px 8px;
+  min-height: 38px !important;
+  height: 38px !important;
+  resize: none !important;
+  font-size: 12px !important;
+  padding: 4px 8px !important;
 }
 
 .seo-sidebar-form-box .appointment-submit {
-  width: 100%;
-  margin-top: 10px;
-  background-color: #e8a33d;
-  border-color: #e8a33d;
+  width: 100% !important;
+  height: 34px !important;
+  margin-top: 6px !important;
+  background-color: #e8a33d !important;
+  border: 1px solid #e8a33d !important;
   color: #ffffff !important;
-  font-weight: 700;
-  font-size: 13.5px;
-  padding: 9px 14px;
-  border-radius: 8px;
-  transition: all 0.2s ease;
+  font-weight: 700 !important;
+  font-size: 13px !important;
+  padding: 0 14px !important;
+  border-radius: 6px !important;
+  cursor: pointer !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  transition: all 0.2s ease !important;
 }
 
 .seo-sidebar-form-box .appointment-submit:hover {
@@ -1569,4 +1578,73 @@
   .seo-bottom-cta-body {
     padding: 24px 20px;
   }
+}
+
+/* ============================================================ */
+/* PREVIEW MODAL MULTI-DEVICE RESPONSIVE EMULATION              */
+/* ============================================================ */
+.preview-mode-mobile .row.seo-content-row,
+.preview-mode-tablet .row.seo-content-row,
+.preview-mode-mobile .row.align-items-center,
+.preview-mode-tablet .row.align-items-center {
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+.preview-mode-mobile .col-lg-7,
+.preview-mode-mobile .col-lg-5,
+.preview-mode-mobile .col-lg-8,
+.preview-mode-mobile .col-lg-4,
+.preview-mode-tablet .col-lg-7,
+.preview-mode-tablet .col-lg-5,
+.preview-mode-tablet .col-lg-8,
+.preview-mode-tablet .col-lg-4 {
+  width: 100% !important;
+  max-width: 100% !important;
+  flex: 0 0 100% !important;
+}
+
+.preview-mode-mobile .seo-sticky-appointment-card,
+.preview-mode-tablet .seo-sticky-appointment-card {
+  position: static !important;
+  top: auto !important;
+  max-height: none !important;
+  overflow-y: visible !important;
+  width: 100% !important;
+  margin-top: 24px !important;
+}
+
+.preview-mode-mobile .d-none.d-lg-block {
+  display: none !important;
+}
+
+.preview-mode-mobile .d-block.d-lg-none {
+  display: block !important;
+}
+
+.preview-mode-mobile .seo-hero-h1 {
+  font-size: 20px !important;
+  line-height: 1.3 !important;
+}
+
+.preview-mode-mobile .seo-hero-intro {
+  font-size: 13px !important;
+  line-height: 1.4 !important;
+}
+
+.preview-mode-mobile .seo-article-container {
+  padding: 16px 12px !important;
+}
+
+.preview-mode-mobile .seo-article-h2 {
+  font-size: 18px !important;
+}
+
+.preview-mode-mobile .seo-article-p {
+  font-size: 13px !important;
+}
+
+.preview-mode-mobile .seo-sidebar-form-box .appointment-request-form .col-md-6 {
+  flex: 0 0 100% !important;
+  max-width: 100% !important;
 }

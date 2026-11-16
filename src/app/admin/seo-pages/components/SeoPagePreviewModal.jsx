@@ -211,21 +211,23 @@ export default function SeoPagePreviewModal({
           display: "flex",
           justifyContent: "center",
           alignItems: "flex-start",
-          padding: deviceMode === "desktop" ? 0 : "24px 16px 48px",
+          padding: deviceMode === "desktop" ? "16px 20px 48px" : "24px 16px 48px",
         }}
       >
         <div
+          className={`seo-live-preview-root preview-mode-${deviceMode}`}
           style={{
             width: containerWidth,
-            maxWidth: "100%",
+            maxWidth: deviceMode === "desktop" ? "1240px" : "100%",
             minHeight: "100%",
             background: "#ffffff",
-            boxShadow: deviceMode === "desktop" ? "none" : "0 25px 50px -12px rgba(0, 0, 0, 0.7)",
-            borderRadius: deviceMode === "desktop" ? 0 : 12,
+            boxShadow: deviceMode === "desktop" ? "0 10px 30px rgba(0, 0, 0, 0.35)" : "0 25px 50px -12px rgba(0, 0, 0, 0.7)",
+            borderRadius: deviceMode === "desktop" ? 8 : 12,
             overflowX: "hidden",
             overflowY: "visible",
             transition: "width 0.3s ease",
             boxSizing: "border-box",
+            margin: "0 auto",
           }}
         >
           {/* Render Actual Reusable Template */}
