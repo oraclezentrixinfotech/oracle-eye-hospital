@@ -1711,7 +1711,73 @@ export default function SeoPageForm({ initialData = null, doctorsList = [], allP
                     </div>
                   </div>
                 ))}
+
+                {/* Add Section at Bottom of List */}
+                <button
+                  type="button"
+                  onClick={addSection}
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    gap: 8,
+                    width: "100%",
+                    padding: "13px",
+                    background: "#f0fdfa",
+                    border: "2px dashed #0d9488",
+                    borderRadius: 8,
+                    color: "#0d9488",
+                    fontWeight: 700,
+                    fontSize: 14,
+                    cursor: "pointer",
+                    marginTop: 8,
+                    transition: "all 0.15s ease",
+                  }}
+                  onMouseEnter={(e) => (e.currentTarget.style.background = "#ccfbf1")}
+                  onMouseLeave={(e) => (e.currentTarget.style.background = "#f0fdfa")}
+                >
+                  <Plus size={16} strokeWidth={2.5} /> Add Another Content Section
+                </button>
               </div>
+
+              {/* Floating Sticky "Add Content Section" Button on Right Side */}
+              <button
+                type="button"
+                onClick={addSection}
+                title="Add New Content Section"
+                style={{
+                  position: "fixed",
+                  right: 28,
+                  bottom: 32,
+                  zIndex: 1000,
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: 8,
+                  padding: "12px 20px",
+                  background: "linear-gradient(135deg, #0d9488 0%, #0f766e 100%)",
+                  color: "#ffffff",
+                  fontSize: 14,
+                  fontWeight: 700,
+                  borderRadius: 50,
+                  border: "2px solid #ffffff",
+                  boxShadow: "0 10px 25px rgba(13, 148, 136, 0.45), 0 4px 10px rgba(0, 0, 0, 0.12)",
+                  cursor: "pointer",
+                  transition: "all 0.2s ease",
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.transform = "translateY(-2px) scale(1.03)";
+                  e.currentTarget.style.boxShadow =
+                    "0 14px 30px rgba(13, 148, 136, 0.55), 0 6px 14px rgba(0, 0, 0, 0.15)";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = "none";
+                  e.currentTarget.style.boxShadow =
+                    "0 10px 25px rgba(13, 148, 136, 0.45), 0 4px 10px rgba(0, 0, 0, 0.12)";
+                }}
+              >
+                <Plus size={18} strokeWidth={2.5} />
+                <span>+ Add Content Section</span>
+              </button>
             </div>
           )}
 

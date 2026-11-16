@@ -50,9 +50,16 @@ export default function ServiceContentClient({
       if (!rowRef.current || !sidebarColRef.current) return;
 
       const rowRect = rowRef.current.getBoundingClientRect();
-      const colRect = sidebarColRef.current.getBoundingClientRect();
+      const colEl = sidebarColRef.current;
+      const colRect = colEl.getBoundingClientRect();
+      const colStyle = window.getComputedStyle(colEl);
+      const padLeft = parseFloat(colStyle.paddingLeft) || 0;
+      const padRight = parseFloat(colStyle.paddingRight) || 0;
+      const actualWidth = colRect.width - padLeft - padRight;
+      const actualLeft = colRect.left + padLeft;
+
       const topOffset = 90; // distance from top of viewport below header
-      const formCard = sidebarColRef.current.querySelector(".seo-sticky-appointment-card");
+      const formCard = colEl.querySelector(".seo-sticky-appointment-card");
       const cardHeight = formCard ? formCard.offsetHeight : 380;
 
       // 1. Above content row: natural static position
@@ -71,8 +78,8 @@ export default function ServiceContentClient({
           position: "absolute",
           bottom: 0,
           top: "auto",
-          left: 0,
-          width: "100%",
+          left: `${padLeft}px`,
+          width: `${actualWidth}px`,
           zIndex: 30,
         });
       }
@@ -81,9 +88,11 @@ export default function ServiceContentClient({
         setSidebarStyle({
           position: "fixed",
           top: `${topOffset}px`,
-          left: `${colRect.left}px`,
-          width: `${colRect.width}px`,
+          left: `${actualLeft}px`,
+          width: `${actualWidth}px`,
           zIndex: 90,
+          maxHeight: `calc(100vh - ${topOffset + 15}px)`,
+          overflowY: "auto",
         });
       }
     };
@@ -447,17 +456,17 @@ export default function ServiceContentClient({
                       <ul className="seo-sidebar-toc-list">
                         {tocItems.map((item, idx) => (
                           <li key={idx}>
-                            <a href={`#${item.id}`}>• {item.heading}</a>
+                            <a href={`#${item.id}`} title={item.heading}>• {item.heading}</a>
                           </li>
                         ))}
                         {doctors.length > 0 && (
                           <li>
-                            <a href="#expert-doctors">• Meet Specialists</a>
+                            <a href="#expert-doctors" title="Meet Specialists">• Meet Specialists</a>
                           </li>
                         )}
                         {faqs.length > 0 && (
                           <li>
-                            <a href="#faq-section">• FAQs</a>
+                            <a href="#faq-section" title="Frequently Asked Questions">• FAQs</a>
                           </li>
                         )}
                       </ul>

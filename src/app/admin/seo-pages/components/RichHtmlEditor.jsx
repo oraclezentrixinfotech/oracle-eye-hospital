@@ -73,6 +73,8 @@ export default function RichHtmlEditor({
   const [mounted, setMounted] = useState(false);
   const [headingDropdownOpen, setHeadingDropdownOpen] = useState(false);
   const [alignDropdownOpen, setAlignDropdownOpen] = useState(false);
+  const [bulletDropdownOpen, setBulletDropdownOpen] = useState(false);
+  const [orderedDropdownOpen, setOrderedDropdownOpen] = useState(false);
 
   // Floating Image Bubble Menu State
   const [imageBubble, setImageBubble] = useState(null);
@@ -80,6 +82,8 @@ export default function RichHtmlEditor({
   const containerRef = useRef(null);
   const headingRef = useRef(null);
   const alignRef = useRef(null);
+  const bulletRef = useRef(null);
+  const orderedRef = useRef(null);
 
   const editor = useEditor({
     immediatelyRender: false,
@@ -188,6 +192,12 @@ export default function RichHtmlEditor({
       }
       if (alignRef.current && !alignRef.current.contains(event.target)) {
         setAlignDropdownOpen(false);
+      }
+      if (bulletRef.current && !bulletRef.current.contains(event.target)) {
+        setBulletDropdownOpen(false);
+      }
+      if (orderedRef.current && !orderedRef.current.contains(event.target)) {
+        setOrderedDropdownOpen(false);
       }
       if (
         containerRef.current &&
@@ -536,38 +546,125 @@ export default function RichHtmlEditor({
 
         <div className="tb-divider" />
 
-        {/* Lists & Blocks */}
+        {/* Lists & Blocks with Internal / External Dropdown Options */}
         <div style={{ display: "flex", alignItems: "center", gap: 2 }}>
-          <button
-            type="button"
-            title="Highlight Bullet Points (Items List)"
-            onMouseDown={preventBlur}
-            onClick={() => {
-              if (onToggleBulletList) {
-                onToggleBulletList();
-              } else {
-                editor?.chain().focus().toggleBulletList().run();
-              }
-            }}
-            className={`tb-btn ${editor?.isActive("bulletList") ? "active" : ""}`}
-          >
-            <List size={14} />
-          </button>
-          <button
-            type="button"
-            title="Numbered Step Items (Items List)"
-            onMouseDown={preventBlur}
-            onClick={() => {
-              if (onToggleOrderedList) {
-                onToggleOrderedList();
-              } else {
-                editor?.chain().focus().toggleOrderedList().run();
-              }
-            }}
-            className={`tb-btn ${editor?.isActive("orderedList") ? "active" : ""}`}
-          >
-            <ListOrdered size={14} />
-          </button>
+          {/* Bullet List */}
+          <div ref={bulletRef} style={{ position: "relative" }}>
+            <button
+              type="button"
+              title={onToggleBulletList ? "Bullet Points (Internal or External)" : "Bullet List"}
+              onMouseDown={preventBlur}
+              onClick={() => {
+                if (onToggleBulletList) {
+                  setBulletDropdownOpen(!bulletDropdownOpen);
+                  setOrderedDropdownOpen(false);
+                } else {
+                  editor?.chain().focus().toggleBulletList().run();
+                }
+              }}
+              className={`tb-btn ${editor?.isActive("bulletList") || bulletDropdownOpen ? "active" : ""}`}
+              style={onToggleBulletList ? { width: "auto", padding: "0 5px", gap: 2 } : {}}
+            >
+              <List size={14} />
+              {onToggleBulletList && <ChevronDown size={10} style={{ opacity: 0.6 }} />}
+            </button>
+
+            {bulletDropdownOpen && (
+              <div className="tb-dropdown-menu" style={{ minWidth: 230, left: 0 }}>
+                <button
+                  type="button"
+                  onMouseDown={preventBlur}
+                  onClick={() => {
+                    editor?.chain().focus().toggleBulletList().run();
+                    setBulletDropdownOpen(false);
+                  }}
+                  className={`tb-dropdown-item ${editor?.isActive("bulletList") ? "active" : ""}`}
+                  style={{ display: "flex", alignItems: "center", gap: 8, padding: "8px 10px" }}
+                >
+                  <List size={15} color="#0d9488" />
+                  <div style={{ textAlign: "left" }}>
+                    <div style={{ fontWeight: 600, fontSize: 13, color: "#0f172a" }}>Internal (Inside Content)</div>
+                    <div style={{ fontSize: 11, color: "#64748b" }}>Bullet list directly inside paragraph text</div>
+                  </div>
+                </button>
+                <button
+                  type="button"
+                  onMouseDown={preventBlur}
+                  onClick={() => {
+                    onToggleBulletList?.();
+                    setBulletDropdownOpen(false);
+                  }}
+                  className="tb-dropdown-item"
+                  style={{ display: "flex", alignItems: "center", gap: 8, padding: "8px 10px" }}
+                >
+                  <Grid size={15} color="#e8a33d" />
+                  <div style={{ textAlign: "left" }}>
+                    <div style={{ fontWeight: 600, fontSize: 13, color: "#0f172a" }}>External (Highlight Box)</div>
+                    <div style={{ fontSize: 11, color: "#64748b" }}>Highlight Bullet Points card below section</div>
+                  </div>
+                </button>
+              </div>
+            )}
+          </div>
+
+          {/* Numbered List */}
+          <div ref={orderedRef} style={{ position: "relative" }}>
+            <button
+              type="button"
+              title={onToggleOrderedList ? "Numbered Items (Internal or External)" : "Numbered List"}
+              onMouseDown={preventBlur}
+              onClick={() => {
+                if (onToggleOrderedList) {
+                  setOrderedDropdownOpen(!orderedDropdownOpen);
+                  setBulletDropdownOpen(false);
+                } else {
+                  editor?.chain().focus().toggleOrderedList().run();
+                }
+              }}
+              className={`tb-btn ${editor?.isActive("orderedList") || orderedDropdownOpen ? "active" : ""}`}
+              style={onToggleOrderedList ? { width: "auto", padding: "0 5px", gap: 2 } : {}}
+            >
+              <ListOrdered size={14} />
+              {onToggleOrderedList && <ChevronDown size={10} style={{ opacity: 0.6 }} />}
+            </button>
+
+            {orderedDropdownOpen && (
+              <div className="tb-dropdown-menu" style={{ minWidth: 230, left: 0 }}>
+                <button
+                  type="button"
+                  onMouseDown={preventBlur}
+                  onClick={() => {
+                    editor?.chain().focus().toggleOrderedList().run();
+                    setOrderedDropdownOpen(false);
+                  }}
+                  className={`tb-dropdown-item ${editor?.isActive("orderedList") ? "active" : ""}`}
+                  style={{ display: "flex", alignItems: "center", gap: 8, padding: "8px 10px" }}
+                >
+                  <ListOrdered size={15} color="#0d9488" />
+                  <div style={{ textAlign: "left" }}>
+                    <div style={{ fontWeight: 600, fontSize: 13, color: "#0f172a" }}>Internal (Inside Content)</div>
+                    <div style={{ fontSize: 11, color: "#64748b" }}>1, 2, 3 list directly inside paragraph text</div>
+                  </div>
+                </button>
+                <button
+                  type="button"
+                  onMouseDown={preventBlur}
+                  onClick={() => {
+                    onToggleOrderedList?.();
+                    setOrderedDropdownOpen(false);
+                  }}
+                  className="tb-dropdown-item"
+                  style={{ display: "flex", alignItems: "center", gap: 8, padding: "8px 10px" }}
+                >
+                  <Rows size={15} color="#e8a33d" />
+                  <div style={{ textAlign: "left" }}>
+                    <div style={{ fontWeight: 600, fontSize: 13, color: "#0f172a" }}>External (Numbered Steps)</div>
+                    <div style={{ fontSize: 11, color: "#64748b" }}>Step-by-step boxes below section</div>
+                  </div>
+                </button>
+              </div>
+            )}
+          </div>
           <button
             type="button"
             title="Blockquote"
@@ -1631,6 +1728,39 @@ export default function RichHtmlEditor({
         }
         .rich-html-editor-content p {
           margin: 0 0 10px;
+        }
+        .rich-html-editor-content ul,
+        .ProseMirror ul {
+          list-style-type: disc !important;
+          list-style-position: outside !important;
+          padding-left: 28px !important;
+          margin: 8px 0 12px 0 !important;
+        }
+        .rich-html-editor-content ol,
+        .ProseMirror ol {
+          list-style-type: decimal !important;
+          list-style-position: outside !important;
+          padding-left: 28px !important;
+          margin: 8px 0 12px 0 !important;
+        }
+        .rich-html-editor-content ul li,
+        .ProseMirror ul li {
+          list-style-type: disc !important;
+          display: list-item !important;
+          margin-bottom: 4px !important;
+          padding-left: 4px !important;
+        }
+        .rich-html-editor-content ol li,
+        .ProseMirror ol li {
+          list-style-type: decimal !important;
+          display: list-item !important;
+          margin-bottom: 4px !important;
+          padding-left: 4px !important;
+        }
+        .rich-html-editor-content li > p,
+        .ProseMirror li > p {
+          margin: 0 !important;
+          display: block !important;
         }
         .rich-html-editor-content h2,
         .rich-html-editor-content h3,

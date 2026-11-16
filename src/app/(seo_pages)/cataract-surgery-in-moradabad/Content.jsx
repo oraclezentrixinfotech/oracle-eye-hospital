@@ -102,9 +102,16 @@ export default function Content({ faqs = DEFAULT_CATARACT_FAQS }) {
       if (!rowRef.current || !sidebarColRef.current) return;
 
       const rowRect = rowRef.current.getBoundingClientRect();
-      const colRect = sidebarColRef.current.getBoundingClientRect();
+      const colEl = sidebarColRef.current;
+      const colRect = colEl.getBoundingClientRect();
+      const colStyle = window.getComputedStyle(colEl);
+      const padLeft = parseFloat(colStyle.paddingLeft) || 0;
+      const padRight = parseFloat(colStyle.paddingRight) || 0;
+      const actualWidth = colRect.width - padLeft - padRight;
+      const actualLeft = colRect.left + padLeft;
+
       const topOffset = 90; // distance from top of viewport below header
-      const formCard = sidebarColRef.current.querySelector(".seo-sticky-appointment-card");
+      const formCard = colEl.querySelector(".seo-sticky-appointment-card");
       const cardHeight = formCard ? formCard.offsetHeight : 380;
 
       // 1. Above content row: natural static position
@@ -123,8 +130,8 @@ export default function Content({ faqs = DEFAULT_CATARACT_FAQS }) {
           position: "absolute",
           bottom: 0,
           top: "auto",
-          left: 0,
-          width: "100%",
+          left: `${padLeft}px`,
+          width: `${actualWidth}px`,
           zIndex: 30,
         });
       }
@@ -133,9 +140,11 @@ export default function Content({ faqs = DEFAULT_CATARACT_FAQS }) {
         setSidebarStyle({
           position: "fixed",
           top: `${topOffset}px`,
-          left: `${colRect.left}px`,
-          width: `${colRect.width}px`,
+          left: `${actualLeft}px`,
+          width: `${actualWidth}px`,
           zIndex: 90,
+          maxHeight: `calc(100vh - ${topOffset + 15}px)`,
+          overflowY: "auto",
         });
       }
     };

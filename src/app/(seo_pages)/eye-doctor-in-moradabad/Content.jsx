@@ -102,9 +102,16 @@ export default function Content({ faqs = DEFAULT_EYE_DOCTOR_FAQS }) {
             if (!rowRef.current || !sidebarColRef.current) return;
 
             const rowRect = rowRef.current.getBoundingClientRect();
-            const colRect = sidebarColRef.current.getBoundingClientRect();
+            const colEl = sidebarColRef.current;
+            const colRect = colEl.getBoundingClientRect();
+            const colStyle = window.getComputedStyle(colEl);
+            const padLeft = parseFloat(colStyle.paddingLeft) || 0;
+            const padRight = parseFloat(colStyle.paddingRight) || 0;
+            const actualWidth = colRect.width - padLeft - padRight;
+            const actualLeft = colRect.left + padLeft;
+
             const topOffset = 90;
-            const formCard = sidebarColRef.current.querySelector(
+            const formCard = colEl.querySelector(
                 ".seo-sticky-appointment-card"
             );
             const cardHeight = formCard ? formCard.offsetHeight : 380;
@@ -122,17 +129,19 @@ export default function Content({ faqs = DEFAULT_EYE_DOCTOR_FAQS }) {
                     position: "absolute",
                     bottom: 0,
                     top: "auto",
-                    left: 0,
-                    width: "100%",
+                    left: `${padLeft}px`,
+                    width: `${actualWidth}px`,
                     zIndex: 30,
                 });
             } else {
                 setSidebarStyle({
                     position: "fixed",
                     top: `${topOffset}px`,
-                    left: `${colRect.left}px`,
-                    width: `${colRect.width}px`,
+                    left: `${actualLeft}px`,
+                    width: `${actualWidth}px`,
                     zIndex: 90,
+                    maxHeight: `calc(100vh - ${topOffset + 15}px)`,
+                    overflowY: "auto",
                 });
             }
         };
