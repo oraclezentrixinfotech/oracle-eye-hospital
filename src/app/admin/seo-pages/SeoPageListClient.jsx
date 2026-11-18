@@ -393,10 +393,13 @@ export default function SeoPageListClient({ rows = [], doctorsList = [], allPage
 
   return (
     <>
-      {/* Header Card - Slim, Sleek & Single-line */}
+      {/* Header Card - Slim, Sleek, Sticky & Single-line */}
       <div
         className="adt-header-card"
         style={{
+          position: "sticky",
+          top: 0,
+          zIndex: 40,
           marginBottom: 16,
           padding: "10px 18px",
           display: "flex",
@@ -407,7 +410,7 @@ export default function SeoPageListClient({ rows = [], doctorsList = [], allPage
           background: "#ffffff",
           border: "1px solid #e2e8f0",
           borderRadius: 8,
-          boxShadow: "0 1px 3px rgba(0,0,0,0.04)",
+          boxShadow: "0 4px 12px rgba(0,0,0,0.06)",
           minHeight: 52,
         }}
       >
@@ -479,8 +482,8 @@ export default function SeoPageListClient({ rows = [], doctorsList = [], allPage
 
           <a
             href="/api/admin/seo-pages/download-template"
-            download="sample.docx"
-            title="Download Word Document Content Template (sample.docx)"
+            download="template.docx"
+            title="Download Word Document Content Template (template.docx)"
             style={{
               height: 32,
               padding: "0 11px",

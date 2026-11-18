@@ -544,11 +544,7 @@ export default function Content({ faqs = DEFAULT_EYE_DOCTOR_FAQS }) {
                                             <strong>Easy access for Moradabad and nearby towns:</strong> Patients from surrounding areas can receive quality eye care close to home.
                                         </li>
                                     </ul>
-                                    <p className="seo-article-p">
-                                        <em>
-                                            [Client to add: hospital address, doctor names and qualifications, years of experience, equipment details, awards and patient testimonials to boost trust and local SEO.]
-                                        </em>
-                                    </p>
+
                                 </div>
                             </article>
                         </div>

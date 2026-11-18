@@ -67,6 +67,8 @@ export default function RichHtmlEditor({
   minHeight = 140,
   onToggleBulletList,
   onToggleOrderedList,
+  onEditorFocus,
+  onEditorReady,
 }) {
   const [sourceMode, setSourceMode] = useState(false);
   const [source, setSource] = useState(value || "");
@@ -114,7 +116,11 @@ export default function RichHtmlEditor({
         return false;
       },
     },
+    onFocus: ({ editor: current }) => {
+      onEditorFocus?.(current);
+    },
     onSelectionUpdate: ({ editor: current }) => {
+      onEditorFocus?.(current);
       const { state, view } = current;
       const { selection } = state;
       if (selection.node && selection.node.type.name === "image") {
@@ -183,6 +189,12 @@ export default function RichHtmlEditor({
   useEffect(() => {
     setMounted(true);
   }, []);
+
+  useEffect(() => {
+    if (editor && onEditorReady) {
+      onEditorReady(editor);
+    }
+  }, [editor, onEditorReady]);
 
   // Close dropdowns and image bubble on outside click
   useEffect(() => {
@@ -358,6 +370,9 @@ export default function RichHtmlEditor({
     <div
       ref={containerRef}
       className="rich-html-editor"
+      onFocusCapture={() => {
+        if (editor) onEditorFocus?.(editor);
+      }}
       style={{
         border: "1px solid #cbd5e1",
         borderRadius: 6,

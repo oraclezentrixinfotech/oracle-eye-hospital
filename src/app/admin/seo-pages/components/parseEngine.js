@@ -152,7 +152,8 @@ export function matchRelatedIds(relatedInput, allPages = []) {
 
   items.forEach((item) => {
     const itemStr = typeof item === "object" && item !== null ? item.slug || item.h1Title || "" : String(item || "");
-    const slugCandidate = slugify(itemStr);
+    const cleanStr = itemStr.replace(/^[/#]+|[./#\s]+$/g, "");
+    const slugCandidate = slugify(cleanStr);
     const found = allPages.find(
       (p) =>
         p.id === item ||
@@ -604,8 +605,24 @@ export function parseBasicText(rawText, doctorsList = [], allPages = [], extraMe
       continue;
     }
 
-    // 4. Intro paragraphs before any section heading
+    // 4. Intro paragraphs or highlight callout before any section heading
     if (!currentSection && sections.length === 0) {
+      const colonIdx = trimmed.indexOf(":");
+      if (colonIdx > 0 && colonIdx <= 45 && !trimmed.startsWith("http")) {
+        const h = trimmed.slice(0, colonIdx).trim();
+        const body = trimmed.slice(colonIdx + 1).trim();
+        if (h && body && !metadataKeySet.has(h.toLowerCase())) {
+          sections.push({
+            id: slugify(h).slice(0, 35) || `section-1`,
+            heading: h,
+            type: "highlight",
+            content: formatInlineMarkdown(body),
+            items: [],
+            table: null,
+          });
+          continue;
+        }
+      }
       introParagraphs.push(trimmed);
       continue;
     }

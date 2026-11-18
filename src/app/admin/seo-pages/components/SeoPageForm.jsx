@@ -32,6 +32,7 @@ import {
 } from "lucide-react";
 import ImageUpload from "../../components/ImageUpload";
 import RichHtmlEditor from "./RichHtmlEditor";
+import FloatingVerticalToolbar from "./FloatingVerticalToolbar";
 import { toast } from "../../components/Toast";
 import SeoPagePreviewModal from "./SeoPagePreviewModal";
 import "../../admin.css";
@@ -137,6 +138,10 @@ export default function SeoPageForm({ initialData = null, doctorsList = [], allP
   const [savingSchemaOnly, setSavingSchemaOnly] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
   const [showPreview, setShowPreview] = useState(false);
+
+  // Active Rich Text Editor & Section tracker for floating vertical toolbar
+  const [activeEditor, setActiveEditor] = useState(null);
+  const [activeSectionIdx, setActiveSectionIdx] = useState(0);
 
   // Draft persistence for "Add New SEO Page" and "Edit SEO Page" to prevent data loss on refresh
   const DRAFT_KEY = isEditing && initialData?.id
@@ -403,6 +408,40 @@ export default function SeoPageForm({ initialData = null, doctorsList = [], allP
       };
       return { ...prev, sections: next };
     });
+  }
+
+  function handleToggleExternalBullets() {
+    const idx = activeSectionIdx;
+    if (form.sections && form.sections[idx]) {
+      const sec = form.sections[idx];
+      if (sec.type === "highlight") {
+        updateSection(idx, "type", "text");
+      } else {
+        const existingItems = Array.isArray(sec.items) && sec.items.length > 0 ? sec.items : ["", ""];
+        setForm((prev) => {
+          const next = [...prev.sections];
+          next[idx] = { ...next[idx], type: "highlight", items: existingItems };
+          return { ...prev, sections: next };
+        });
+      }
+    }
+  }
+
+  function handleToggleExternalNumbered() {
+    const idx = activeSectionIdx;
+    if (form.sections && form.sections[idx]) {
+      const sec = form.sections[idx];
+      if (sec.type === "numbered") {
+        updateSection(idx, "type", "text");
+      } else {
+        const existingItems = Array.isArray(sec.items) && sec.items.length > 0 ? sec.items : ["", ""];
+        setForm((prev) => {
+          const next = [...prev.sections];
+          next[idx] = { ...next[idx], type: "numbered", items: existingItems };
+          return { ...prev, sections: next };
+        });
+      }
+    }
   }
 
   // ── Doctors Multi-select ────────────────────────────────────────
@@ -746,10 +785,13 @@ export default function SeoPageForm({ initialData = null, doctorsList = [], allP
 
   return (
     <div style={{ maxWidth: 1100, margin: "0 auto", paddingBottom: 60 }}>
-      {/* Top Header Card - Slim, Sleek & Single-line */}
+      {/* Top Header Card - Slim, Sleek, Sticky & Single-line */}
       <div
         className="adt-header-card"
         style={{
+          position: "sticky",
+          top: 0,
+          zIndex: 40,
           marginBottom: 16,
           padding: "10px 18px",
           display: "flex",
@@ -760,7 +802,7 @@ export default function SeoPageForm({ initialData = null, doctorsList = [], allP
           background: "#ffffff",
           border: "1px solid #e2e8f0",
           borderRadius: 8,
-          boxShadow: "0 1px 3px rgba(0,0,0,0.04)",
+          boxShadow: "0 4px 12px rgba(0,0,0,0.06)",
           minHeight: 52,
         }}
       >
@@ -1687,6 +1729,16 @@ export default function SeoPageForm({ initialData = null, doctorsList = [], allP
                           onChange={(html) => updateSection(idx, "content", html)}
                           placeholder="Section paragraph content..."
                           minHeight={130}
+                          onEditorFocus={(ed) => {
+                            setActiveEditor(ed);
+                            setActiveSectionIdx(idx);
+                          }}
+                          onEditorReady={(ed) => {
+                            if (!activeEditor && idx === 0) {
+                              setActiveEditor(ed);
+                              setActiveSectionIdx(0);
+                            }
+                          }}
                           onToggleBulletList={() => {
                             if (sec.type === "highlight") {
                               updateSection(idx, "type", "text");
@@ -1993,6 +2045,7 @@ export default function SeoPageForm({ initialData = null, doctorsList = [], allP
                           onChange={(html) => updateFaq(idx, "answer", html)}
                           placeholder="Provide a clear, clinical, patient-friendly answer..."
                           minHeight={100}
+                          onEditorFocus={(ed) => setActiveEditor(ed)}
                         />
                       </div>
                     </div>
@@ -3314,6 +3367,14 @@ export default function SeoPageForm({ initialData = null, doctorsList = [], allP
           </div>
         </div>
       )}
+
+      {/* Floating Vertical Toolbar pinned permanently on right during editing */}
+      <FloatingVerticalToolbar
+        activeEditor={activeEditor}
+        onToggleExternalBullets={handleToggleExternalBullets}
+        onToggleExternalNumbered={handleToggleExternalNumbered}
+        visible={activeTab === "content"}
+      />
     </div>
   );
 }
