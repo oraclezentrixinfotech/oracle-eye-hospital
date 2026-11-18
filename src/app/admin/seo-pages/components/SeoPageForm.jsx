@@ -420,7 +420,12 @@ export default function SeoPageForm({ initialData = null, doctorsList = [], allP
         const existingItems = Array.isArray(sec.items) && sec.items.length > 0 ? sec.items : ["", ""];
         setForm((prev) => {
           const next = [...prev.sections];
-          next[idx] = { ...next[idx], type: "highlight", items: existingItems };
+          next[idx] = {
+            ...next[idx],
+            type: "highlight",
+            calloutHeading: next[idx].calloutHeading || "Why Choose Oracle Eye Hospital?",
+            items: existingItems,
+          };
           return { ...prev, sections: next };
         });
       }
@@ -965,7 +970,7 @@ export default function SeoPageForm({ initialData = null, doctorsList = [], allP
 
           {isEditing && form.slug && (
             <a
-              href={`/${form.slug}`}
+              href={`/${String(form.slug || "").trim().replace(/^\/+/, "")}`}
               target="_blank"
               rel="noopener noreferrer"
               title="View live published page"
@@ -1699,7 +1704,13 @@ export default function SeoPageForm({ initialData = null, doctorsList = [], allP
                           <label>Section Display Layout Type</label>
                           <select
                             value={sec.type}
-                            onChange={(e) => updateSection(idx, "type", e.target.value)}
+                            onChange={(e) => {
+                              const newType = e.target.value;
+                              updateSection(idx, "type", newType);
+                              if (newType === "highlight" && !sec.calloutHeading) {
+                                updateSection(idx, "calloutHeading", "Why Choose Oracle Eye Hospital?");
+                              }
+                            }}
                             style={{
                               padding: "9px 12px",
                               border: "1px solid #d1d5db",
@@ -1715,6 +1726,78 @@ export default function SeoPageForm({ initialData = null, doctorsList = [], allP
                           </select>
                         </div>
                       </div>
+
+                      {/* Callout Box Heading (when layout is Highlight Callout Box) */}
+                      {sec.type === "highlight" && (
+                        <div
+                          className="adt-field"
+                          style={{
+                            marginBottom: 14,
+                            padding: "10px 14px",
+                            background: "#f0fdfa",
+                            border: "1px solid #99f6e4",
+                            borderRadius: 6,
+                          }}
+                        >
+                          <div
+                            style={{
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "space-between",
+                              marginBottom: 6,
+                            }}
+                          >
+                            <label
+                              style={{
+                                fontSize: 13,
+                                fontWeight: 700,
+                                color: "#0f766e",
+                                margin: 0,
+                                display: "flex",
+                                alignItems: "center",
+                                gap: 6,
+                              }}
+                            >
+                              <span>Callout Box Heading</span>
+                              <span style={{ fontSize: 11, fontWeight: 400, color: "#64748b" }}>
+                                (Displayed inside the highlighted callout box)
+                              </span>
+                            </label>
+                            <button
+                              type="button"
+                              onClick={() => updateSection(idx, "calloutHeading", "Why Choose Oracle Eye Hospital?")}
+                              style={{
+                                background: "none",
+                                border: "none",
+                                color: "#0d9488",
+                                fontSize: 11.5,
+                                fontWeight: 600,
+                                cursor: "pointer",
+                                textDecoration: "underline",
+                                padding: 0,
+                              }}
+                              title="Reset to default heading"
+                            >
+                              Reset Default
+                            </button>
+                          </div>
+                          <input
+                            type="text"
+                            placeholder="Why Choose Oracle Eye Hospital?"
+                            value={sec.calloutHeading !== undefined ? sec.calloutHeading : "Why Choose Oracle Eye Hospital?"}
+                            onChange={(e) => updateSection(idx, "calloutHeading", e.target.value)}
+                            style={{
+                              width: "100%",
+                              padding: "8px 12px",
+                              borderRadius: 6,
+                              border: "1px solid #14b8a6",
+                              fontSize: 13,
+                              background: "#ffffff",
+                              color: "#0f172a",
+                            }}
+                          />
+                        </div>
+                      )}
 
                       {/* Content / Intro Body */}
                       <div className="adt-field">
@@ -1751,6 +1834,7 @@ export default function SeoPageForm({ initialData = null, doctorsList = [], allP
                                 next[idx] = {
                                   ...next[idx],
                                   type: "highlight",
+                                  calloutHeading: next[idx].calloutHeading || "Why Choose Oracle Eye Hospital?",
                                   items: existingItems,
                                 };
                                 return { ...prev, sections: next };

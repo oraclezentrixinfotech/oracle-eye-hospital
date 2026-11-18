@@ -870,6 +870,9 @@ export function sanitizeParsedOutput(data, doctorsList = [], allPages = [], full
     ? rawSections.map((s, idx) => ({
         id: slugify(s.heading || `section-${idx + 1}`).slice(0, 35) || `section-${idx + 1}`,
         heading: String(s.heading || `Section ${idx + 1}`).trim(),
+        calloutHeading: s.calloutHeading
+          ? String(s.calloutHeading).trim()
+          : (s.callout_heading ? String(s.callout_heading).trim() : undefined),
         type: ["text", "checklist", "numbered", "highlight"].includes(s.type)
           ? s.type
           : Array.isArray(s.items) && s.items.length > 0

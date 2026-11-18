@@ -6,6 +6,7 @@ import { prisma } from "@/lib/prisma";
 import ServiceContentClient from "./ServiceContentClient";
 import { SITE_URL } from "@/lib/siteUrl";
 import { ensureDbSchema } from "@/lib/ensureDbSchema";
+import { isAdmin } from "@/lib/auth";
 
 export const dynamic = "force-dynamic";
 
@@ -16,8 +17,15 @@ export async function generateMetadata({ params }) {
   let seoPage = null;
   try {
     await ensureDbSchema();
+    const cleanSlug = decodeURIComponent(slug || "").trim().replace(/^\/+|\/+$/g, "");
     seoPage = await prisma.seoPage.findFirst({
-      where: { slug, status: "published" },
+      where: {
+        OR: [
+          { slug: cleanSlug },
+          { slug: `/${cleanSlug}` },
+          { slug: { equals: cleanSlug, mode: "insensitive" } },
+        ],
+      },
     });
   } catch (err) {
     console.error("generateMetadata SEO Page DB error:", err?.message || err);
@@ -106,8 +114,18 @@ export default async function ServicePage({ params }) {
 
   try {
     await ensureDbSchema();
+    const adminUser = isAdmin();
+    const cleanSlug = decodeURIComponent(slug || "").trim().replace(/^\/+|\/+$/g, "");
+
     seoPage = await prisma.seoPage.findFirst({
-      where: { slug, status: "published" },
+      where: {
+        OR: [
+          { slug: cleanSlug },
+          { slug: `/${cleanSlug}` },
+          { slug: { equals: cleanSlug, mode: "insensitive" } },
+        ],
+        ...(adminUser ? {} : { status: "published" }),
+      },
     });
 
     if (seoPage) {

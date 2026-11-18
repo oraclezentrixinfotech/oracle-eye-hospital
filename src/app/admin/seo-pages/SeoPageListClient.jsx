@@ -156,10 +156,11 @@ function SlugCell({ slug }) {
 }
 
 function ActionButtons({ r, onOpenDelete }) {
+  const cleanSlug = String(r.slug || "").trim().replace(/^\/+/, "");
   return (
     <div style={{ display: "inline-flex", alignItems: "center", gap: 6, whiteSpace: "nowrap" }}>
       <a
-        href={`/${r.slug}`}
+        href={`/${cleanSlug}`}
         target="_blank"
         rel="noopener noreferrer"
         title="View live page"

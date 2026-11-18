@@ -203,13 +203,15 @@ export default function ServiceContentClient({
                       <HeadingTag className={headingClass}>{sec.heading}</HeadingTag>
 
                       {/* Paragraph text / Rich HTML */}
-                      {paragraphs.map((pText, pIdx) => (
-                        <div
-                          key={pIdx}
-                          className="seo-article-p"
-                          dangerouslySetInnerHTML={{ __html: pText }}
-                        />
-                      ))}
+                      {sec.type !== "highlight" || (Array.isArray(sec.items) && sec.items.length > 0)
+                        ? paragraphs.map((pText, pIdx) => (
+                            <div
+                              key={pIdx}
+                              className="seo-article-p"
+                              dangerouslySetInnerHTML={{ __html: pText }}
+                            />
+                          ))
+                        : null}
 
                       {/* Structured Table (if present) */}
                       {sec.table && Array.isArray(sec.table.headers) && sec.table.headers.length > 0 && (
@@ -241,22 +243,40 @@ export default function ServiceContentClient({
                       )}
 
                       {/* Layout Type: Highlight Callout Box */}
-                      {sec.type === "highlight" &&
-                        Array.isArray(sec.items) &&
-                        sec.items.length > 0 && (
-                          <div className="seo-article-callout">
-                            <h4>Why Choose Oracle Eye Hospital?</h4>
-                            <ul style={{ margin: "10px 0 0 0", paddingLeft: 20 }}>
-                              {sec.items.map((hItem, hIdx) => (
-                                <li
-                                  key={hIdx}
-                                  style={{ marginBottom: 6 }}
-                                  dangerouslySetInnerHTML={{ __html: hItem }}
-                                />
-                              ))}
-                            </ul>
-                          </div>
-                        )}
+                      {sec.type === "highlight" && (
+                        <div className="seo-article-callout">
+                          <h4>
+                            {sec.calloutHeading && sec.calloutHeading.trim()
+                              ? sec.calloutHeading.trim()
+                              : "Why Choose Oracle Eye Hospital?"}
+                          </h4>
+                          {Array.isArray(sec.items) && sec.items.length > 0 ? (
+                            sec.items.length === 1 ? (
+                              <p dangerouslySetInnerHTML={{ __html: sec.items[0] }} />
+                            ) : (
+                              <ul style={{ margin: "10px 0 0 0", paddingLeft: 20 }}>
+                                {sec.items.map((hItem, hIdx) => (
+                                  <li
+                                    key={hIdx}
+                                    style={{ marginBottom: 6 }}
+                                    dangerouslySetInnerHTML={{ __html: hItem }}
+                                  />
+                                ))}
+                              </ul>
+                            )
+                          ) : (
+                            paragraphs.length > 0 &&
+                            paragraphs.map((pText, pIdx) => (
+                              <div
+                                key={pIdx}
+                                className="seo-article-p"
+                                style={{ margin: 0 }}
+                                dangerouslySetInnerHTML={{ __html: pText }}
+                              />
+                            ))
+                          )}
+                        </div>
+                      )}
 
                       {/* Layout Type: Checklist */}
                       {sec.type === "checklist" &&
