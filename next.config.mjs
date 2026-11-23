@@ -6,6 +6,17 @@ const nextConfig = {
   async redirects() {
     return [
       {
+        source: "/:path*",
+        has: [
+          {
+            type: "host",
+            value: "oracleeyehospital.com",
+          },
+        ],
+        destination: "https://www.oracleeyehospital.com/:path*",
+        permanent: true,
+      },
+      {
         source: "/login",
         destination: "/admin/login",
         permanent: false,

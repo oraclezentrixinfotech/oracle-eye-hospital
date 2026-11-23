@@ -3,7 +3,7 @@ import Content from "./Content";
 import { prisma } from "@/lib/prisma";
 import { SITE_URL } from "@/lib/siteUrl";
 
-const PAGE_SLUG = "second-opinion-before-surgery";
+const PAGE_SLUG = "why-getting-a-second-opinion-matters-before-major-surgery";
 const PAGE_URL = `${SITE_URL}/${PAGE_SLUG}`;
 
 // 56 characters (50–60 chars, keyword first, ends with "| Oracle Eye Hospital")

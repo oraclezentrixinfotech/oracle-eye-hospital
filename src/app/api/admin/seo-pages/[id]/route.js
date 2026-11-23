@@ -5,7 +5,8 @@ import { clean, cleanMultiline, slugify } from "@/lib/validate";
 import { revalidatePath } from "next/cache";
 import { sanitizeSeoFaqs, sanitizeSeoSections } from "@/lib/sanitizeSeoPage";
 import { validateSchemaJson } from "@/lib/validateSchema";
-import { SITE_URL } from "@/lib/siteUrl";
+import { SITE_URL, normalizeCanonicalUrl } from "@/lib/siteUrl";
+import { syncPageToSitemapFile } from "@/lib/sitemapSync";
 import { ensureDbSchema } from "@/lib/ensureDbSchema";
 
 export const dynamic = "force-dynamic";
@@ -126,6 +127,8 @@ export async function PUT(req, { params }) {
       customSchema = schemaJson ? JSON.stringify(schemaJson, null, 2) : null;
     }
 
+    const finalCanonicalUrl = normalizeCanonicalUrl(canonicalUrl || slug);
+
     const updated = await prisma.seoPage.update({
       where: { id },
       data: {
@@ -134,7 +137,7 @@ export async function PUT(req, { params }) {
         metaTitle,
         metaDescription,
         keywords,
-        canonicalUrl: canonicalUrl || `${SITE_URL}/${slug}`,
+        canonicalUrl: finalCanonicalUrl,
         ogImage: ogImage || heroImage,
         heroBadge,
         h1Title,
@@ -157,6 +160,13 @@ export async function PUT(req, { params }) {
     });
 
     try {
+      if (updated.status === "published") {
+        syncPageToSitemapFile({
+          slug: updated.slug,
+          canonicalUrl: updated.canonicalUrl,
+          updatedAt: updated.updatedAt,
+        });
+      }
       if (existing.slug !== updated.slug) {
         revalidatePath("/" + existing.slug);
         revalidatePath("/services/" + existing.slug);
@@ -165,6 +175,7 @@ export async function PUT(req, { params }) {
       revalidatePath("/services/" + updated.slug);
       revalidatePath("/admin/seo-pages");
       revalidatePath("/sitemap.xml");
+      revalidatePath("/api/sitemap");
     } catch (revalErr) {
       console.warn("Revalidation warning:", revalErr?.message);
     }

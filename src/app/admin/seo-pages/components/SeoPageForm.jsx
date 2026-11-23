@@ -35,6 +35,7 @@ import RichHtmlEditor from "./RichHtmlEditor";
 import FloatingVerticalToolbar from "./FloatingVerticalToolbar";
 import { toast } from "../../components/Toast";
 import SeoPagePreviewModal from "./SeoPagePreviewModal";
+import { normalizeCanonicalUrl } from "@/lib/siteUrl";
 import "../../admin.css";
 import "../../components/datatable.css";
 
@@ -61,7 +62,11 @@ export default function SeoPageForm({ initialData = null, doctorsList = [], allP
     metaTitle: initialData?.metaTitle || "",
     metaDescription: initialData?.metaDescription || "",
     keywords: initialData?.keywords || "",
-    canonicalUrl: initialData?.canonicalUrl || "",
+    canonicalUrl: initialData?.canonicalUrl
+      ? normalizeCanonicalUrl(initialData.canonicalUrl)
+      : initialData?.slug
+      ? normalizeCanonicalUrl(initialData.slug)
+      : "",
     ogImage: initialData?.ogImage || "",
     heroBadge: initialData?.heroBadge ?? (isEditing ? "" : "NABH-Accredited Eye Hospital in Moradabad"),
     h1Title: initialData?.h1Title || "",
@@ -254,16 +259,18 @@ export default function SeoPageForm({ initialData = null, doctorsList = [], allP
     const generatedSlug = slugify(title);
     setForm((prev) => {
       const nextSlug = !slugLocked ? generatedSlug : prev.slug;
+      const isDefaultOrCanonical =
+        !prev.canonicalUrl ||
+        prev.canonicalUrl.includes("oracleeyehospital.com") ||
+        prev.canonicalUrl.includes("localhost");
       return {
         ...prev,
         h1Title: title,
         slug: nextSlug,
         metaTitle: !prev.metaTitle ? `${title} | Oracle Eye Hospital` : prev.metaTitle,
-        canonicalUrl:
-          !prev.canonicalUrl ||
-            prev.canonicalUrl.startsWith("https://www.oracleeyehospital.com/")
-            ? `https://www.oracleeyehospital.com/${nextSlug}`
-            : prev.canonicalUrl,
+        canonicalUrl: isDefaultOrCanonical
+          ? (nextSlug ? normalizeCanonicalUrl(nextSlug) : "")
+          : prev.canonicalUrl,
       };
     });
   }
@@ -272,15 +279,19 @@ export default function SeoPageForm({ initialData = null, doctorsList = [], allP
   function handleSlugChange(e) {
     const clean = slugify(e.target.value);
     setSlugLocked(true);
-    setForm((prev) => ({
-      ...prev,
-      slug: clean,
-      canonicalUrl:
+    setForm((prev) => {
+      const isDefaultOrCanonical =
         !prev.canonicalUrl ||
-          prev.canonicalUrl.startsWith("https://www.oracleeyehospital.com/")
-          ? `https://www.oracleeyehospital.com/${clean}`
+        prev.canonicalUrl.includes("oracleeyehospital.com") ||
+        prev.canonicalUrl.includes("localhost");
+      return {
+        ...prev,
+        slug: clean,
+        canonicalUrl: isDefaultOrCanonical
+          ? (clean ? normalizeCanonicalUrl(clean) : "")
           : prev.canonicalUrl,
-    }));
+      };
+    });
   }
 
   // Sync slug with current H1
@@ -289,7 +300,7 @@ export default function SeoPageForm({ initialData = null, doctorsList = [], allP
     setForm((prev) => ({
       ...prev,
       slug: generated,
-      canonicalUrl: `https://www.oracleeyehospital.com/${generated}`,
+      canonicalUrl: generated ? normalizeCanonicalUrl(generated) : "",
     }));
     setSlugLocked(false);
   }
@@ -620,6 +631,7 @@ export default function SeoPageForm({ initialData = null, doctorsList = [], allP
 
     const payload = {
       ...form,
+      canonicalUrl: normalizeCanonicalUrl(form.canonicalUrl || form.slug),
       schemaJson: parsedSchema,
       allowRatings: true,
     };
@@ -3016,7 +3028,7 @@ export default function SeoPageForm({ initialData = null, doctorsList = [], allP
                     setForm((prev) => ({ ...prev, customSchema: e.target.value }));
                     if (schemaStatusMsg.text) setSchemaStatusMsg({ type: "", text: "" });
                   }}
-                  placeholder={`[\n  {\n    "@context": "https://schema.org",\n    "@type": "MedicalProcedure",\n    "name": "${form.h1Title || "LASIK Eye Surgery"}",\n    "url": "https://oracleeyehospital.com/${form.slug || ""}"\n  }\n]`}
+                  placeholder={`[\n  {\n    "@context": "https://schema.org",\n    "@type": "MedicalProcedure",\n    "name": "${form.h1Title || "LASIK Eye Surgery"}",\n    "url": "https://www.oracleeyehospital.com/${form.slug || ""}"\n  }\n]`}
                   style={{
                     fontFamily: "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Courier New', monospace",
                     fontSize: 13,

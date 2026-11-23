@@ -3,7 +3,7 @@ import fs from "fs";
 import path from "path";
 import { isAdmin, unauthorized } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { SITE_URL } from "@/lib/siteUrl";
+import { SITE_URL, normalizeCanonicalUrl } from "@/lib/siteUrl";
 import { revalidatePath } from "next/cache";
 
 export const dynamic = "force-dynamic";
@@ -47,13 +47,15 @@ function parseSitemapEntries() {
     const priorityMatch = /<priority>([\s\S]*?)<\/priority>/i.exec(block);
 
     if (locMatch && locMatch[1]) {
-      let loc = locMatch[1].trim();
-      entries.push({
-        loc,
-        lastmod: lastmodMatch ? lastmodMatch[1].trim() : formatDate(new Date()),
-        changefreq: changefreqMatch ? changefreqMatch[1].trim() : "weekly",
-        priority: priorityMatch ? priorityMatch[1].trim() : "0.8",
-      });
+      const loc = normalizeCanonicalUrl(locMatch[1].trim());
+      if (loc) {
+        entries.push({
+          loc,
+          lastmod: lastmodMatch ? lastmodMatch[1].trim() : formatDate(new Date()),
+          changefreq: changefreqMatch ? changefreqMatch[1].trim() : "weekly",
+          priority: priorityMatch ? priorityMatch[1].trim() : "0.8",
+        });
+      }
     }
   }
 
@@ -107,11 +109,11 @@ export async function GET() {
     }
 
     return NextResponse.json({
-      siteUrl: SITE_URL,
+      siteUrl: "https://www.oracleeyehospital.com",
       customEntries,
       dbSeoPages: dbSeoPages.map((p) => ({
         ...p,
-        fullUrl: `${SITE_URL}/${p.slug.replace(/^\/+/, "")}`,
+        fullUrl: normalizeCanonicalUrl(p.slug),
         lastmod: formatDate(p.updatedAt || p.createdAt),
       })),
     });
@@ -136,11 +138,8 @@ export async function POST(req) {
       return NextResponse.json({ error: "URL path or location is required." }, { status: 400 });
     }
 
-    // Auto-normalize relative or absolute URL
-    if (!loc.startsWith("http://") && !loc.startsWith("https://")) {
-      const cleanPath = loc.startsWith("/") ? loc : `/${loc}`;
-      loc = `${SITE_URL}${cleanPath}`;
-    }
+    // Auto-normalize relative or absolute URL to canonical domain
+    loc = normalizeCanonicalUrl(loc);
 
     const currentEntries = parseSitemapEntries();
 
@@ -182,13 +181,11 @@ export async function PUT(req) {
       return NextResponse.json({ error: "Both target URL and updated URL are required." }, { status: 400 });
     }
 
-    if (!loc.startsWith("http://") && !loc.startsWith("https://")) {
-      const cleanPath = loc.startsWith("/") ? loc : `/${loc}`;
-      loc = `${SITE_URL}${cleanPath}`;
-    }
+    const normTargetLoc = normalizeCanonicalUrl(targetLoc);
+    loc = normalizeCanonicalUrl(loc);
 
     const currentEntries = parseSitemapEntries();
-    const index = currentEntries.findIndex((e) => e.loc.toLowerCase() === targetLoc.toLowerCase());
+    const index = currentEntries.findIndex((e) => normalizeCanonicalUrl(e.loc).toLowerCase() === normTargetLoc.toLowerCase());
 
     if (index === -1) {
       return NextResponse.json({ error: "Target URL not found in sitemap." }, { status: 404 });

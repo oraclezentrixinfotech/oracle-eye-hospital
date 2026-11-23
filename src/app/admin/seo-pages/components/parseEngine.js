@@ -2,6 +2,7 @@
 // Supports Word (.docx), Plain Text (.txt), and Markdown structures
 
 import { sanitizeHtml } from "../../../../lib/sanitizeHtml.js";
+import { normalizeCanonicalUrl } from "@/lib/siteUrl";
 
 export function normalizeRawText(rawText) {
   if (!rawText) return "";
@@ -919,7 +920,7 @@ export function sanitizeParsedOutput(data, doctorsList = [], allPages = [], full
     metaTitle,
     metaDescription,
     keywords: data.keywords || "",
-    canonicalUrl: data.canonicalUrl || (slug ? `https://www.oracleeyehospital.com/${slug}` : ""),
+    canonicalUrl: normalizeCanonicalUrl(data.canonicalUrl || slug),
     ogImage: data.ogImage || data.heroImage || "/Assets/img/services/Cataract-Service.png",
     heroBadge,
     heroSubtitle: sanitizeHtml(data.hero_subtitle || data.heroSubtitle || metaDescription),

@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import fs from "fs";
 import path from "path";
 import { prisma } from "@/lib/prisma";
-import { SITE_URL } from "@/lib/siteUrl";
+import { SITE_URL, normalizeCanonicalUrl } from "@/lib/siteUrl";
 import { SEO_PAGES as CODE_SEO_PAGES } from "@/app/(seo_pages)/_lib/pages";
 import { ensureDbSchema } from "@/lib/ensureDbSchema";
 
@@ -64,22 +64,17 @@ function parseCustomSitemapXml() {
       const priorityMatch = /<priority>([\s\S]*?)<\/priority>/i.exec(block);
 
       if (locMatch && locMatch[1]) {
-        let loc = locMatch[1].trim();
-        try {
-          const parsed = new URL(loc);
-          loc = `${SITE_URL}${parsed.pathname}`;
-        } catch {
-          if (!loc.startsWith("http")) {
-            loc = `${SITE_URL}/${loc.replace(/^\/+/, "")}`;
-          }
-        }
+        const rawLoc = locMatch[1].trim();
+        const loc = normalizeCanonicalUrl(rawLoc);
 
-        entries.push({
-          loc,
-          lastmod: lastmodMatch ? lastmodMatch[1].trim() : formatDate(new Date()),
-          changefreq: changefreqMatch ? changefreqMatch[1].trim() : "weekly",
-          priority: priorityMatch ? priorityMatch[1].trim() : "0.9",
-        });
+        if (loc) {
+          entries.push({
+            loc,
+            lastmod: lastmodMatch ? lastmodMatch[1].trim() : formatDate(new Date()),
+            changefreq: changefreqMatch ? changefreqMatch[1].trim() : "weekly",
+            priority: priorityMatch ? priorityMatch[1].trim() : "0.9",
+          });
+        }
       }
     }
   } catch (err) {
@@ -112,7 +107,7 @@ export async function GET() {
       }
     } else {
       for (const page of DEFAULT_STATIC_PAGES) {
-        const fullUrl = `${SITE_URL}${page.path}`;
+        const fullUrl = normalizeCanonicalUrl(page.path);
         if (!seenLocs.has(fullUrl)) {
           seenLocs.add(fullUrl);
           urls.push(`  <url>
@@ -129,8 +124,7 @@ export async function GET() {
     if (Array.isArray(CODE_SEO_PAGES)) {
       for (const codePage of CODE_SEO_PAGES) {
         if (!codePage?.slug) continue;
-        const cleanSlug = codePage.slug.replace(/^\/+/, "");
-        const fullUrl = `${SITE_URL}/${cleanSlug}`;
+        const fullUrl = normalizeCanonicalUrl(codePage.slug);
 
         if (!seenLocs.has(fullUrl)) {
           seenLocs.add(fullUrl);
@@ -153,6 +147,7 @@ export async function GET() {
         },
         select: {
           slug: true,
+          canonicalUrl: true,
           updatedAt: true,
           createdAt: true,
         },
@@ -163,8 +158,7 @@ export async function GET() {
 
       for (const page of dbSeoPages) {
         if (!page.slug) continue;
-        const cleanSlug = page.slug.replace(/^\/+/, "");
-        const fullUrl = `${SITE_URL}/${cleanSlug}`;
+        const fullUrl = normalizeCanonicalUrl(page.canonicalUrl || page.slug);
 
         if (!seenLocs.has(fullUrl)) {
           seenLocs.add(fullUrl);

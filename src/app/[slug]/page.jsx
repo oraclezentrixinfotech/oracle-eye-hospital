@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import ServiceContentClient from "@/app/services/[slug]/ServiceContentClient";
 
-import { SITE_URL } from "@/lib/siteUrl";
+import { SITE_URL, normalizeCanonicalUrl } from "@/lib/siteUrl";
 import { ensureDbSchema } from "@/lib/ensureDbSchema";
 import { isAdmin } from "@/lib/auth";
 
@@ -37,9 +37,9 @@ export async function generateMetadata({ params }) {
       seoPage.metaDescription ||
       seoPage.heroSubtitle ||
       `Advanced ${seoPage.h1Title} at Oracle Eye Hospital in Moradabad.`;
-    const canonical =
-      seoPage.canonicalUrl ||
-      `${SITE_URL}/${seoPage.slug}`;
+    const canonical = normalizeCanonicalUrl(
+      seoPage.canonicalUrl || seoPage.slug
+    );
     const ogImg =
       seoPage.ogImage ||
       seoPage.heroImage ||

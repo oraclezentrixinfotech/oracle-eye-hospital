@@ -3,7 +3,7 @@ import Content from "./Content";
 import { prisma } from "@/lib/prisma";
 import { SITE_URL } from "@/lib/siteUrl";
 
-const PAGE_SLUG = "dry-eye-clinic-moradabad";
+const PAGE_SLUG = "dry-eye-clinic-in-moradabad";
 const PAGE_URL = `${SITE_URL}/${PAGE_SLUG}`;
 
 // SEO Meta Title
