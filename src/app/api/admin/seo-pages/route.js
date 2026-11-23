@@ -8,6 +8,7 @@ import { validateSchemaJson } from "@/lib/validateSchema";
 import { SITE_URL, normalizeCanonicalUrl } from "@/lib/siteUrl";
 import { syncPageToSitemapFile } from "@/lib/sitemapSync";
 import { ensureDbSchema } from "@/lib/ensureDbSchema";
+import { removeExcludedSitemapUrl } from "@/lib/sitemapDb";
 
 export const dynamic = "force-dynamic";
 
@@ -131,6 +132,8 @@ export async function POST(req) {
 
     try {
       if (status === "published") {
+        await removeExcludedSitemapUrl(page.canonicalUrl);
+        await removeExcludedSitemapUrl(page.slug);
         syncPageToSitemapFile({
           slug: page.slug,
           canonicalUrl: page.canonicalUrl,
@@ -140,6 +143,7 @@ export async function POST(req) {
       revalidatePath("/" + slug);
       revalidatePath("/services/" + slug);
       revalidatePath("/admin/seo-pages");
+      revalidatePath("/admin/sitemap");
       revalidatePath("/sitemap.xml");
       revalidatePath("/api/sitemap");
     } catch (revalErr) {

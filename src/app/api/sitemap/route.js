@@ -5,6 +5,7 @@ import { prisma } from "@/lib/prisma";
 import { SITE_URL, normalizeCanonicalUrl } from "@/lib/siteUrl";
 import { SEO_PAGES as CODE_SEO_PAGES } from "@/app/(seo_pages)/_lib/pages";
 import { ensureDbSchema } from "@/lib/ensureDbSchema";
+import { getExcludedSitemapUrls, getCustomSitemapEntries } from "@/lib/sitemapDb";
 
 export const dynamic = "force-dynamic";
 
@@ -89,13 +90,15 @@ export async function GET() {
 
     const urls = [];
     const seenLocs = new Set();
+    const excludedSet = await getExcludedSitemapUrls();
+    const dbCustom = await getCustomSitemapEntries();
 
     // 1. Read entries from public/sitemap.xml (Custom & static URLs managed via Admin/code)
     const customEntries = parseCustomSitemapXml();
 
     if (customEntries.length > 0) {
       for (const item of customEntries) {
-        if (!seenLocs.has(item.loc)) {
+        if (!excludedSet.has(item.loc.toLowerCase()) && !seenLocs.has(item.loc)) {
           seenLocs.add(item.loc);
           urls.push(`  <url>
     <loc>${escapeXml(item.loc)}</loc>
@@ -108,7 +111,7 @@ export async function GET() {
     } else {
       for (const page of DEFAULT_STATIC_PAGES) {
         const fullUrl = normalizeCanonicalUrl(page.path);
-        if (!seenLocs.has(fullUrl)) {
+        if (!excludedSet.has(fullUrl.toLowerCase()) && !seenLocs.has(fullUrl)) {
           seenLocs.add(fullUrl);
           urls.push(`  <url>
     <loc>${escapeXml(fullUrl)}</loc>
@@ -120,13 +123,26 @@ export async function GET() {
       }
     }
 
+    // 1b. Additional custom sitemap entries from database
+    for (const item of dbCustom) {
+      if (!excludedSet.has(item.loc.toLowerCase()) && !seenLocs.has(item.loc)) {
+        seenLocs.add(item.loc);
+        urls.push(`  <url>
+    <loc>${escapeXml(item.loc)}</loc>
+    <lastmod>${escapeXml(item.lastmod)}</lastmod>
+    <changefreq>${escapeXml(item.changefreq)}</changefreq>
+    <priority>${escapeXml(item.priority)}</priority>
+  </url>`);
+      }
+    }
+
     // 2. Read registered code SEO pages from src/app/(seo_pages)/_lib/pages.js
     if (Array.isArray(CODE_SEO_PAGES)) {
       for (const codePage of CODE_SEO_PAGES) {
         if (!codePage?.slug) continue;
         const fullUrl = normalizeCanonicalUrl(codePage.slug);
 
-        if (!seenLocs.has(fullUrl)) {
+        if (!excludedSet.has(fullUrl.toLowerCase()) && !seenLocs.has(fullUrl)) {
           seenLocs.add(fullUrl);
           const lastmod = formatDate(codePage.lastModified || new Date());
           urls.push(`  <url>
@@ -160,7 +176,7 @@ export async function GET() {
         if (!page.slug) continue;
         const fullUrl = normalizeCanonicalUrl(page.canonicalUrl || page.slug);
 
-        if (!seenLocs.has(fullUrl)) {
+        if (!excludedSet.has(fullUrl.toLowerCase()) && !seenLocs.has(fullUrl)) {
           seenLocs.add(fullUrl);
           const lastmod = formatDate(page.updatedAt || page.createdAt);
           urls.push(`  <url>

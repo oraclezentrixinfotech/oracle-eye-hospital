@@ -8,6 +8,7 @@ import { validateSchemaJson } from "@/lib/validateSchema";
 import { SITE_URL, normalizeCanonicalUrl } from "@/lib/siteUrl";
 import { syncPageToSitemapFile } from "@/lib/sitemapSync";
 import { ensureDbSchema } from "@/lib/ensureDbSchema";
+import { addExcludedSitemapUrl, removeExcludedSitemapUrl, getCustomSitemapEntries, saveCustomSitemapEntries } from "@/lib/sitemapDb";
 
 export const dynamic = "force-dynamic";
 
@@ -161,19 +162,26 @@ export async function PUT(req, { params }) {
 
     try {
       if (updated.status === "published") {
+        await removeExcludedSitemapUrl(updated.canonicalUrl);
+        await removeExcludedSitemapUrl(updated.slug);
         syncPageToSitemapFile({
           slug: updated.slug,
           canonicalUrl: updated.canonicalUrl,
           updatedAt: updated.updatedAt,
         });
+      } else {
+        await addExcludedSitemapUrl(updated.canonicalUrl);
+        await addExcludedSitemapUrl(updated.slug);
       }
       if (existing.slug !== updated.slug) {
+        await addExcludedSitemapUrl(existing.slug);
         revalidatePath("/" + existing.slug);
         revalidatePath("/services/" + existing.slug);
       }
       revalidatePath("/" + updated.slug);
       revalidatePath("/services/" + updated.slug);
       revalidatePath("/admin/seo-pages");
+      revalidatePath("/admin/sitemap");
       revalidatePath("/sitemap.xml");
       revalidatePath("/api/sitemap");
     } catch (revalErr) {
@@ -220,10 +228,17 @@ export async function PATCH(req, { params }) {
     });
 
     try {
+      if (updated.status === "published") {
+        await removeExcludedSitemapUrl(existing.canonicalUrl || existing.slug);
+      } else {
+        await addExcludedSitemapUrl(existing.canonicalUrl || existing.slug);
+      }
       revalidatePath("/" + existing.slug);
       revalidatePath("/services/" + existing.slug);
       revalidatePath("/admin/seo-pages");
+      revalidatePath("/admin/sitemap");
       revalidatePath("/sitemap.xml");
+      revalidatePath("/api/sitemap");
     } catch (revalErr) {
       console.warn("Revalidation warning:", revalErr?.message);
     }
@@ -253,11 +268,30 @@ export async function DELETE(req, { params }) {
 
     await prisma.seoPage.delete({ where: { id } });
 
+    // Exclude page from sitemap
+    try {
+      const pageLoc = normalizeCanonicalUrl(existing.canonicalUrl || existing.slug);
+      await addExcludedSitemapUrl(pageLoc);
+      await addExcludedSitemapUrl(existing.slug);
+
+      const dbCustom = await getCustomSitemapEntries();
+      const nextCustom = dbCustom.filter(
+        (e) => e.loc.toLowerCase() !== pageLoc.toLowerCase()
+      );
+      if (nextCustom.length !== dbCustom.length) {
+        await saveCustomSitemapEntries(nextCustom);
+      }
+    } catch (sitemapErr) {
+      console.warn("Sitemap exclusion warning on page delete:", sitemapErr?.message || sitemapErr);
+    }
+
     try {
       revalidatePath("/" + existing.slug);
       revalidatePath("/services/" + existing.slug);
       revalidatePath("/admin/seo-pages");
+      revalidatePath("/admin/sitemap");
       revalidatePath("/sitemap.xml");
+      revalidatePath("/api/sitemap");
     } catch (revalErr) {
       console.warn("Revalidation warning:", revalErr?.message);
     }
