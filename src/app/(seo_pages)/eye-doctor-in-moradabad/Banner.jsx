@@ -17,9 +17,7 @@ export default function Banner() {
                 <nav aria-label="Breadcrumb" className="seo-breadcrumb">
                     <Link href="/">Home</Link>
                     <span className="mx-2 text-white-50">/</span>
-                    <Link href="/services">Services</Link>
-                    <span className="mx-2 text-white-50">/</span>
-                    <span className="active">Dry Doctor in Moradabad</span>
+                    <span className="active">Eye Doctor in Moradabad</span>
                 </nav>
 
                 <div className="row align-items-center">

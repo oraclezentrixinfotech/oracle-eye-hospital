@@ -56,8 +56,6 @@ export default function ServiceContentClient({
           <nav aria-label="Breadcrumb" className="seo-breadcrumb">
             <Link href="/">Home</Link>
             <span className="mx-2 text-white-50">/</span>
-            <Link href="/services">Services</Link>
-            <span className="mx-2 text-white-50">/</span>
             <span className="active">{page.h1Title}</span>
           </nav>
 
