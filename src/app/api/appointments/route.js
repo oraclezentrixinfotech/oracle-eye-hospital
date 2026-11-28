@@ -1,6 +1,38 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { clean, cleanMultiline, digits, isEmail } from "@/lib/validate";
+import nodemailer from "nodemailer";
+
+const NOTIFICATION_EMAIL = process.env.APPOINTMENT_NOTIFICATION_EMAIL || "orcal.zentrixinfotech@gmail.com";
+
+async function sendAppointmentNotification(appointment) {
+  if (!process.env.SMTP_HOST || !process.env.SMTP_USER || !process.env.SMTP_PASSWORD) {
+    console.warn("Appointment saved, but email notification is not configured (missing SMTP settings).");
+    return;
+  }
+  const transporter = nodemailer.createTransport({
+    host: process.env.SMTP_HOST,
+    port: Number(process.env.SMTP_PORT || 587),
+    secure: process.env.SMTP_SECURE === "true",
+    auth: { user: process.env.SMTP_USER, pass: process.env.SMTP_PASSWORD },
+  });
+  await transporter.sendMail({
+    from: process.env.SMTP_FROM || process.env.SMTP_USER,
+    to: NOTIFICATION_EMAIL,
+    replyTo: appointment.email || undefined,
+    subject: `New appointment request - ${appointment.name}`,
+    text: [
+      "New appointment request received",
+      `Name: ${appointment.name}`,
+      `Phone: ${appointment.phone}`,
+      `Email: ${appointment.email || "Not provided"}`,
+      `Doctor: ${appointment.doctor || "Any available doctor"}`,
+      `Service: ${appointment.service || "Not specified"}`,
+      `Preferred date: ${appointment.preferredDate || "Not specified"}`,
+      `Message: ${appointment.message || "—"}`,
+    ].join("\n"),
+  });
+}
 
 export async function POST(req) {
   let body;
@@ -31,7 +63,7 @@ export async function POST(req) {
   }
 
   try {
-    await prisma.appointment.create({
+    const appointment = await prisma.appointment.create({
       data: {
         name,
         phone,
@@ -42,6 +74,11 @@ export async function POST(req) {
         message: cleanMultiline(body.message, 1000) || null,
       },
     });
+    try {
+      await sendAppointmentNotification(appointment);
+    } catch (emailError) {
+      console.error("appointment notification failed:", emailError);
+    }
     return NextResponse.json({ ok: true }, { status: 201 });
   } catch (e) {
     console.error("appointment create failed:", e);
